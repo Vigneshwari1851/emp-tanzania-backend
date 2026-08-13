@@ -12,9 +12,7 @@
     "seed:employees": "ts-node prisma/seed_75_employees.ts",
     "seed:documents": "ts-node src/scripts/seed-documents.ts"
   },
-  "prisma": {
-    "seed": "ts-node prisma/seed.ts"
-  },
+
   "keywords": [],
   "author": "",
   "license": "ISC",

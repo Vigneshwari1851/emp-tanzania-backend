@@ -27,39 +27,25 @@ export class WebSocketService {
                 const userId = decoded.id;
                 const sessionId = decoded.jti; // Added: extract sessionId
 
-                // Added: Verify the session in the database
-                prisma.user.findUnique({
-                    where: { id: Number(userId) }
-                }).then(user => {
-                    if (!user || user.sessionToken !== String(sessionId)) {
-                        console.log(`[WS] Connection rejected: Session mismatch/invalid for user ${userId}`);
-                        ws.close(3000, 'Session expired');
-                        return;
-                    }
+                if (ws.readyState !== WebSocket.OPEN) {
+                    return;
+                }
 
-                    if (ws.readyState !== WebSocket.OPEN) {
-                        return;
-                    }
+                if (!this.clients.has(userId)) {
+                    this.clients.set(userId, new Set());
+                }
+                (ws as any).sessionId = sessionId;
+                this.clients.get(userId)!.add(ws);
+                console.log(`[WS] Session ${sessionId} connected for user ${userId}`);
 
-                    if (!this.clients.has(userId)) {
-                        this.clients.set(userId, new Set());
-                    }
-                    (ws as any).sessionId = sessionId; // Added: store sessionId on ws
-                    this.clients.get(userId)!.add(ws);
-                    console.log(`[WS] Session ${sessionId} connected for user ${userId}`);
-
-                    ws.on('close', () => {
-                        const userClients = this.clients.get(userId);
-                        if (userClients) {
-                            userClients.delete(ws);
-                            if (userClients.size === 0) {
-                                this.clients.delete(userId);
-                            }
+                ws.on('close', () => {
+                    const userClients = this.clients.get(userId);
+                    if (userClients) {
+                        userClients.delete(ws);
+                        if (userClients.size === 0) {
+                            this.clients.delete(userId);
                         }
-                    });
-                }).catch(err => {
-                    console.error('[WS] DB verification error:', err);
-                    ws.close(1011, 'Internal server error');
+                    }
                 });
             } catch (err) {
                 console.error('WebSocket connection error:', err);
