@@ -64,42 +64,42 @@ app.get('/', (req, res) => {
     return sendResponse(res, 200, true, 'Employee Management API is running');
 });
 
-app.use('/employee-api/auth', authRoutes);
-app.use('/employee-api/roles', rolesRoutes);
-app.use('/employee-api/organizations', organizationRoutes);
-app.use('/employee-api/teams', teamRoutes);
-app.use('/employee-api/departments', departmentRoutes);
-app.use('/employee-api/employees', employeeRoutes);
-app.use('/employee-api/leave-policies', leavePolicyRoutes);
-app.use('/employee-api/leaves', leaveRoutes);
-app.use('/employee-api/attendance', attendanceRoutes);
-app.use('/employee-api/permissions', permissionsRoutes);
-app.use('/employee-api/settings', settingsRoutes);
-app.use('/employee-api/branches', branchRoutes);
-app.use('/employee-api/notifications', notificationRoutes);
-app.use('/employee-api/banks', bankRoutes);
-app.use('/employee-api/payroll', payrollRoutes);
-app.use('/employee-api/exit', exitRoutes);
-app.use('/employee-api/designations', designationRoutes);
-app.use('/employee-api/assets', assetRoutes);
-app.use('/employee-api/assignments', assignmentRoutes);
-app.use('/employee-api/lms', lmsRoutes);
-app.use('/employee-api/audit', auditRoutes);
-app.use('/employee-api/recruitment', recruitmentRoutes);
-app.use('/employee-api/public/surveys', publicSurveyRoutes);
-app.use('/employee-api/survey', surveyRoutes);
-app.use('/employee-api/edition', editionRoutes);
-app.use('/employee-api/surveys', surveyRoutes);
-app.use('/employee-api/user-types', userTypeRoutes);
-app.use('/employee-api/news', newsRoutes);
-app.use('/employee-api/documents', documentRoutes);
-app.use('/employee-api/loans-advances', loansAdvancesRoutes);
-app.use('/employee-api/loan-types', loanTypesRoutes);
-app.use('/employee-api/loan-applications', loanApplicationsRoutes);
+app.use('/rafiki/auth', authRoutes);
+app.use('/rafiki/roles', rolesRoutes);
+app.use('/rafiki/organizations', organizationRoutes);
+app.use('/rafiki/teams', teamRoutes);
+app.use('/rafiki/departments', departmentRoutes);
+app.use('/rafiki/employees', employeeRoutes);
+app.use('/rafiki/leave-policies', leavePolicyRoutes);
+app.use('/rafiki/leaves', leaveRoutes);
+app.use('/rafiki/attendance', attendanceRoutes);
+app.use('/rafiki/permissions', permissionsRoutes);
+app.use('/rafiki/settings', settingsRoutes);
+app.use('/rafiki/branches', branchRoutes);
+app.use('/rafiki/notifications', notificationRoutes);
+app.use('/rafiki/banks', bankRoutes);
+app.use('/rafiki/payroll', payrollRoutes);
+app.use('/rafiki/exit', exitRoutes);
+app.use('/rafiki/designations', designationRoutes);
+app.use('/rafiki/assets', assetRoutes);
+app.use('/rafiki/assignments', assignmentRoutes);
+app.use('/rafiki/lms', lmsRoutes);
+app.use('/rafiki/audit', auditRoutes);
+app.use('/rafiki/recruitment', recruitmentRoutes);
+app.use('/rafiki/public/surveys', publicSurveyRoutes);
+app.use('/rafiki/survey', surveyRoutes);
+app.use('/rafiki/edition', editionRoutes);
+app.use('/rafiki/surveys', surveyRoutes);
+app.use('/rafiki/user-types', userTypeRoutes);
+app.use('/rafiki/news', newsRoutes);
+app.use('/rafiki/documents', documentRoutes);
+app.use('/rafiki/loans-advances', loansAdvancesRoutes);
+app.use('/rafiki/loan-types', loanTypesRoutes);
+app.use('/rafiki/loan-applications', loanApplicationsRoutes);
 import changeRequestRoutes from './modules/change-requests/change-request.routes';
-app.use('/employee-api/change-requests', changeRequestRoutes);
+app.use('/rafiki/change-requests', changeRequestRoutes);
 import feedbackRoutes from './modules/feedback/feedback.routes';
-app.use('/employee-api/feedback', feedbackRoutes);
+app.use('/rafiki/feedback', feedbackRoutes);
 
 
 // Generic file upload endpoint for Asset Images and other modules
@@ -123,7 +123,7 @@ const singleUpload = multer({
     limits: { fileSize: 20 * 1024 * 1024 }
 }).single('file');
 
-app.post('/employee-api/upload', (req, res) => {
+app.post('/rafiki/upload', (req, res) => {
     singleUpload(req, res, (err) => {
         if (err) {
             console.error('Upload error:', err);
