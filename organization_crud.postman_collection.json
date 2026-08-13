@@ -1,0 +1,178 @@
+{
+	"info": {
+		"_postman_id": "org-crud-collection",
+		"name": "Organization Management API",
+		"description": "Professional CRUD operations for Organizations and Branches with RBAC and Validation.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Organization",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"entity_name\": \"ABC Pvt Ltd\",\n    \"company_code\": \"ABC001\",\n    \"company_type\": \"Private\",\n    \"jurisdiction\": \"India\",\n    \"currency\": \"INR\",\n    \"fiscal_year_end\": \"2025-03-31\",\n    \"pan\": \"ABCDE1234F\",\n    \"address\": \"MG Road\",\n    \"city\": \"Bangalore\",\n    \"state\": \"Karnataka\",\n    \"country\": \"India\",\n    \"zip\": \"560001\",\n    \"business_unit\": \"Technology\",\n    \"cost_center\": \"CC100\",\n    \"job_architecture\": true,\n    \"standard_working_hours_per_week\": 40,\n    \"working_days\": [\n        \"Mon\",\n        \"Tue\",\n        \"Wed\",\n        \"Thu\",\n        \"Fri\"\n    ],\n    \"public_holidays\": [\n        \"2025-01-01\",\n        \"2025-08-15\"\n    ],\n    \"branch\": [\n        {\n            \"branch_name\": \"Bangalore HQ\",\n            \"branch_code\": \"BLR01\",\n            \"city\": \"Bangalore\",\n            \"state\": \"Karnataka\",\n            \"country\": \"India\",\n            \"time_zone\": \"Asia/Kolkata\",\n            \"gst\": \"29ABCDE1234F1Z5\",\n            \"tax_location\": \"Karnataka\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/organizations",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"organizations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Organizations",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/organizations",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"organizations"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Organization By ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/organizations/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"organizations",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Organization",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"entity_name\": \"ABC Global Pvt Ltd\",\n    \"currency\": \"USD\",\n    \"address\": \"New Street 123\",\n    \"city\": \"New York\",\n    \"state\": \"NY\",\n    \"country\": \"USA\",\n    \"zip\": \"10001\",\n    \"job_architecture\": false,\n    \"standard_working_hours_per_week\": 45,\n    \"working_days\": [\"Mon\", \"Tue\", \"Wed\", \"Thu\", \"Fri\", \"Sat\"],\n    \"public_holidays\": [],\n    \"branch\": []\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/organizations/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"organizations",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Organization",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/organizations/1",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"organizations",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		}
+	]
+}

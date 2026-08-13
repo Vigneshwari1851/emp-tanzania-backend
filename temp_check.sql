@@ -1,0 +1,1 @@
+SELECT l.id, l.userDetailId, l.principalAmount, l.monthlyRecovery, l.outstandingBalance, l.isActive, l.status, l.disbursed_at, l.disbursement_reference, ud.user_id, ud.first_name, ud.last_name, ud.employee_id FROM loans l JOIN user_details ud ON l.userDetailId = ud.id WHERE ud.user_id = 243;

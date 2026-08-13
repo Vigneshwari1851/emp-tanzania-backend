@@ -1,0 +1,1214 @@
+{
+  "info": {
+    "_postman_id": "ecb418df-20cc-4a14-8a00-269c21bab2b5",
+    "name": "EMP Roles & Permissions",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "42962066",
+    "_collection_link": "https://go.postman.co/collection/42962066-ecb418df-20cc-4a14-8a00-269c21bab2b5?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Roles & Permissions",
+      "item": [
+        {
+          "name": "Role Management APIs",
+          "item": [
+            {
+              "name": "Create Role",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"role_name\": \"HR Manager\",\n    \"description\": \"Handles human resources\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/roles",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "roles"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Create Role Response",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"role_name\": \"HR Manager\",\n    \"description\": \"Handles human resources\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{base_url}}/roles",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "roles"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "*"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "229"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"e5-uoZhJ0mjXBDXI7TzxYv/MZ4k2p0\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 11 Mar 2026 11:27:51 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"Role created successfully\",\n    \"data\": {\n        \"id\": 5,\n        \"role_name\": \"hr manager\",\n        \"description\": \"Handles human resources\",\n        \"status\": true,\n        \"created_at\": \"2026-03-11T11:27:51.849Z\",\n        \"updated_at\": \"2026-03-11T11:27:51.849Z\"\n    }\n}"
+                }
+              ]
+            },
+            {
+              "name": "List Roles",
+              "request": {
+                "auth": {
+                  "type": "jwt",
+                  "jwt": [
+                    {
+                      "key": "algorithm",
+                      "value": "HS256",
+                      "type": "string"
+                    },
+                    {
+                      "key": "isSecretBase64Encoded",
+                      "value": false,
+                      "type": "boolean"
+                    },
+                    {
+                      "key": "payload",
+                      "value": "{}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "addTokenTo",
+                      "value": "header",
+                      "type": "string"
+                    },
+                    {
+                      "key": "headerPrefix",
+                      "value": "Bearer",
+                      "type": "string"
+                    },
+                    {
+                      "key": "queryParamKey",
+                      "value": "token",
+                      "type": "string"
+                    },
+                    {
+                      "key": "header",
+                      "value": "{}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/roles",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "roles"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "List Roles Response",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{base_url}}/roles",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "roles"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "*"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "8449"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"2101-GS6Euim7AIZsIbiAFRDVOnXWqDE\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 11 Mar 2026 11:29:27 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"Roles fetched successfully\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"role_name\": \"super admin\",\n            \"description\": \"Full access to the system\",\n            \"status\": true,\n            \"created_at\": \"2026-03-10T17:10:54.188Z\",\n            \"updated_at\": \"2026-03-10T17:10:54.188Z\",\n            \"permissions\": [\n                {\n                    \"id\": 1,\n                    \"role_id\": 1,\n                    \"permission_id\": 1,\n                    \"created_at\": \"2026-03-10T17:10:54.238Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.238Z\",\n                    \"permission\": {\n                        \"id\": 1,\n                        \"permission_name\": \"employee.create\",\n                        \"description\": \"Can create employees\",\n                        \"created_at\": \"2026-03-10T17:10:53.999Z\",\n                        \"updated_at\": \"2026-03-10T17:10:53.999Z\"\n                    }\n                },\n                {\n                    \"id\": 2,\n                    \"role_id\": 1,\n                    \"permission_id\": 2,\n                    \"created_at\": \"2026-03-10T17:10:54.264Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.264Z\",\n                    \"permission\": {\n                        \"id\": 2,\n                        \"permission_name\": \"employee.view\",\n                        \"description\": \"Can view employees\",\n                        \"created_at\": \"2026-03-10T17:10:54.128Z\",\n                        \"updated_at\": \"2026-03-10T17:10:54.128Z\"\n                    }\n                },\n                {\n                    \"id\": 3,\n                    \"role_id\": 1,\n                    \"permission_id\": 3,\n                    \"created_at\": \"2026-03-10T17:10:54.270Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.270Z\",\n                    \"permission\": {\n                        \"id\": 3,\n                        \"permission_name\": \"employee.update\",\n                        \"description\": \"Can update employees\",\n                        \"created_at\": \"2026-03-10T17:10:54.137Z\",\n                        \"updated_at\": \"2026-03-10T17:10:54.137Z\"\n                    }\n                },\n                {\n                    \"id\": 4,\n                    \"role_id\": 1,\n                    \"permission_id\": 4,\n                    \"created_at\": \"2026-03-10T17:10:54.277Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.277Z\",\n                    \"permission\": {\n                        \"id\": 4,\n                        \"permission_name\": \"employee.delete\",\n                        \"description\": \"Can delete employees\",\n                        \"created_at\": \"2026-03-10T17:10:54.144Z\",\n                        \"updated_at\": \"2026-03-10T17:10:54.144Z\"\n                    }\n                },\n                {\n                    \"id\": 5,\n                    \"role_id\": 1,\n                    \"permission_id\": 5,\n                    \"created_at\": \"2026-03-10T17:10:54.283Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.283Z\",\n                    \"permission\": {\n                        \"id\": 5,\n                        \"permission_name\": \"leave.apply\",\n                        \"description\": \"Can apply for leave\",\n                        \"created_at\": \"2026-03-10T17:10:54.151Z\",\n                        \"updated_at\": \"2026-03-10T17:10:54.151Z\"\n                    }\n                },\n                {\n                    \"id\": 6,\n                    \"role_id\": 1,\n                    \"permission_id\": 6,\n                    \"created_at\": \"2026-03-10T17:10:54.289Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.289Z\",\n                    \"permission\": {\n                        \"id\": 6,\n                        \"permission_name\": \"leave.approve\",\n                        \"description\": \"Can approve leave\",\n                        \"created_at\": \"2026-03-10T17:10:54.157Z\",\n                        \"updated_at\": \"2026-03-10T17:10:54.157Z\"\n                    }\n                },\n                {\n                    \"id\": 7,\n                    \"role_id\": 1,\n                    \"permission_id\": 7,\n                    \"created_at\": \"2026-03-10T17:10:54.296Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.296Z\",\n                    \"permission\": {\n                        \"id\": 7,\n                        \"permission_name\": \"leave.reject\",\n                        \"description\": \"Can reject leave\",\n                        \"created_at\": \"2026-03-10T17:10:54.164Z\",\n                        \"updated_at\": \"2026-03-10T17:10:54.164Z\"\n                    }\n                },\n                {\n                    \"id\": 8,\n                    \"role_id\": 1,\n                    \"permission_id\": 8,\n                    \"created_at\": \"2026-03-10T17:10:54.301Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.301Z\",\n                    \"permission\": {\n                        \"id\": 8,\n                        \"permission_name\": \"candidate.create\",\n                        \"description\": \"Can create candidates\",\n                        \"created_at\": \"2026-03-10T17:10:54.170Z\",\n                        \"updated_at\": \"2026-03-10T17:10:54.170Z\"\n                    }\n                },\n                {\n                    \"id\": 9,\n                    \"role_id\": 1,\n                    \"permission_id\": 9,\n                    \"created_at\": \"2026-03-10T17:10:54.307Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.307Z\",\n                    \"permission\": {\n                        \"id\": 9,\n                        \"permission_name\": \"candidate.update\",\n                        \"description\": \"Can update candidates\",\n                        \"created_at\": \"2026-03-10T17:10:54.180Z\",\n                        \"updated_at\": \"2026-03-10T17:10:54.180Z\"\n                    }\n                },\n                {\n                    \"id\": 10,\n                    \"role_id\": 1,\n                    \"permission_id\": 10,\n                    \"created_at\": \"2026-03-11T01:45:30.072Z\",\n                    \"updated_at\": \"2026-03-11T01:45:30.072Z\",\n                    \"permission\": {\n                        \"id\": 10,\n                        \"permission_name\": \"manage_roles\",\n                        \"description\": \"Can create/update/delete roles\",\n                        \"created_at\": \"2026-03-11T01:45:29.932Z\",\n                        \"updated_at\": \"2026-03-11T01:45:29.932Z\"\n                    }\n                },\n                {\n                    \"id\": 11,\n                    \"role_id\": 1,\n                    \"permission_id\": 11,\n                    \"created_at\": \"2026-03-11T01:45:30.078Z\",\n                    \"updated_at\": \"2026-03-11T01:45:30.078Z\",\n                    \"permission\": {\n                        \"id\": 11,\n                        \"permission_name\": \"view_roles\",\n                        \"description\": \"Can view roles\",\n                        \"created_at\": \"2026-03-11T01:45:29.950Z\",\n                        \"updated_at\": \"2026-03-11T01:45:29.950Z\"\n                    }\n                },\n                {\n                    \"id\": 12,\n                    \"role_id\": 1,\n                    \"permission_id\": 12,\n                    \"created_at\": \"2026-03-11T01:45:30.083Z\",\n                    \"updated_at\": \"2026-03-11T01:45:30.083Z\",\n                    \"permission\": {\n                        \"id\": 12,\n                        \"permission_name\": \"manage_permissions\",\n                        \"description\": \"Can create/update permissions\",\n                        \"created_at\": \"2026-03-11T01:45:29.955Z\",\n                        \"updated_at\": \"2026-03-11T01:45:29.955Z\"\n                    }\n                },\n                {\n                    \"id\": 13,\n                    \"role_id\": 1,\n                    \"permission_id\": 13,\n                    \"created_at\": \"2026-03-11T01:45:30.088Z\",\n                    \"updated_at\": \"2026-03-11T01:45:30.088Z\",\n                    \"permission\": {\n                        \"id\": 13,\n                        \"permission_name\": \"view_permissions\",\n                        \"description\": \"Can view permissions\",\n                        \"created_at\": \"2026-03-11T01:45:29.961Z\",\n                        \"updated_at\": \"2026-03-11T01:45:29.961Z\"\n                    }\n                },\n                {\n                    \"id\": 14,\n                    \"role_id\": 1,\n                    \"permission_id\": 14,\n                    \"created_at\": \"2026-03-11T01:45:30.094Z\",\n                    \"updated_at\": \"2026-03-11T01:45:30.094Z\",\n                    \"permission\": {\n                        \"id\": 14,\n                        \"permission_name\": \"user.create\",\n                        \"description\": \"Can create users\",\n                        \"created_at\": \"2026-03-11T01:45:29.969Z\",\n                        \"updated_at\": \"2026-03-11T01:45:29.969Z\"\n                    }\n                },\n                {\n                    \"id\": 15,\n                    \"role_id\": 1,\n                    \"permission_id\": 15,\n                    \"created_at\": \"2026-03-11T01:45:30.099Z\",\n                    \"updated_at\": \"2026-03-11T01:45:30.099Z\",\n                    \"permission\": {\n                        \"id\": 15,\n                        \"permission_name\": \"user.view\",\n                        \"description\": \"Can view users\",\n                        \"created_at\": \"2026-03-11T01:45:29.975Z\",\n                        \"updated_at\": \"2026-03-11T01:45:29.975Z\"\n                    }\n                },\n                {\n                    \"id\": 16,\n                    \"role_id\": 1,\n                    \"permission_id\": 16,\n                    \"created_at\": \"2026-03-11T01:45:30.104Z\",\n                    \"updated_at\": \"2026-03-11T01:45:30.104Z\",\n                    \"permission\": {\n                        \"id\": 16,\n                        \"permission_name\": \"user.update\",\n                        \"description\": \"Can update users\",\n                        \"created_at\": \"2026-03-11T01:45:29.980Z\",\n                        \"updated_at\": \"2026-03-11T01:45:29.980Z\"\n                    }\n                },\n                {\n                    \"id\": 17,\n                    \"role_id\": 1,\n                    \"permission_id\": 17,\n                    \"created_at\": \"2026-03-11T01:45:30.108Z\",\n                    \"updated_at\": \"2026-03-11T01:45:30.108Z\",\n                    \"permission\": {\n                        \"id\": 17,\n                        \"permission_name\": \"user.delete\",\n                        \"description\": \"Can delete users\",\n                        \"created_at\": \"2026-03-11T01:45:29.985Z\",\n                        \"updated_at\": \"2026-03-11T01:45:29.985Z\"\n                    }\n                },\n                {\n                    \"id\": 18,\n                    \"role_id\": 1,\n                    \"permission_id\": 18,\n                    \"created_at\": \"2026-03-11T01:45:30.113Z\",\n                    \"updated_at\": \"2026-03-11T01:45:30.113Z\",\n                    \"permission\": {\n                        \"id\": 18,\n                        \"permission_name\": \"department.manage\",\n                        \"description\": \"Can manage departments\",\n                        \"created_at\": \"2026-03-11T01:45:29.990Z\",\n                        \"updated_at\": \"2026-03-11T01:45:29.990Z\"\n                    }\n                },\n                {\n                    \"id\": 19,\n                    \"role_id\": 1,\n                    \"permission_id\": 19,\n                    \"created_at\": \"2026-03-11T01:45:30.118Z\",\n                    \"updated_at\": \"2026-03-11T01:45:30.118Z\",\n                    \"permission\": {\n                        \"id\": 19,\n                        \"permission_name\": \"department.view\",\n                        \"description\": \"Can view departments\",\n                        \"created_at\": \"2026-03-11T01:45:29.996Z\",\n                        \"updated_at\": \"2026-03-11T01:45:29.996Z\"\n                    }\n                },\n                {\n                    \"id\": 20,\n                    \"role_id\": 1,\n                    \"permission_id\": 20,\n                    \"created_at\": \"2026-03-11T01:45:30.122Z\",\n                    \"updated_at\": \"2026-03-11T01:45:30.122Z\",\n                    \"permission\": {\n                        \"id\": 20,\n                        \"permission_name\": \"company.manage\",\n                        \"description\": \"Can manage company details\",\n                        \"created_at\": \"2026-03-11T01:45:30.000Z\",\n                        \"updated_at\": \"2026-03-11T01:45:30.000Z\"\n                    }\n                },\n                {\n                    \"id\": 21,\n                    \"role_id\": 1,\n                    \"permission_id\": 21,\n                    \"created_at\": \"2026-03-11T10:22:29.130Z\",\n                    \"updated_at\": \"2026-03-11T10:22:29.130Z\",\n                    \"permission\": {\n                        \"id\": 21,\n                        \"permission_name\": \"candidate.list\",\n                        \"description\": \"Can view candidate\",\n                        \"created_at\": \"2026-03-11T01:50:46.087Z\",\n                        \"updated_at\": \"2026-03-11T01:50:46.087Z\"\n                    }\n                },\n                {\n                    \"id\": 22,\n                    \"role_id\": 1,\n                    \"permission_id\": 22,\n                    \"created_at\": \"2026-03-11T10:22:29.135Z\",\n                    \"updated_at\": \"2026-03-11T10:22:29.135Z\",\n                    \"permission\": {\n                        \"id\": 22,\n                        \"permission_name\": \"candidate.delete\",\n                        \"description\": \"Can delete candidates\",\n                        \"created_at\": \"2026-03-11T10:22:29.038Z\",\n                        \"updated_at\": \"2026-03-11T10:22:29.038Z\"\n                    }\n                },\n                {\n                    \"id\": 23,\n                    \"role_id\": 1,\n                    \"permission_id\": 23,\n                    \"created_at\": \"2026-03-11T10:22:29.179Z\",\n                    \"updated_at\": \"2026-03-11T10:22:29.179Z\",\n                    \"permission\": {\n                        \"id\": 23,\n                        \"permission_name\": \"organization.manage\",\n                        \"description\": \"Can manage organization details\",\n                        \"created_at\": \"2026-03-11T10:22:29.052Z\",\n                        \"updated_at\": \"2026-03-11T10:22:29.052Z\"\n                    }\n                },\n                {\n                    \"id\": 24,\n                    \"role_id\": 1,\n                    \"permission_id\": 24,\n                    \"created_at\": \"2026-03-11T10:22:29.186Z\",\n                    \"updated_at\": \"2026-03-11T10:22:29.186Z\",\n                    \"permission\": {\n                        \"id\": 24,\n                        \"permission_name\": \"organization.view\",\n                        \"description\": \"Can view organizations\",\n                        \"created_at\": \"2026-03-11T10:22:29.055Z\",\n                        \"updated_at\": \"2026-03-11T10:22:29.055Z\"\n                    }\n                },\n                {\n                    \"id\": 25,\n                    \"role_id\": 1,\n                    \"permission_id\": 25,\n                    \"created_at\": \"2026-03-11T10:22:29.189Z\",\n                    \"updated_at\": \"2026-03-11T10:22:29.189Z\",\n                    \"permission\": {\n                        \"id\": 25,\n                        \"permission_name\": \"branch.manage\",\n                        \"description\": \"Can manage branches\",\n                        \"created_at\": \"2026-03-11T10:22:29.057Z\",\n                        \"updated_at\": \"2026-03-11T10:22:29.057Z\"\n                    }\n                }\n            ],\n            \"_count\": {\n                \"users\": 2\n            }\n        },\n        {\n            \"id\": 2,\n            \"role_name\": \"admin\",\n            \"description\": \"Administrative access\",\n            \"status\": true,\n            \"created_at\": \"2026-03-10T17:10:54.216Z\",\n            \"updated_at\": \"2026-03-10T17:10:54.216Z\",\n            \"permissions\": [],\n            \"_count\": {\n                \"users\": 2\n            }\n        },\n        {\n            \"id\": 3,\n            \"role_name\": \"manager\",\n            \"description\": \"Managerial access\",\n            \"status\": true,\n            \"created_at\": \"2026-03-10T17:10:54.223Z\",\n            \"updated_at\": \"2026-03-10T17:10:54.223Z\",\n            \"permissions\": [],\n            \"_count\": {\n                \"users\": 2\n            }\n        },\n        {\n            \"id\": 4,\n            \"role_name\": \"user\",\n            \"description\": \"Standard user access\",\n            \"status\": true,\n            \"created_at\": \"2026-03-10T17:10:54.231Z\",\n            \"updated_at\": \"2026-03-10T17:10:54.231Z\",\n            \"permissions\": [],\n            \"_count\": {\n                \"users\": 2\n            }\n        },\n        {\n            \"id\": 5,\n            \"role_name\": \"hr manager\",\n            \"description\": \"Handles human resources\",\n            \"status\": true,\n            \"created_at\": \"2026-03-11T11:27:51.849Z\",\n            \"updated_at\": \"2026-03-11T11:27:51.849Z\",\n            \"permissions\": [],\n            \"_count\": {\n                \"users\": 0\n            }\n        }\n    ]\n}"
+                }
+              ]
+            },
+            {
+              "name": "Role Details",
+              "request": {
+                "auth": {
+                  "type": "jwt",
+                  "jwt": [
+                    {
+                      "key": "algorithm",
+                      "value": "HS256",
+                      "type": "string"
+                    },
+                    {
+                      "key": "isSecretBase64Encoded",
+                      "value": false,
+                      "type": "boolean"
+                    },
+                    {
+                      "key": "payload",
+                      "value": "{}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "addTokenTo",
+                      "value": "header",
+                      "type": "string"
+                    },
+                    {
+                      "key": "headerPrefix",
+                      "value": "Bearer",
+                      "type": "string"
+                    },
+                    {
+                      "key": "queryParamKey",
+                      "value": "token",
+                      "type": "string"
+                    },
+                    {
+                      "key": "header",
+                      "value": "{}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/roles/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "roles",
+                    "1"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Role Details Response",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{base_url}}/roles/1",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "roles",
+                        "1"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "",
+                  "header": [
+                    {
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "*"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "7626"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"1dca-TYn9MJB3gvxik3ZJVB9sEy+rmO8\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 11 Mar 2026 11:35:19 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [
+                    {
+                      "expires": "Invalid Date",
+                      "domain": "",
+                      "path": ""
+                    }
+                  ],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"Role fetched successfully\",\n    \"data\": {\n        \"id\": 1,\n        \"role_name\": \"super admin\",\n        \"description\": \"Full access to the system\",\n        \"status\": true,\n        \"created_at\": \"2026-03-10T17:10:54.188Z\",\n        \"updated_at\": \"2026-03-10T17:10:54.188Z\",\n        \"permissions\": [\n            {\n                \"id\": 1,\n                \"role_id\": 1,\n                \"permission_id\": 1,\n                \"created_at\": \"2026-03-10T17:10:54.238Z\",\n                \"updated_at\": \"2026-03-10T17:10:54.238Z\",\n                \"permission\": {\n                    \"id\": 1,\n                    \"permission_name\": \"employee.create\",\n                    \"description\": \"Can create employees\",\n                    \"created_at\": \"2026-03-10T17:10:53.999Z\",\n                    \"updated_at\": \"2026-03-10T17:10:53.999Z\"\n                }\n            },\n            {\n                \"id\": 2,\n                \"role_id\": 1,\n                \"permission_id\": 2,\n                \"created_at\": \"2026-03-10T17:10:54.264Z\",\n                \"updated_at\": \"2026-03-10T17:10:54.264Z\",\n                \"permission\": {\n                    \"id\": 2,\n                    \"permission_name\": \"employee.view\",\n                    \"description\": \"Can view employees\",\n                    \"created_at\": \"2026-03-10T17:10:54.128Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.128Z\"\n                }\n            },\n            {\n                \"id\": 3,\n                \"role_id\": 1,\n                \"permission_id\": 3,\n                \"created_at\": \"2026-03-10T17:10:54.270Z\",\n                \"updated_at\": \"2026-03-10T17:10:54.270Z\",\n                \"permission\": {\n                    \"id\": 3,\n                    \"permission_name\": \"employee.update\",\n                    \"description\": \"Can update employees\",\n                    \"created_at\": \"2026-03-10T17:10:54.137Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.137Z\"\n                }\n            },\n            {\n                \"id\": 4,\n                \"role_id\": 1,\n                \"permission_id\": 4,\n                \"created_at\": \"2026-03-10T17:10:54.277Z\",\n                \"updated_at\": \"2026-03-10T17:10:54.277Z\",\n                \"permission\": {\n                    \"id\": 4,\n                    \"permission_name\": \"employee.delete\",\n                    \"description\": \"Can delete employees\",\n                    \"created_at\": \"2026-03-10T17:10:54.144Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.144Z\"\n                }\n            },\n            {\n                \"id\": 5,\n                \"role_id\": 1,\n                \"permission_id\": 5,\n                \"created_at\": \"2026-03-10T17:10:54.283Z\",\n                \"updated_at\": \"2026-03-10T17:10:54.283Z\",\n                \"permission\": {\n                    \"id\": 5,\n                    \"permission_name\": \"leave.apply\",\n                    \"description\": \"Can apply for leave\",\n                    \"created_at\": \"2026-03-10T17:10:54.151Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.151Z\"\n                }\n            },\n            {\n                \"id\": 6,\n                \"role_id\": 1,\n                \"permission_id\": 6,\n                \"created_at\": \"2026-03-10T17:10:54.289Z\",\n                \"updated_at\": \"2026-03-10T17:10:54.289Z\",\n                \"permission\": {\n                    \"id\": 6,\n                    \"permission_name\": \"leave.approve\",\n                    \"description\": \"Can approve leave\",\n                    \"created_at\": \"2026-03-10T17:10:54.157Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.157Z\"\n                }\n            },\n            {\n                \"id\": 7,\n                \"role_id\": 1,\n                \"permission_id\": 7,\n                \"created_at\": \"2026-03-10T17:10:54.296Z\",\n                \"updated_at\": \"2026-03-10T17:10:54.296Z\",\n                \"permission\": {\n                    \"id\": 7,\n                    \"permission_name\": \"leave.reject\",\n                    \"description\": \"Can reject leave\",\n                    \"created_at\": \"2026-03-10T17:10:54.164Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.164Z\"\n                }\n            },\n            {\n                \"id\": 8,\n                \"role_id\": 1,\n                \"permission_id\": 8,\n                \"created_at\": \"2026-03-10T17:10:54.301Z\",\n                \"updated_at\": \"2026-03-10T17:10:54.301Z\",\n                \"permission\": {\n                    \"id\": 8,\n                    \"permission_name\": \"candidate.create\",\n                    \"description\": \"Can create candidates\",\n                    \"created_at\": \"2026-03-10T17:10:54.170Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.170Z\"\n                }\n            },\n            {\n                \"id\": 9,\n                \"role_id\": 1,\n                \"permission_id\": 9,\n                \"created_at\": \"2026-03-10T17:10:54.307Z\",\n                \"updated_at\": \"2026-03-10T17:10:54.307Z\",\n                \"permission\": {\n                    \"id\": 9,\n                    \"permission_name\": \"candidate.update\",\n                    \"description\": \"Can update candidates\",\n                    \"created_at\": \"2026-03-10T17:10:54.180Z\",\n                    \"updated_at\": \"2026-03-10T17:10:54.180Z\"\n                }\n            },\n            {\n                \"id\": 10,\n                \"role_id\": 1,\n                \"permission_id\": 10,\n                \"created_at\": \"2026-03-11T01:45:30.072Z\",\n                \"updated_at\": \"2026-03-11T01:45:30.072Z\",\n                \"permission\": {\n                    \"id\": 10,\n                    \"permission_name\": \"manage_roles\",\n                    \"description\": \"Can create/update/delete roles\",\n                    \"created_at\": \"2026-03-11T01:45:29.932Z\",\n                    \"updated_at\": \"2026-03-11T01:45:29.932Z\"\n                }\n            },\n            {\n                \"id\": 11,\n                \"role_id\": 1,\n                \"permission_id\": 11,\n                \"created_at\": \"2026-03-11T01:45:30.078Z\",\n                \"updated_at\": \"2026-03-11T01:45:30.078Z\",\n                \"permission\": {\n                    \"id\": 11,\n                    \"permission_name\": \"view_roles\",\n                    \"description\": \"Can view roles\",\n                    \"created_at\": \"2026-03-11T01:45:29.950Z\",\n                    \"updated_at\": \"2026-03-11T01:45:29.950Z\"\n                }\n            },\n            {\n                \"id\": 12,\n                \"role_id\": 1,\n                \"permission_id\": 12,\n                \"created_at\": \"2026-03-11T01:45:30.083Z\",\n                \"updated_at\": \"2026-03-11T01:45:30.083Z\",\n                \"permission\": {\n                    \"id\": 12,\n                    \"permission_name\": \"manage_permissions\",\n                    \"description\": \"Can create/update permissions\",\n                    \"created_at\": \"2026-03-11T01:45:29.955Z\",\n                    \"updated_at\": \"2026-03-11T01:45:29.955Z\"\n                }\n            },\n            {\n                \"id\": 13,\n                \"role_id\": 1,\n                \"permission_id\": 13,\n                \"created_at\": \"2026-03-11T01:45:30.088Z\",\n                \"updated_at\": \"2026-03-11T01:45:30.088Z\",\n                \"permission\": {\n                    \"id\": 13,\n                    \"permission_name\": \"view_permissions\",\n                    \"description\": \"Can view permissions\",\n                    \"created_at\": \"2026-03-11T01:45:29.961Z\",\n                    \"updated_at\": \"2026-03-11T01:45:29.961Z\"\n                }\n            },\n            {\n                \"id\": 14,\n                \"role_id\": 1,\n                \"permission_id\": 14,\n                \"created_at\": \"2026-03-11T01:45:30.094Z\",\n                \"updated_at\": \"2026-03-11T01:45:30.094Z\",\n                \"permission\": {\n                    \"id\": 14,\n                    \"permission_name\": \"user.create\",\n                    \"description\": \"Can create users\",\n                    \"created_at\": \"2026-03-11T01:45:29.969Z\",\n                    \"updated_at\": \"2026-03-11T01:45:29.969Z\"\n                }\n            },\n            {\n                \"id\": 15,\n                \"role_id\": 1,\n                \"permission_id\": 15,\n                \"created_at\": \"2026-03-11T01:45:30.099Z\",\n                \"updated_at\": \"2026-03-11T01:45:30.099Z\",\n                \"permission\": {\n                    \"id\": 15,\n                    \"permission_name\": \"user.view\",\n                    \"description\": \"Can view users\",\n                    \"created_at\": \"2026-03-11T01:45:29.975Z\",\n                    \"updated_at\": \"2026-03-11T01:45:29.975Z\"\n                }\n            },\n            {\n                \"id\": 16,\n                \"role_id\": 1,\n                \"permission_id\": 16,\n                \"created_at\": \"2026-03-11T01:45:30.104Z\",\n                \"updated_at\": \"2026-03-11T01:45:30.104Z\",\n                \"permission\": {\n                    \"id\": 16,\n                    \"permission_name\": \"user.update\",\n                    \"description\": \"Can update users\",\n                    \"created_at\": \"2026-03-11T01:45:29.980Z\",\n                    \"updated_at\": \"2026-03-11T01:45:29.980Z\"\n                }\n            },\n            {\n                \"id\": 17,\n                \"role_id\": 1,\n                \"permission_id\": 17,\n                \"created_at\": \"2026-03-11T01:45:30.108Z\",\n                \"updated_at\": \"2026-03-11T01:45:30.108Z\",\n                \"permission\": {\n                    \"id\": 17,\n                    \"permission_name\": \"user.delete\",\n                    \"description\": \"Can delete users\",\n                    \"created_at\": \"2026-03-11T01:45:29.985Z\",\n                    \"updated_at\": \"2026-03-11T01:45:29.985Z\"\n                }\n            },\n            {\n                \"id\": 18,\n                \"role_id\": 1,\n                \"permission_id\": 18,\n                \"created_at\": \"2026-03-11T01:45:30.113Z\",\n                \"updated_at\": \"2026-03-11T01:45:30.113Z\",\n                \"permission\": {\n                    \"id\": 18,\n                    \"permission_name\": \"department.manage\",\n                    \"description\": \"Can manage departments\",\n                    \"created_at\": \"2026-03-11T01:45:29.990Z\",\n                    \"updated_at\": \"2026-03-11T01:45:29.990Z\"\n                }\n            },\n            {\n                \"id\": 19,\n                \"role_id\": 1,\n                \"permission_id\": 19,\n                \"created_at\": \"2026-03-11T01:45:30.118Z\",\n                \"updated_at\": \"2026-03-11T01:45:30.118Z\",\n                \"permission\": {\n                    \"id\": 19,\n                    \"permission_name\": \"department.view\",\n                    \"description\": \"Can view departments\",\n                    \"created_at\": \"2026-03-11T01:45:29.996Z\",\n                    \"updated_at\": \"2026-03-11T01:45:29.996Z\"\n                }\n            },\n            {\n                \"id\": 20,\n                \"role_id\": 1,\n                \"permission_id\": 20,\n                \"created_at\": \"2026-03-11T01:45:30.122Z\",\n                \"updated_at\": \"2026-03-11T01:45:30.122Z\",\n                \"permission\": {\n                    \"id\": 20,\n                    \"permission_name\": \"company.manage\",\n                    \"description\": \"Can manage company details\",\n                    \"created_at\": \"2026-03-11T01:45:30.000Z\",\n                    \"updated_at\": \"2026-03-11T01:45:30.000Z\"\n                }\n            },\n            {\n                \"id\": 21,\n                \"role_id\": 1,\n                \"permission_id\": 21,\n                \"created_at\": \"2026-03-11T10:22:29.130Z\",\n                \"updated_at\": \"2026-03-11T10:22:29.130Z\",\n                \"permission\": {\n                    \"id\": 21,\n                    \"permission_name\": \"candidate.list\",\n                    \"description\": \"Can view candidate\",\n                    \"created_at\": \"2026-03-11T01:50:46.087Z\",\n                    \"updated_at\": \"2026-03-11T01:50:46.087Z\"\n                }\n            },\n            {\n                \"id\": 22,\n                \"role_id\": 1,\n                \"permission_id\": 22,\n                \"created_at\": \"2026-03-11T10:22:29.135Z\",\n                \"updated_at\": \"2026-03-11T10:22:29.135Z\",\n                \"permission\": {\n                    \"id\": 22,\n                    \"permission_name\": \"candidate.delete\",\n                    \"description\": \"Can delete candidates\",\n                    \"created_at\": \"2026-03-11T10:22:29.038Z\",\n                    \"updated_at\": \"2026-03-11T10:22:29.038Z\"\n                }\n            },\n            {\n                \"id\": 23,\n                \"role_id\": 1,\n                \"permission_id\": 23,\n                \"created_at\": \"2026-03-11T10:22:29.179Z\",\n                \"updated_at\": \"2026-03-11T10:22:29.179Z\",\n                \"permission\": {\n                    \"id\": 23,\n                    \"permission_name\": \"organization.manage\",\n                    \"description\": \"Can manage organization details\",\n                    \"created_at\": \"2026-03-11T10:22:29.052Z\",\n                    \"updated_at\": \"2026-03-11T10:22:29.052Z\"\n                }\n            },\n            {\n                \"id\": 24,\n                \"role_id\": 1,\n                \"permission_id\": 24,\n                \"created_at\": \"2026-03-11T10:22:29.186Z\",\n                \"updated_at\": \"2026-03-11T10:22:29.186Z\",\n                \"permission\": {\n                    \"id\": 24,\n                    \"permission_name\": \"organization.view\",\n                    \"description\": \"Can view organizations\",\n                    \"created_at\": \"2026-03-11T10:22:29.055Z\",\n                    \"updated_at\": \"2026-03-11T10:22:29.055Z\"\n                }\n            },\n            {\n                \"id\": 25,\n                \"role_id\": 1,\n                \"permission_id\": 25,\n                \"created_at\": \"2026-03-11T10:22:29.189Z\",\n                \"updated_at\": \"2026-03-11T10:22:29.189Z\",\n                \"permission\": {\n                    \"id\": 25,\n                    \"permission_name\": \"branch.manage\",\n                    \"description\": \"Can manage branches\",\n                    \"created_at\": \"2026-03-11T10:22:29.057Z\",\n                    \"updated_at\": \"2026-03-11T10:22:29.057Z\"\n                }\n            }\n        ]\n    }\n}"
+                }
+              ]
+            },
+            {
+              "name": "Update Role",
+              "request": {
+                "auth": {
+                  "type": "jwt",
+                  "jwt": [
+                    {
+                      "key": "algorithm",
+                      "value": "HS256",
+                      "type": "string"
+                    },
+                    {
+                      "key": "isSecretBase64Encoded",
+                      "value": false,
+                      "type": "boolean"
+                    },
+                    {
+                      "key": "payload",
+                      "value": "{}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "addTokenTo",
+                      "value": "header",
+                      "type": "string"
+                    },
+                    {
+                      "key": "headerPrefix",
+                      "value": "Bearer",
+                      "type": "string"
+                    },
+                    {
+                      "key": "queryParamKey",
+                      "value": "token",
+                      "type": "string"
+                    },
+                    {
+                      "key": "header",
+                      "value": "{}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"role_name\": \"HR Manager\",\r\n    \"description\": \"Handles human resources\",\r\n    \"status\" : false\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/roles/5",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "roles",
+                    "5"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Update Role Response",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"role_name\": \"HR Manager\",\r\n    \"description\": \"Handles human resources\",\r\n    \"status\" : false\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{base_url}}/roles/5",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "roles",
+                        "5"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "",
+                  "header": [
+                    {
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "*"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "230"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"e6-zhEXWIX0abLrALHisfTol9EiwEw\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 11 Mar 2026 11:38:31 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [
+                    {
+                      "expires": "Invalid Date",
+                      "domain": "",
+                      "path": ""
+                    }
+                  ],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"Role updated successfully\",\n    \"data\": {\n        \"id\": 5,\n        \"role_name\": \"hr manager\",\n        \"description\": \"Handles human resources\",\n        \"status\": false,\n        \"created_at\": \"2026-03-11T11:27:51.849Z\",\n        \"updated_at\": \"2026-03-11T11:38:31.765Z\"\n    }\n}"
+                }
+              ]
+            },
+            {
+              "name": "Delete Role",
+              "request": {
+                "auth": {
+                  "type": "jwt",
+                  "jwt": [
+                    {
+                      "key": "algorithm",
+                      "value": "HS256",
+                      "type": "string"
+                    },
+                    {
+                      "key": "isSecretBase64Encoded",
+                      "value": false,
+                      "type": "boolean"
+                    },
+                    {
+                      "key": "payload",
+                      "value": "{}",
+                      "type": "string"
+                    },
+                    {
+                      "key": "addTokenTo",
+                      "value": "header",
+                      "type": "string"
+                    },
+                    {
+                      "key": "headerPrefix",
+                      "value": "Bearer",
+                      "type": "string"
+                    },
+                    {
+                      "key": "queryParamKey",
+                      "value": "token",
+                      "type": "string"
+                    },
+                    {
+                      "key": "header",
+                      "value": "{}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/roles/5",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "roles",
+                    "5"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Delete Role Response",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{base_url}}/roles/5",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "roles",
+                        "5"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "",
+                  "header": [
+                    {
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "*"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "66"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"42-f6xdYFDLxLip4gDnegzbIMUhmdc\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 11 Mar 2026 11:39:21 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [
+                    {
+                      "expires": "Invalid Date",
+                      "domain": "",
+                      "path": ""
+                    }
+                  ],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"Role deleted successfully\",\n    \"data\": null\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Permission APIs",
+          "item": [
+            {
+              "name": "List Permissions",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/roles/permissions/all",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "roles",
+                    "permissions",
+                    "all"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "List Permissions Response",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "url": {
+                      "raw": "{{base_url}}/roles/permissions/all",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "roles",
+                        "permissions",
+                        "all"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "*"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "4276"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"10b4-nhrPpdMuM+NsWZORMhxW5doGyJM\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 11 Mar 2026 11:44:44 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"Permissions fetched successfully\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"permission_name\": \"employee.create\",\n            \"description\": \"Can create employees\",\n            \"created_at\": \"2026-03-10T17:10:53.999Z\",\n            \"updated_at\": \"2026-03-10T17:10:53.999Z\"\n        },\n        {\n            \"id\": 2,\n            \"permission_name\": \"employee.view\",\n            \"description\": \"Can view employees\",\n            \"created_at\": \"2026-03-10T17:10:54.128Z\",\n            \"updated_at\": \"2026-03-10T17:10:54.128Z\"\n        },\n        {\n            \"id\": 3,\n            \"permission_name\": \"employee.update\",\n            \"description\": \"Can update employees\",\n            \"created_at\": \"2026-03-10T17:10:54.137Z\",\n            \"updated_at\": \"2026-03-10T17:10:54.137Z\"\n        },\n        {\n            \"id\": 4,\n            \"permission_name\": \"employee.delete\",\n            \"description\": \"Can delete employees\",\n            \"created_at\": \"2026-03-10T17:10:54.144Z\",\n            \"updated_at\": \"2026-03-10T17:10:54.144Z\"\n        },\n        {\n            \"id\": 5,\n            \"permission_name\": \"leave.apply\",\n            \"description\": \"Can apply for leave\",\n            \"created_at\": \"2026-03-10T17:10:54.151Z\",\n            \"updated_at\": \"2026-03-10T17:10:54.151Z\"\n        },\n        {\n            \"id\": 6,\n            \"permission_name\": \"leave.approve\",\n            \"description\": \"Can approve leave\",\n            \"created_at\": \"2026-03-10T17:10:54.157Z\",\n            \"updated_at\": \"2026-03-10T17:10:54.157Z\"\n        },\n        {\n            \"id\": 7,\n            \"permission_name\": \"leave.reject\",\n            \"description\": \"Can reject leave\",\n            \"created_at\": \"2026-03-10T17:10:54.164Z\",\n            \"updated_at\": \"2026-03-10T17:10:54.164Z\"\n        },\n        {\n            \"id\": 8,\n            \"permission_name\": \"candidate.create\",\n            \"description\": \"Can create candidates\",\n            \"created_at\": \"2026-03-10T17:10:54.170Z\",\n            \"updated_at\": \"2026-03-10T17:10:54.170Z\"\n        },\n        {\n            \"id\": 9,\n            \"permission_name\": \"candidate.update\",\n            \"description\": \"Can update candidates\",\n            \"created_at\": \"2026-03-10T17:10:54.180Z\",\n            \"updated_at\": \"2026-03-10T17:10:54.180Z\"\n        },\n        {\n            \"id\": 10,\n            \"permission_name\": \"manage_roles\",\n            \"description\": \"Can create/update/delete roles\",\n            \"created_at\": \"2026-03-11T01:45:29.932Z\",\n            \"updated_at\": \"2026-03-11T01:45:29.932Z\"\n        },\n        {\n            \"id\": 11,\n            \"permission_name\": \"view_roles\",\n            \"description\": \"Can view roles\",\n            \"created_at\": \"2026-03-11T01:45:29.950Z\",\n            \"updated_at\": \"2026-03-11T01:45:29.950Z\"\n        },\n        {\n            \"id\": 12,\n            \"permission_name\": \"manage_permissions\",\n            \"description\": \"Can create/update permissions\",\n            \"created_at\": \"2026-03-11T01:45:29.955Z\",\n            \"updated_at\": \"2026-03-11T01:45:29.955Z\"\n        },\n        {\n            \"id\": 13,\n            \"permission_name\": \"view_permissions\",\n            \"description\": \"Can view permissions\",\n            \"created_at\": \"2026-03-11T01:45:29.961Z\",\n            \"updated_at\": \"2026-03-11T01:45:29.961Z\"\n        },\n        {\n            \"id\": 14,\n            \"permission_name\": \"user.create\",\n            \"description\": \"Can create users\",\n            \"created_at\": \"2026-03-11T01:45:29.969Z\",\n            \"updated_at\": \"2026-03-11T01:45:29.969Z\"\n        },\n        {\n            \"id\": 15,\n            \"permission_name\": \"user.view\",\n            \"description\": \"Can view users\",\n            \"created_at\": \"2026-03-11T01:45:29.975Z\",\n            \"updated_at\": \"2026-03-11T01:45:29.975Z\"\n        },\n        {\n            \"id\": 16,\n            \"permission_name\": \"user.update\",\n            \"description\": \"Can update users\",\n            \"created_at\": \"2026-03-11T01:45:29.980Z\",\n            \"updated_at\": \"2026-03-11T01:45:29.980Z\"\n        },\n        {\n            \"id\": 17,\n            \"permission_name\": \"user.delete\",\n            \"description\": \"Can delete users\",\n            \"created_at\": \"2026-03-11T01:45:29.985Z\",\n            \"updated_at\": \"2026-03-11T01:45:29.985Z\"\n        },\n        {\n            \"id\": 18,\n            \"permission_name\": \"department.manage\",\n            \"description\": \"Can manage departments\",\n            \"created_at\": \"2026-03-11T01:45:29.990Z\",\n            \"updated_at\": \"2026-03-11T01:45:29.990Z\"\n        },\n        {\n            \"id\": 19,\n            \"permission_name\": \"department.view\",\n            \"description\": \"Can view departments\",\n            \"created_at\": \"2026-03-11T01:45:29.996Z\",\n            \"updated_at\": \"2026-03-11T01:45:29.996Z\"\n        },\n        {\n            \"id\": 20,\n            \"permission_name\": \"company.manage\",\n            \"description\": \"Can manage company details\",\n            \"created_at\": \"2026-03-11T01:45:30.000Z\",\n            \"updated_at\": \"2026-03-11T01:45:30.000Z\"\n        },\n        {\n            \"id\": 21,\n            \"permission_name\": \"candidate.list\",\n            \"description\": \"Can view candidate\",\n            \"created_at\": \"2026-03-11T01:50:46.087Z\",\n            \"updated_at\": \"2026-03-11T01:50:46.087Z\"\n        },\n        {\n            \"id\": 22,\n            \"permission_name\": \"candidate.delete\",\n            \"description\": \"Can delete candidates\",\n            \"created_at\": \"2026-03-11T10:22:29.038Z\",\n            \"updated_at\": \"2026-03-11T10:22:29.038Z\"\n        },\n        {\n            \"id\": 23,\n            \"permission_name\": \"organization.manage\",\n            \"description\": \"Can manage organization details\",\n            \"created_at\": \"2026-03-11T10:22:29.052Z\",\n            \"updated_at\": \"2026-03-11T10:22:29.052Z\"\n        },\n        {\n            \"id\": 24,\n            \"permission_name\": \"organization.view\",\n            \"description\": \"Can view organizations\",\n            \"created_at\": \"2026-03-11T10:22:29.055Z\",\n            \"updated_at\": \"2026-03-11T10:22:29.055Z\"\n        },\n        {\n            \"id\": 25,\n            \"permission_name\": \"branch.manage\",\n            \"description\": \"Can manage branches\",\n            \"created_at\": \"2026-03-11T10:22:29.057Z\",\n            \"updated_at\": \"2026-03-11T10:22:29.057Z\"\n        },\n        {\n            \"id\": 26,\n            \"permission_name\": \"dashboard.view\",\n            \"description\": \"Can view dashboard\",\n            \"created_at\": \"2026-03-11T11:41:27.283Z\",\n            \"updated_at\": \"2026-03-11T11:41:27.283Z\"\n        }\n    ]\n}"
+                }
+              ]
+            },
+            {
+              "name": "Create Permission",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"permission_name\": \"dashboard.view\",\n    \"description\": \"Can view dashboard\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/roles/permissions",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "roles",
+                    "permissions"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Create Permission Response",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"permission_name\": \"dashboard.view\",\n    \"description\": \"Can view dashboard\"\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{base_url}}/roles/permissions",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "roles",
+                        "permissions"
+                      ]
+                    }
+                  },
+                  "status": "Created",
+                  "code": 201,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "*"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "227"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"e3-217PcVqBuKYkRqmcT0J41aYWALM\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 11 Mar 2026 11:41:27 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"Permission created successfully\",\n    \"data\": {\n        \"id\": 26,\n        \"permission_name\": \"dashboard.view\",\n        \"description\": \"Can view dashboard\",\n        \"created_at\": \"2026-03-11T11:41:27.283Z\",\n        \"updated_at\": \"2026-03-11T11:41:27.283Z\"\n    }\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Role–Privilege Mapping APIs",
+          "item": [
+            {
+              "name": "Assign Permissions to Role",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"permission_ids\": [1, 2, 3]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/roles/2/permissions",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "roles",
+                    "2",
+                    "permissions"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Assign Permissions to Role Response",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"permission_ids\": [1, 2, 3]\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{base_url}}/roles/2/permissions",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "roles",
+                        "2",
+                        "permissions"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "*"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "72"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"48-kqjWKEK0Ok95SPlO7Tew0vtrlgg\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 11 Mar 2026 11:49:52 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"Permissions synced successfully\",\n    \"data\": null\n}"
+                }
+              ]
+            },
+            {
+              "name": "Assigned Permissions For Role",
+              "protocolProfileBehavior": {
+                "disableBodyPruning": true
+              },
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/roles/2/permissions",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "roles",
+                    "2",
+                    "permissions"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Assign Permissions to Role Response",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\n    \"permission_ids\": [1, 2, 3]\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{base_url}}/roles/2/permissions",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "roles",
+                        "2",
+                        "permissions"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "*"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "72"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"48-kqjWKEK0Ok95SPlO7Tew0vtrlgg\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 11 Mar 2026 11:49:52 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"Permissions synced successfully\",\n    \"data\": null\n}"
+                }
+              ]
+            },
+            {
+              "name": "Delete Permissions To Role",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/roles/2/permissions/3",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "roles",
+                    "2",
+                    "permissions",
+                    "3"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Delete Permissions To Role",
+                  "originalRequest": {
+                    "method": "DELETE",
+                    "header": [
+                      {
+                        "key": "Authorization",
+                        "value": "Bearer {{token}}",
+                        "type": "text"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "{{base_url}}/roles/2/permissions/3",
+                      "host": [
+                        "{{base_url}}"
+                      ],
+                      "path": [
+                        "roles",
+                        "2",
+                        "permissions",
+                        "3"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": null,
+                  "header": [
+                    {
+                      "key": "X-Powered-By",
+                      "value": "Express"
+                    },
+                    {
+                      "key": "Access-Control-Allow-Origin",
+                      "value": "*"
+                    },
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json; charset=utf-8"
+                    },
+                    {
+                      "key": "Content-Length",
+                      "value": "82"
+                    },
+                    {
+                      "key": "ETag",
+                      "value": "W/\"52-kHrDSooowf5uAMeWe9k+aANR2sM\""
+                    },
+                    {
+                      "key": "Date",
+                      "value": "Wed, 11 Mar 2026 11:55:27 GMT"
+                    },
+                    {
+                      "key": "Connection",
+                      "value": "keep-alive"
+                    },
+                    {
+                      "key": "Keep-Alive",
+                      "value": "timeout=5"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n    \"success\": true,\n    \"message\": \"Permission removed from role successfully\",\n    \"data\": null\n}"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

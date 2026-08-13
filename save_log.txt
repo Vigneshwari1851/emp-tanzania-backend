@@ -1,0 +1,6191 @@
+2026-06-24T11:04:18.482Z\n[
+  {
+    "id": 199,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 200,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 263,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 264,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 201,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 265,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 266,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 267,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 268,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 202,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T11:05:19.212Z\n[
+  {
+    "id": 203,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 204,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 269,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 270,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 205,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 271,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 272,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 273,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 274,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 206,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false
+  }
+]\n2026-06-24T11:05:52.869Z\n[
+  {
+    "id": 207,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 208,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 275,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 276,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 209,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 277,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 278,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 279,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 280,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 210,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T11:19:25.262Z\n[
+  {
+    "id": 211,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 212,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 281,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 282,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 213,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "options": [
+      {
+        "id": 283,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 284,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 285,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 286,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 214,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2
+  }
+]\n2026-06-24T11:19:50.420Z\n[
+  {
+    "id": 217,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 218,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 287,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 288,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 219,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "options": [
+      {
+        "id": 289,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 290,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 291,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 292,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 220,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2
+  }
+]\n2026-06-24T11:20:03.169Z\n[
+  {
+    "id": 221,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 222,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 293,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 294,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 223,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 295,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 296,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 297,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 298,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 224,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T11:22:24.241Z\n[
+  {
+    "id": 225,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 226,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 299,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 300,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 227,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 301,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 302,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 303,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 304,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 228,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false
+  }
+]\n2026-06-24T11:22:43.881Z\n[
+  {
+    "id": 229,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 230,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 305,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 306,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 231,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 307,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 308,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 309,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 310,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 232,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T11:23:57.777Z\n[
+  {
+    "id": 233,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 234,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 311,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 312,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 235,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 313,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 314,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 315,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 316,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 236,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T11:26:32.261Z\n[
+  {
+    "id": 237,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 238,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 317,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 318,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 239,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 319,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 320,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 321,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 322,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 240,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false
+  }
+]\n2026-06-24T11:27:06.655Z\n[
+  {
+    "id": 241,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 242,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 323,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 324,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 243,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 325,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 326,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 327,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 328,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 244,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2
+  }
+]\n2026-06-24T11:27:06.856Z\n[
+  {
+    "id": 245,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 246,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 329,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 330,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 247,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 331,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 332,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 333,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 334,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 248,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2
+  }
+]\n2026-06-24T11:27:07.961Z\n[
+  {
+    "id": 249,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 250,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 335,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 336,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 251,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 337,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 338,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 339,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 340,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 252,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2
+  }
+]\n2026-06-24T11:27:23.806Z\n[
+  {
+    "id": 253,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 254,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 341,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 342,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 255,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 343,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 344,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 345,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 346,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 256,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T11:44:43.457Z\n[
+  {
+    "id": 257,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 258,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 347,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 348,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 259,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 349,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 350,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 351,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 352,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 260,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false
+  }
+]\n2026-06-24T11:45:04.888Z\n[
+  {
+    "id": 261,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 262,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 353,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 354,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 263,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 355,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 356,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 357,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 358,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 264,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false
+  }
+]\n2026-06-24T11:45:13.547Z\n[
+  {
+    "id": 265,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 266,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 359,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 360,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 267,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 361,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 362,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 363,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 364,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 268,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T11:45:43.379Z\n[
+  {
+    "id": 269,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 270,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 365,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 366,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 271,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 367,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 368,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 369,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 370,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 272,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false
+  }
+]\n2026-06-24T11:46:15.272Z\n[
+  {
+    "id": 273,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 274,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 371,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 372,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 275,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 373,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 374,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 375,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 376,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 276,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2
+  }
+]\n2026-06-24T11:46:25.031Z\n[
+  {
+    "id": 277,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 278,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 377,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 378,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 279,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 379,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 380,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 381,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 382,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 280,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T11:46:35.026Z\n[
+  {
+    "id": 281,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 282,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 383,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 384,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 283,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 385,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 386,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 387,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 388,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 284,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T11:48:45.718Z\n[
+  {
+    "id": 285,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 286,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 389,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 390,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 287,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 391,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 392,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 393,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 394,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 288,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T11:48:57.554Z\n[
+  {
+    "id": 289,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 290,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 395,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 396,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 291,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 397,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 398,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 399,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 400,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 292,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T11:50:48.402Z\n[
+  {
+    "id": 293,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 294,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 401,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 402,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 295,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "options": [
+      {
+        "id": 403,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 404,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 405,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 406,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 296,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2
+  }
+]\n2026-06-24T11:50:54.816Z\n[
+  {
+    "id": 297,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 298,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 407,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 408,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 299,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 409,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 410,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 411,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 412,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 300,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T11:51:05.705Z\n[
+  {
+    "id": 301,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 302,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 413,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 414,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 303,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 415,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 416,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 417,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 418,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 304,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T11:58:29.119Z\n[
+  {
+    "id": 305,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 306,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 419,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 420,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 307,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 421,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 422,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 423,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 424,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 308,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T11:59:01.107Z\n[
+  {
+    "id": 309,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 310,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 425,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 426,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 311,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 427,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 428,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 429,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 430,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 312,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 0
+  }
+]\n2026-06-24T11:59:31.716Z\n[
+  {
+    "id": 313,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 314,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 431,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 432,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 315,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 433,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 434,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 435,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 436,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 316,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T12:00:09.986Z\n[
+  {
+    "id": 317,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 318,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 437,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 438,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 319,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 439,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 440,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 441,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 442,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 320,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T12:00:51.982Z\n[
+  {
+    "id": 321,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 322,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 443,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 444,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 323,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 445,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 446,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 447,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 448,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 324,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 0
+  }
+]\n2026-06-24T12:01:17.264Z\n[
+  {
+    "id": 325,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 326,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 449,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 450,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 327,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 451,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 452,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 453,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 454,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 328,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T12:06:21.212Z\n[
+  {
+    "id": 329,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 330,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 455,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 456,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 331,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 457,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 458,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 459,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 460,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 332,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T12:07:04.403Z\n[
+  {
+    "id": 333,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 334,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 461,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 462,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 335,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 463,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 464,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 465,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 466,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 336,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 0
+  }
+]\n2026-06-24T12:07:37.012Z\n[
+  {
+    "id": 337,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 338,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 467,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 468,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 339,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 469,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 470,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 471,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 472,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 340,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 0
+  }
+]\n2026-06-24T12:07:46.574Z\n[
+  {
+    "id": 341,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 342,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 473,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 474,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 343,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 475,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 476,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 477,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 478,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 344,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T12:11:26.257Z\n[
+  {
+    "id": 345,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 346,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 479,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 480,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 347,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 481,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 482,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 483,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 484,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 348,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 0
+  }
+]\n2026-06-24T12:12:25.045Z\n[
+  {
+    "id": 349,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 350,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 485,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 486,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 351,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 487,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 488,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 489,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 490,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 352,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n2026-06-24T12:16:59.516Z\n[
+  {
+    "id": 353,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 354,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 491,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 492,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 355,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 493,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 494,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 495,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 496,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 356,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false
+  }
+]\n2026-06-24T12:17:46.016Z\n[
+  {
+    "id": 357,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 358,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 497,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 498,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 359,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 499,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 500,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 501,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 502,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 360,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n
+[getById] 2026-06-24T12:20:52.483Z rules=0/4 q_ids=[361,362,363,364] parent_ids=[null,null,null,null]
+2026-06-24T12:21:03.225Z\n[
+  {
+    "id": 361,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 362,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 503,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 504,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 363,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 505,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 506,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 507,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 508,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 364,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false
+  }
+]\n[transaction] 2026-06-24T12:21:03.235Z transaction completed successfully with 1 rules
+
+[getById] 2026-06-24T12:21:03.242Z rules=1/4 q_ids=[365,366,367,368] parent_ids=[null,365,null,null]
+
+[getById] 2026-06-24T12:21:03.258Z rules=1/4 q_ids=[365,366,367,368] parent_ids=[null,365,null,null]
+
+[getById] 2026-06-24T12:24:18.422Z rules=1/4 q_ids=[365,366,367,368] parent_ids=[null,365,null,null]
+
+[getById] 2026-06-24T12:24:25.189Z rules=1/4 q_ids=[365,366,367,368] parent_ids=[null,365,null,null]
+2026-06-24T12:24:32.294Z\n[
+  {
+    "id": 365,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 366,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 509,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 510,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 367,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 511,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 512,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 513,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 514,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 368,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n[transaction] 2026-06-24T12:24:32.296Z transaction completed successfully with 0 rules
+
+[getById] 2026-06-24T12:24:32.301Z rules=0/4 q_ids=[369,370,371,372] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:24:32.314Z rules=0/4 q_ids=[369,370,371,372] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:24:32.429Z rules=0/4 q_ids=[369,370,371,372] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:25:14.600Z rules=0/4 q_ids=[369,370,371,372] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:27:39.233Z rules=0/4 q_ids=[369,370,371,372] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:27:51.681Z rules=0/4 q_ids=[369,370,371,372] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:27:58.683Z rules=0/4 q_ids=[369,370,371,372] parent_ids=[null,null,null,null]
+2026-06-24T12:28:10.404Z\n[
+  {
+    "id": 369,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 370,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 515,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 516,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 371,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 517,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 518,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 519,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 520,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 372,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false
+  }
+]\n[transaction] 2026-06-24T12:28:10.415Z transaction completed successfully with 1 rules
+
+[getById] 2026-06-24T12:28:10.421Z rules=1/4 q_ids=[373,374,375,376] parent_ids=[null,373,null,null]
+
+[getById] 2026-06-24T12:28:10.440Z rules=1/4 q_ids=[373,374,375,376] parent_ids=[null,373,null,null]
+
+[getById] 2026-06-24T12:28:26.391Z rules=1/4 q_ids=[373,374,375,376] parent_ids=[null,373,null,null]
+
+[getById] 2026-06-24T12:28:31.644Z rules=1/4 q_ids=[373,374,375,376] parent_ids=[null,373,null,null]
+
+[getById] 2026-06-24T12:29:24.246Z rules=1/4 q_ids=[373,374,375,376] parent_ids=[null,373,null,null]
+2026-06-24T12:29:25.623Z\n[
+  {
+    "id": 373,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 374,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 373,
+    "options": [
+      {
+        "id": 521,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 522,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 375,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 523,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 524,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 525,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 526,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 376,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n[transaction] 2026-06-24T12:29:25.627Z transaction completed successfully with 1 rules
+
+[getById] 2026-06-24T12:29:25.630Z rules=0/4 q_ids=[377,378,379,380] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:29:25.643Z rules=0/4 q_ids=[377,378,379,380] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:29:25.749Z rules=0/4 q_ids=[377,378,379,380] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:32:39.580Z rules=0/4 q_ids=[377,378,379,380] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:32:41.888Z rules=0/4 q_ids=[377,378,379,380] parent_ids=[null,null,null,null]
+2026-06-24T12:32:49.885Z\n[
+  {
+    "id": 377,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 378,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 527,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 528,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 379,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 529,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 530,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 531,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 532,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 380,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false
+  }
+]\n[transaction] 2026-06-24T12:32:49.893Z transaction completed successfully with 1 rules
+
+[getById] 2026-06-24T12:32:49.899Z rules=1/4 q_ids=[381,382,383,384] parent_ids=[null,381,null,null]
+
+[getById] 2026-06-24T12:32:49.915Z rules=1/4 q_ids=[381,382,383,384] parent_ids=[null,381,null,null]
+
+[getById] 2026-06-24T12:32:57.278Z rules=1/4 q_ids=[381,382,383,384] parent_ids=[null,381,null,null]
+2026-06-24T12:33:00.606Z\n[
+  {
+    "id": 381,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 382,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 533,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 534,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 383,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 535,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 536,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 537,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 538,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 384,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n[transaction] 2026-06-24T12:33:00.613Z transaction completed successfully with 1 rules
+
+[getById] 2026-06-24T12:33:00.618Z rules=1/4 q_ids=[385,386,387,388] parent_ids=[null,385,null,null]
+
+[getById] 2026-06-24T12:33:00.631Z rules=1/4 q_ids=[385,386,387,388] parent_ids=[null,385,null,null]
+
+[getById] 2026-06-24T12:33:00.738Z rules=1/4 q_ids=[385,386,387,388] parent_ids=[null,385,null,null]
+
+[getById] 2026-06-24T12:33:29.391Z rules=1/4 q_ids=[385,386,387,388] parent_ids=[null,385,null,null]
+2026-06-24T12:33:35.661Z\n[
+  {
+    "id": 385,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 386,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 539,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 540,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 387,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 541,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 542,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 543,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 544,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 388,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n[transaction] 2026-06-24T12:33:35.667Z transaction completed successfully with 1 rules
+
+[getById] 2026-06-24T12:33:35.671Z rules=1/4 q_ids=[389,390,391,392] parent_ids=[null,389,null,null]
+
+[getById] 2026-06-24T12:33:35.683Z rules=1/4 q_ids=[389,390,391,392] parent_ids=[null,389,null,null]
+
+[getById] 2026-06-24T12:33:35.792Z rules=1/4 q_ids=[389,390,391,392] parent_ids=[null,389,null,null]
+2026-06-24T12:34:15.114Z\n[
+  {
+    "id": 389,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 390,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 545,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 546,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 391,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 547,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 548,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 549,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 550,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 392,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 0
+  }
+]\n[transaction] 2026-06-24T12:34:15.127Z transaction completed successfully with 3 rules
+
+[getById] 2026-06-24T12:34:15.134Z rules=3/4 q_ids=[393,394,395,396] parent_ids=[null,393,394,394]
+
+[getById] 2026-06-24T12:34:15.146Z rules=3/4 q_ids=[393,394,395,396] parent_ids=[null,393,394,394]
+
+[getById] 2026-06-24T12:34:20.459Z rules=3/4 q_ids=[393,394,395,396] parent_ids=[null,393,394,394]
+
+[getById] 2026-06-24T12:34:37.113Z rules=3/4 q_ids=[393,394,395,396] parent_ids=[null,393,394,394]
+
+[getById] 2026-06-24T12:34:44.774Z rules=0/4 q_ids=[31,32,33,34] parent_ids=[null,null,null,null]
+2026-06-24T12:34:46.809Z\n[
+  {
+    "id": 31,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 32,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised?",
+    "order": 2,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 33,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 43,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 44,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 45,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 46,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 34,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n[transaction] 2026-06-24T12:34:46.812Z transaction completed successfully with 0 rules
+
+[getById] 2026-06-24T12:34:46.815Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:34:46.827Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:34:46.902Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:35:00.068Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:36:16.038Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:36:21.149Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:36:22.887Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:37:10.749Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:37:13.857Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:37:20.760Z rules=3/4 q_ids=[393,394,395,396] parent_ids=[null,393,394,394]
+2026-06-24T12:37:23.299Z\n[
+  {
+    "id": 393,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 394,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 551,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 552,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 395,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 553,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 554,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 555,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 556,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 396,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 0,
+    "options": []
+  }
+]\n[transaction] 2026-06-24T12:37:23.310Z transaction completed successfully with 3 rules
+
+[getById] 2026-06-24T12:37:23.315Z rules=3/4 q_ids=[401,402,403,404] parent_ids=[null,401,402,402]
+
+[getById] 2026-06-24T12:37:23.327Z rules=3/4 q_ids=[401,402,403,404] parent_ids=[null,401,402,402]
+
+[getById] 2026-06-24T12:37:23.410Z rules=3/4 q_ids=[401,402,403,404] parent_ids=[null,401,402,402]
+
+[getById] 2026-06-24T12:37:33.709Z rules=3/4 q_ids=[401,402,403,404] parent_ids=[null,401,402,402]
+
+[getById] 2026-06-24T12:38:54.998Z rules=3/4 q_ids=[401,402,403,404] parent_ids=[null,401,402,402]
+
+[getById] 2026-06-24T12:40:55.152Z rules=3/4 q_ids=[401,402,403,404] parent_ids=[null,401,402,402]
+
+[getById] 2026-06-24T12:40:57.380Z rules=3/4 q_ids=[401,402,403,404] parent_ids=[null,401,402,402]
+
+[getById] 2026-06-24T12:41:08.082Z rules=3/4 q_ids=[401,402,403,404] parent_ids=[null,401,402,402]
+2026-06-24T12:41:28.778Z\n[
+  {
+    "id": 401,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 402,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 561,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 562,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 403,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 563,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 564,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 565,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 566,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 404,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 0
+  }
+]\n[transaction] 2026-06-24T12:41:28.789Z transaction completed successfully with 2 rules
+
+[getById] 2026-06-24T12:41:28.794Z rules=2/4 q_ids=[405,406,407,408] parent_ids=[null,405,null,406]
+
+[getById] 2026-06-24T12:41:28.806Z rules=2/4 q_ids=[405,406,407,408] parent_ids=[null,405,null,406]
+
+[getById] 2026-06-24T12:41:35.149Z rules=2/4 q_ids=[405,406,407,408] parent_ids=[null,405,null,406]
+
+[getById] 2026-06-24T12:42:00.155Z rules=2/4 q_ids=[405,406,407,408] parent_ids=[null,405,null,406]
+
+[getById] 2026-06-24T12:42:08.038Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:42:10.757Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:42:10.772Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:42:15.119Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:44:12.787Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:44:23.109Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:44:23.277Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:44:27.586Z rules=2/4 q_ids=[405,406,407,408] parent_ids=[null,405,null,406]
+2026-06-24T12:44:30.882Z\n[
+  {
+    "id": 405,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 406,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 567,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 568,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 407,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 569,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 570,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 571,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 572,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 408,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 0,
+    "options": []
+  }
+]\n[transaction] 2026-06-24T12:44:30.897Z transaction completed successfully with 2 rules
+
+[getById] 2026-06-24T12:44:30.905Z rules=2/4 q_ids=[409,410,411,412] parent_ids=[null,409,null,410]
+
+[getById] 2026-06-24T12:44:30.924Z rules=2/4 q_ids=[409,410,411,412] parent_ids=[null,409,null,410]
+
+[getById] 2026-06-24T12:44:31.090Z rules=2/4 q_ids=[409,410,411,412] parent_ids=[null,409,null,410]
+2026-06-24T12:44:51.951Z\n[
+  {
+    "id": 409,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 410,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 573,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 574,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 411,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 575,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 576,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 577,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 578,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 412,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 0
+  }
+]\n[transaction] 2026-06-24T12:44:51.960Z transaction completed successfully with 3 rules
+
+[getById] 2026-06-24T12:44:51.964Z rules=3/4 q_ids=[413,414,415,416] parent_ids=[null,413,414,414]
+
+[getById] 2026-06-24T12:44:51.975Z rules=3/4 q_ids=[413,414,415,416] parent_ids=[null,413,414,414]
+
+[getById] 2026-06-24T12:44:56.931Z rules=3/4 q_ids=[413,414,415,416] parent_ids=[null,413,414,414]
+
+[getById] 2026-06-24T12:46:11.513Z rules=3/4 q_ids=[413,414,415,416] parent_ids=[null,413,414,414]
+
+[getById] 2026-06-24T12:46:19.743Z rules=0/4 q_ids=[397,398,399,400] parent_ids=[null,null,null,null]
+2026-06-24T12:46:23.179Z\n[
+  {
+    "id": 397,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 398,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised?",
+    "order": 2,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 399,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 557,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 558,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 559,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 560,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 400,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  }
+]\n[transaction] 2026-06-24T12:46:23.183Z transaction completed successfully with 0 rules
+
+[getById] 2026-06-24T12:46:23.188Z rules=0/4 q_ids=[417,418,419,420] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:46:23.200Z rules=0/4 q_ids=[417,418,419,420] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:46:23.308Z rules=0/4 q_ids=[417,418,419,420] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:46:30.440Z rules=0/4 q_ids=[417,418,419,420] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:46:32.207Z rules=0/4 q_ids=[417,418,419,420] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:46:36.141Z rules=0/4 q_ids=[417,418,419,420] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:46:45.829Z rules=3/4 q_ids=[413,414,415,416] parent_ids=[null,413,414,414]
+2026-06-24T12:46:49.589Z\n[
+  {
+    "id": 413,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 414,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 579,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 580,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 415,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 1,
+    "options": [
+      {
+        "id": 581,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 582,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 583,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 584,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 416,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 0,
+    "options": []
+  }
+]\n[transaction] 2026-06-24T12:46:49.601Z transaction completed successfully with 3 rules
+
+[getById] 2026-06-24T12:46:49.607Z rules=3/4 q_ids=[421,422,423,424] parent_ids=[null,421,422,422]
+
+[getById] 2026-06-24T12:46:49.620Z rules=3/4 q_ids=[421,422,423,424] parent_ids=[null,421,422,422]
+
+[getById] 2026-06-24T12:46:49.733Z rules=3/4 q_ids=[421,422,423,424] parent_ids=[null,421,422,422]
+2026-06-24T12:47:04.616Z\n[
+  {
+    "id": 421,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 422,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised? [thumbs]",
+    "order": 2,
+    "required": true,
+    "options": [
+      {
+        "id": 589,
+        "label": "Thumbs Up",
+        "value": "thumbs_up",
+        "order": 1
+      },
+      {
+        "id": 590,
+        "label": "Thumbs Down",
+        "value": "thumbs_down",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 423,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement? [dropdown]",
+    "order": 3,
+    "required": false,
+    "options": [
+      {
+        "id": 591,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 592,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 593,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 594,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 424,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false
+  }
+]\n[transaction] 2026-06-24T12:47:04.619Z transaction completed successfully with 0 rules
+
+[getById] 2026-06-24T12:47:04.622Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:47:04.633Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:47:07.439Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:47:22.773Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:47:22.784Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:47:24.495Z rules=0/4 q_ids=[417,418,419,420] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:47:26.789Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:47:37.128Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:47:37.139Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:47:37.988Z rules=0/4 q_ids=[417,418,419,420] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:47:40.678Z rules=0/4 q_ids=[417,418,419,420] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:47:45.268Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:47:45.640Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:47:49.923Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:47:52.046Z rules=0/4 q_ids=[417,418,419,420] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:47:54.018Z rules=0/4 q_ids=[417,418,419,420] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:47:55.621Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:48:00.547Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:48:00.557Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:48:19.782Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:48:19.792Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:48:25.144Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:48:40.864Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:48:43.691Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:48:43.702Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:48:46.738Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:49:07.094Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:50:13.160Z rules=0/4 q_ids=[417,418,419,420] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:50:14.017Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:50:16.297Z rules=0/4 q_ids=[417,418,419,420] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:50:18.666Z rules=0/4 q_ids=[417,418,419,420] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:50:20.828Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:50:35.224Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:50:43.274Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:51:29.306Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:52:49.780Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:52:57.903Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-24T12:56:20.293Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-24T12:58:16.859Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-24T13:00:03.448Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-24T13:03:31.434Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T05:16:29.917Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T05:40:05.724Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T06:03:39.197Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T06:11:18.581Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T06:12:50.994Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T06:18:57.742Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T06:32:47.661Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T06:35:15.468Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T06:35:20.670Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T07:16:00.124Z rules=0/1 q_ids=[429] parent_ids=[null]
+
+[getById] 2026-06-25T07:16:00.183Z rules=0/1 q_ids=[429] parent_ids=[null]
+
+[getById] 2026-06-25T07:19:03.382Z rules=0/1 q_ids=[429] parent_ids=[null]
+
+[getById] 2026-06-25T07:21:30.002Z rules=0/1 q_ids=[429] parent_ids=[null]
+
+[getById] 2026-06-25T07:21:52.328Z rules=0/1 q_ids=[429] parent_ids=[null]
+
+[getById] 2026-06-25T07:22:48.587Z rules=0/1 q_ids=[429] parent_ids=[null]
+
+[getById] 2026-06-25T07:23:37.873Z rules=0/1 q_ids=[429] parent_ids=[null]
+
+[getById] 2026-06-25T07:25:20.406Z rules=0/4 q_ids=[430,431,432,433] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T07:25:20.447Z rules=0/4 q_ids=[430,431,432,433] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T07:31:25.994Z rules=0/4 q_ids=[434,435,436,437] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T07:31:26.039Z rules=0/4 q_ids=[434,435,436,437] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T07:31:47.562Z rules=0/4 q_ids=[434,435,436,437] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T07:34:48.323Z rules=0/4 q_ids=[434,435,436,437] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T07:34:51.767Z rules=0/4 q_ids=[434,435,436,437] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T07:35:29.593Z rules=0/4 q_ids=[434,435,436,437] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T07:35:54.513Z rules=0/1 q_ids=[438] parent_ids=[null]
+
+[getById] 2026-06-25T07:35:54.556Z rules=0/1 q_ids=[438] parent_ids=[null]
+
+[getById] 2026-06-25T07:38:31.247Z rules=0/1 q_ids=[438] parent_ids=[null]
+
+[getById] 2026-06-25T07:38:37.646Z rules=0/1 q_ids=[438] parent_ids=[null]
+
+[getById] 2026-06-25T07:38:44.026Z rules=0/4 q_ids=[434,435,436,437] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T07:38:50.195Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T07:40:14.165Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T07:40:21.899Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T07:41:48.114Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T07:41:49.187Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T07:41:50.334Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T07:41:57.558Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T07:42:09.632Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T08:10:43.804Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T08:10:43.976Z rules=0/4 q_ids=[425,426,427,428] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T10:57:22.702Z rules=0/4 q_ids=[439,440,441,442] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T10:57:22.750Z rules=0/4 q_ids=[439,440,441,442] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T10:58:31.982Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T10:58:42.523Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T10:58:49.931Z rules=4/5 q_ids=[115,116,117,118,119] parent_ids=[null,115,116,117,118]
+
+[getById] 2026-06-25T10:58:57.066Z rules=0/4 q_ids=[439,440,441,442] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T10:59:05.694Z rules=0/1 q_ids=[429] parent_ids=[null]
+
+[getById] 2026-06-25T10:59:21.937Z rules=0/4 q_ids=[443,444,445,446] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T10:59:21.978Z rules=0/4 q_ids=[443,444,445,446] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T11:00:31.371Z rules=0/4 q_ids=[443,444,445,446] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T11:01:15.203Z rules=0/4 q_ids=[443,444,445,446] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T11:01:15.221Z rules=0/4 q_ids=[443,444,445,446] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T11:01:35.503Z rules=0/4 q_ids=[443,444,445,446] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T11:01:35.522Z rules=0/4 q_ids=[443,444,445,446] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T11:01:39.267Z rules=0/4 q_ids=[443,444,445,446] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T11:01:49.862Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T11:02:51.850Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T11:02:59.593Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T11:03:12.966Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T11:03:49.313Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T11:03:51.754Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T11:03:51.771Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T11:03:53.281Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T11:03:53.296Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T11:18:14.231Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T11:29:13.107Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T12:08:21.321Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T12:09:09.030Z rules=0/4 q_ids=[439,440,441,442] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:09:09.146Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:09:16.855Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:09:20.517Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:17:03.719Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T12:17:56.308Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-06-25T12:18:00.074Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:21:04.410Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:32:32.881Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:32:48.118Z rules=0/4 q_ids=[439,440,441,442] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:32:55.242Z rules=4/5 q_ids=[115,116,117,118,119] parent_ids=[null,115,116,117,118]
+
+[getById] 2026-06-25T12:33:02.046Z rules=0/1 q_ids=[438] parent_ids=[null]
+
+[getById] 2026-06-25T12:33:59.305Z rules=0/1 q_ids=[438] parent_ids=[null]
+
+[getById] 2026-06-25T12:51:02.725Z rules=0/1 q_ids=[438] parent_ids=[null]
+
+[getById] 2026-06-25T12:52:06.623Z rules=0/1 q_ids=[438] parent_ids=[null]
+
+[getById] 2026-06-25T12:53:30.709Z rules=0/1 q_ids=[438] parent_ids=[null]
+
+[getById] 2026-06-25T12:54:12.619Z rules=0/1 q_ids=[438] parent_ids=[null]
+
+[getById] 2026-06-25T12:54:42.202Z rules=0/1 q_ids=[438] parent_ids=[null]
+
+[getById] 2026-06-25T12:54:59.301Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:55:36.877Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:55:53.900Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:56:33.812Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:56:36.850Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:56:40.483Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:56:58.488Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:58:44.967Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:59:05.433Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:59:12.620Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:59:15.662Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T12:59:15.675Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-25T13:02:10.839Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T05:04:53.896Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T05:06:13.138Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T05:07:26.629Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T05:10:16.370Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T05:10:36.847Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T05:13:08.514Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T05:13:13.614Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T05:19:28.948Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T05:19:35.706Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T05:20:27.372Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T06:19:48.039Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T06:19:51.669Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T06:20:16.441Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T06:21:05.266Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T06:21:13.888Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T06:21:33.772Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T06:21:58.594Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T06:22:42.595Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T06:24:04.430Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T06:46:50.904Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T06:46:59.123Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T06:51:02.251Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T06:52:39.425Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T06:59:44.943Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T07:11:37.334Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T07:11:39.078Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T07:14:33.555Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T07:14:43.487Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T07:14:50.711Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T07:16:03.563Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T07:16:16.813Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T07:16:23.087Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T07:16:25.268Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T07:16:37.605Z rules=0/4 q_ids=[447,448,449,450] parent_ids=[null,null,null,null]
+
+[getById] 2026-06-26T07:22:43.945Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-06-26T07:22:43.981Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-06-26T07:23:37.574Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-06-26T07:25:38.386Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-06-26T07:25:46.444Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-02T12:22:05.009Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-03T04:33:48.275Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-03T04:33:57.416Z rules=0/1 q_ids=[429] parent_ids=[null]
+
+[getById] 2026-07-03T11:24:06.883Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-03T11:24:30.079Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-03T11:24:34.515Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-03T11:24:39.253Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-03T11:24:43.855Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-03T11:24:49.906Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-03T11:24:56.485Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-03T11:25:21.824Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-03T11:29:26.629Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-06T05:42:52.342Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-06T05:42:58.973Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-06T05:43:06.398Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-06T05:43:10.238Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-06T05:43:13.188Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-06T05:43:13.206Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-06T05:43:40.556Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-06T05:43:58.079Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-06T05:44:34.126Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-06T05:44:36.401Z rules=0/1 q_ids=[452] parent_ids=[null]
+
+[getById] 2026-07-06T05:45:00.706Z rules=0/1 q_ids=[452] parent_ids=[null]
+
+[getById] 2026-07-06T05:49:41.036Z rules=0/1 q_ids=[452] parent_ids=[null]
+
+[getById] 2026-07-06T05:50:46.432Z rules=0/1 q_ids=[452] parent_ids=[null]
+
+[getById] 2026-07-06T05:50:59.045Z rules=0/1 q_ids=[452] parent_ids=[null]
+
+[getById] 2026-07-07T12:46:06.194Z rules=0/1 q_ids=[452] parent_ids=[null]
+
+[getById] 2026-07-07T12:46:07.952Z rules=0/1 q_ids=[453] parent_ids=[null]
+
+[getById] 2026-07-07T12:46:15.123Z rules=0/1 q_ids=[453] parent_ids=[null]
+
+[getById] 2026-07-07T12:47:24.256Z rules=0/1 q_ids=[453] parent_ids=[null]
+
+[getById] 2026-07-07T12:47:28.096Z rules=0/1 q_ids=[453] parent_ids=[null]
+
+[getById] 2026-07-07T12:48:29.589Z rules=0/1 q_ids=[453] parent_ids=[null]
+
+[getById] 2026-07-07T12:48:51.452Z rules=0/1 q_ids=[453] parent_ids=[null]
+
+[getById] 2026-07-07T12:49:17.482Z rules=0/1 q_ids=[453] parent_ids=[null]
+
+[getById] 2026-07-07T12:49:54.634Z rules=0/1 q_ids=[453] parent_ids=[null]
+
+[getById] 2026-07-07T12:50:06.082Z rules=0/1 q_ids=[453] parent_ids=[null]
+
+[getById] 2026-07-07T12:50:37.228Z rules=0/1 q_ids=[453] parent_ids=[null]
+
+[getById] 2026-07-07T12:51:00.898Z rules=0/1 q_ids=[453] parent_ids=[null]
+
+[getById] 2026-07-07T12:51:03.748Z rules=0/1 q_ids=[453] parent_ids=[null]
+
+[getById] 2026-07-07T12:54:26.816Z rules=0/1 q_ids=[453] parent_ids=[null]
+
+[getById] 2026-07-07T12:55:46.484Z rules=0/1 q_ids=[429] parent_ids=[null]
+
+[getById] 2026-07-07T12:55:48.021Z rules=0/1 q_ids=[454] parent_ids=[null]
+
+[getById] 2026-07-07T12:55:48.196Z rules=0/1 q_ids=[454] parent_ids=[null]
+
+[getById] 2026-07-07T12:55:58.774Z rules=0/1 q_ids=[454] parent_ids=[null]
+
+[getById] 2026-07-07T12:56:07.355Z rules=0/1 q_ids=[454] parent_ids=[null]
+
+[getById] 2026-07-07T12:56:12.109Z rules=0/1 q_ids=[453] parent_ids=[null]
+
+[getById] 2026-07-07T12:59:31.778Z rules=0/1 q_ids=[453] parent_ids=[null]
+
+[getById] 2026-07-07T12:59:37.672Z rules=0/1 q_ids=[453] parent_ids=[null]
+
+[getById] 2026-07-07T12:59:47.857Z rules=0/1 q_ids=[438] parent_ids=[null]
+
+[getById] 2026-07-07T12:59:49.452Z rules=0/1 q_ids=[455] parent_ids=[null]
+
+[getById] 2026-07-07T12:59:49.600Z rules=0/1 q_ids=[455] parent_ids=[null]
+2026-07-07T12:59:54.652Z\n[
+  {
+    "id": 455,
+    "type": "TEXT",
+    "label": "Your first question",
+    "order": 1,
+    "required": false,
+    "options": []
+  }
+]\n[transaction] 2026-07-07T12:59:54.658Z transaction completed successfully with 0 rules
+
+[getById] 2026-07-07T12:59:54.667Z rules=0/1 q_ids=[456] parent_ids=[null]
+
+[getById] 2026-07-07T12:59:54.681Z rules=0/1 q_ids=[456] parent_ids=[null]
+
+[getById] 2026-07-07T12:59:54.723Z rules=0/1 q_ids=[456] parent_ids=[null]
+
+[getById] 2026-07-07T13:00:19.720Z rules=0/1 q_ids=[456] parent_ids=[null]
+
+[getById] 2026-07-07T13:01:00.528Z rules=0/1 q_ids=[456] parent_ids=[null]
+
+[getById] 2026-07-07T15:19:25.786Z rules=0/1 q_ids=[456] parent_ids=[null]
+
+[getById] 2026-07-07T15:19:27.148Z rules=0/1 q_ids=[457] parent_ids=[null]
+
+[getById] 2026-07-07T15:19:27.347Z rules=0/1 q_ids=[457] parent_ids=[null]
+2026-07-07T15:19:42.951Z\n[
+  {
+    "id": 457,
+    "type": "TEXT",
+    "label": "Your first question",
+    "order": 1,
+    "required": false,
+    "options": []
+  }
+]\n[transaction] 2026-07-07T15:19:42.957Z transaction completed successfully with 0 rules
+
+[getById] 2026-07-07T15:19:42.965Z rules=0/1 q_ids=[458] parent_ids=[null]
+
+[getById] 2026-07-07T15:19:42.984Z rules=0/1 q_ids=[458] parent_ids=[null]
+
+[getById] 2026-07-07T15:19:43.093Z rules=0/1 q_ids=[458] parent_ids=[null]
+
+[getById] 2026-07-07T15:20:40.635Z rules=0/1 q_ids=[458] parent_ids=[null]
+
+[getById] 2026-07-07T15:22:43.544Z rules=0/1 q_ids=[458] parent_ids=[null]
+
+[getById] 2026-07-07T15:23:24.990Z rules=3/4 q_ids=[65,66,67,68] parent_ids=[null,65,66,66]
+
+[getById] 2026-07-07T15:23:26.002Z rules=3/4 q_ids=[459,460,461,462] parent_ids=[null,459,460,460]
+
+[getById] 2026-07-07T15:27:31.493Z rules=0/1 q_ids=[458] parent_ids=[null]
+
+[getById] 2026-07-07T15:27:35.670Z rules=0/1 q_ids=[458] parent_ids=[null]
+
+[getById] 2026-07-07T15:27:36.486Z rules=0/1 q_ids=[458] parent_ids=[null]
+
+[getById] 2026-07-07T15:30:36.920Z rules=0/1 q_ids=[458] parent_ids=[null]
+
+[getById] 2026-07-07T16:47:57.292Z rules=0/1 q_ids=[458] parent_ids=[null]
+
+[getById] 2026-07-07T17:08:04.728Z rules=0/1 q_ids=[458] parent_ids=[null]
+
+[getById] 2026-07-07T17:12:34.559Z rules=0/1 q_ids=[458] parent_ids=[null]
+
+[getById] 2026-07-07T17:16:34.272Z rules=0/1 q_ids=[458] parent_ids=[null]
+
+[getById] 2026-07-07T18:03:30.690Z rules=3/4 q_ids=[65,66,67,68] parent_ids=[null,65,66,66]
+
+[getById] 2026-07-07T18:03:31.767Z rules=3/4 q_ids=[463,464,465,466] parent_ids=[null,463,464,464]
+
+[getById] 2026-07-07T18:04:36.023Z rules=0/1 q_ids=[458] parent_ids=[null]
+
+[getById] 2026-07-07T18:04:38.901Z rules=0/1 q_ids=[458] parent_ids=[null]
+
+[getById] 2026-07-07T18:05:20.348Z rules=2/7 q_ids=[132,133,134,135,136,137,138] parent_ids=[null,132,133,null,null,null,null]
+
+[getById] 2026-07-07T18:05:21.825Z rules=2/7 q_ids=[467,468,469,470,471,472,473] parent_ids=[null,467,468,null,null,null,null]
+
+[getById] 2026-07-07T18:05:21.927Z rules=2/7 q_ids=[467,468,469,470,471,472,473] parent_ids=[null,467,468,null,null,null,null]
+
+[getById] 2026-07-07T18:09:37.392Z rules=2/7 q_ids=[467,468,469,470,471,472,473] parent_ids=[null,467,468,null,null,null,null]
+
+[getById] 2026-07-07T18:11:50.098Z rules=2/7 q_ids=[467,468,469,470,471,472,473] parent_ids=[null,467,468,null,null,null,null]
+
+[getById] 2026-07-07T18:11:58.090Z rules=2/7 q_ids=[467,468,469,470,471,472,473] parent_ids=[null,467,468,null,null,null,null]
+
+[getById] 2026-07-07T18:13:24.554Z rules=2/7 q_ids=[467,468,469,470,471,472,473] parent_ids=[null,467,468,null,null,null,null]
+
+[getById] 2026-07-07T18:14:00.533Z rules=2/7 q_ids=[467,468,469,470,471,472,473] parent_ids=[null,467,468,null,null,null,null]
+
+[getById] 2026-07-07T18:18:26.459Z rules=2/7 q_ids=[467,468,469,470,471,472,473] parent_ids=[null,467,468,null,null,null,null]
+
+[getById] 2026-07-07T18:19:01.843Z rules=2/7 q_ids=[467,468,469,470,471,472,473] parent_ids=[null,467,468,null,null,null,null]
+
+[getById] 2026-07-07T18:19:03.057Z rules=2/7 q_ids=[474,475,476,477,478,479,480] parent_ids=[null,474,475,null,null,null,null]
+
+[getById] 2026-07-07T18:19:03.135Z rules=2/7 q_ids=[474,475,476,477,478,479,480] parent_ids=[null,474,475,null,null,null,null]
+2026-07-07T18:19:11.480Z\n[
+  {
+    "id": 474,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 475,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised?",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "label": "Yes",
+        "value": "yes",
+        "order": 1
+      },
+      {
+        "label": "No",
+        "value": "no",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 476,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "options": [
+      {
+        "id": 663,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 664,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 665,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 666,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 477,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false
+  },
+  {
+    "id": 478,
+    "type": "TEXT",
+    "label": "Short Answer Question [short]",
+    "order": 5,
+    "required": false
+  },
+  {
+    "id": 479,
+    "type": "RATING",
+    "label": "Emoji Rating Question [emoji]",
+    "order": 6,
+    "required": false
+  },
+  {
+    "id": 480,
+    "type": "RATING",
+    "label": "Number Rating Scale [number]",
+    "order": 7,
+    "required": false
+  }
+]\n[transaction] 2026-07-07T18:19:11.498Z transaction completed successfully with 2 rules
+
+[getById] 2026-07-07T18:19:11.505Z rules=2/7 q_ids=[481,482,483,484,485,486,487] parent_ids=[null,481,482,null,null,null,null]
+
+[getById] 2026-07-07T18:19:11.519Z rules=2/7 q_ids=[481,482,483,484,485,486,487] parent_ids=[null,481,482,null,null,null,null]
+
+[getById] 2026-07-07T18:19:15.477Z rules=2/7 q_ids=[481,482,483,484,485,486,487] parent_ids=[null,481,482,null,null,null,null]
+2026-07-07T18:19:18.709Z\n[
+  {
+    "id": 481,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 482,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised?",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 667,
+        "label": "Yes",
+        "value": "yes",
+        "order": 1
+      },
+      {
+        "id": 668,
+        "label": "No",
+        "value": "no",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 483,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "options": [
+      {
+        "id": 669,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 670,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 671,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 672,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 484,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  },
+  {
+    "id": 485,
+    "type": "TEXT",
+    "label": "Short Answer Question [short]",
+    "order": 5,
+    "required": false,
+    "options": []
+  },
+  {
+    "id": 486,
+    "type": "RATING",
+    "label": "Emoji Rating Question [emoji]",
+    "order": 6,
+    "required": false,
+    "options": []
+  },
+  {
+    "id": 487,
+    "type": "RATING",
+    "label": "Number Rating Scale [number]",
+    "order": 7,
+    "required": false,
+    "options": []
+  }
+]\n[transaction] 2026-07-07T18:19:18.719Z transaction completed successfully with 2 rules
+
+[getById] 2026-07-07T18:19:18.725Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-07T18:19:18.739Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-07T18:19:18.766Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-07T18:26:39.405Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-07T18:35:18.904Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-07T18:38:39.248Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-07T18:39:16.145Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-07T18:39:26.641Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-07T19:05:13.399Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-07T19:05:32.651Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-07T19:05:39.125Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-07T19:06:07.580Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-07T19:10:41.522Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-07T19:10:46.581Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-07T19:11:18.705Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-07T19:14:37.758Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-07T19:14:44.560Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+
+[getById] 2026-07-09T05:05:22.833Z rules=0/1 q_ids=[429] parent_ids=[null]
+
+[getById] 2026-07-09T05:05:25.543Z rules=0/1 q_ids=[495] parent_ids=[null]
+
+[getById] 2026-07-09T05:05:25.661Z rules=0/1 q_ids=[495] parent_ids=[null]
+
+[getById] 2026-07-09T05:05:37.547Z rules=0/1 q_ids=[20] parent_ids=[null]
+
+[getById] 2026-07-09T05:05:41.696Z rules=2/7 q_ids=[467,468,469,470,471,472,473] parent_ids=[null,467,468,null,null,null,null]
+
+[getById] 2026-07-09T05:05:53.242Z rules=2/7 q_ids=[488,489,490,491,492,493,494] parent_ids=[null,488,489,null,null,null,null]
+2026-07-09T05:05:59.433Z\n[
+  {
+    "id": 488,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 489,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised?",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 673,
+        "label": "Yes",
+        "value": "yes",
+        "order": 1
+      },
+      {
+        "id": 674,
+        "label": "No",
+        "value": "no",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 490,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "options": [
+      {
+        "id": 675,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 676,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 677,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 678,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 491,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  },
+  {
+    "id": 492,
+    "type": "TEXT",
+    "label": "Short Answer Question [short]",
+    "order": 5,
+    "required": false,
+    "options": []
+  },
+  {
+    "id": 493,
+    "type": "RATING",
+    "label": "Emoji Rating Question [emoji]",
+    "order": 6,
+    "required": false,
+    "options": []
+  },
+  {
+    "id": 494,
+    "type": "RATING",
+    "label": "Number Rating Scale [number]",
+    "order": 7,
+    "required": false,
+    "options": []
+  }
+]\n[transaction] 2026-07-09T05:05:59.453Z transaction completed successfully with 2 rules
+
+[getById] 2026-07-09T05:05:59.464Z rules=2/7 q_ids=[496,497,498,499,500,501,502] parent_ids=[null,496,497,null,null,null,null]
+
+[getById] 2026-07-09T05:05:59.497Z rules=2/7 q_ids=[496,497,498,499,500,501,502] parent_ids=[null,496,497,null,null,null,null]
+
+[getById] 2026-07-09T05:05:59.548Z rules=2/7 q_ids=[496,497,498,499,500,501,502] parent_ids=[null,496,497,null,null,null,null]
+
+[getById] 2026-07-09T05:06:04.815Z rules=2/7 q_ids=[496,497,498,499,500,501,502] parent_ids=[null,496,497,null,null,null,null]
+
+[getById] 2026-07-09T05:06:07.047Z rules=2/7 q_ids=[503,504,505,506,507,508,509] parent_ids=[null,503,504,null,null,null,null]
+
+[getById] 2026-07-09T05:06:07.146Z rules=2/7 q_ids=[503,504,505,506,507,508,509] parent_ids=[null,503,504,null,null,null,null]
+
+[getById] 2026-07-09T05:06:17.478Z rules=2/7 q_ids=[503,504,505,506,507,508,509] parent_ids=[null,503,504,null,null,null,null]
+2026-07-09T05:06:23.232Z\n[
+  {
+    "id": 503,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 504,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised?",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 685,
+        "label": "Yes",
+        "value": "yes",
+        "order": 1
+      },
+      {
+        "id": 686,
+        "label": "No",
+        "value": "no",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 505,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "options": [
+      {
+        "id": 687,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 688,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 689,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 690,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 506,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  },
+  {
+    "id": 507,
+    "type": "TEXT",
+    "label": "Short Answer Question [short]",
+    "order": 5,
+    "required": false,
+    "options": []
+  },
+  {
+    "id": 508,
+    "type": "RATING",
+    "label": "Emoji Rating Question [emoji]",
+    "order": 6,
+    "required": false,
+    "options": []
+  },
+  {
+    "id": 509,
+    "type": "RATING",
+    "label": "Number Rating Scale [number]",
+    "order": 7,
+    "required": false,
+    "options": []
+  }
+]\n[transaction] 2026-07-09T05:06:23.254Z transaction completed successfully with 2 rules
+
+[getById] 2026-07-09T05:06:23.264Z rules=2/7 q_ids=[510,511,512,513,514,515,516] parent_ids=[null,510,511,null,null,null,null]
+
+[getById] 2026-07-09T05:06:23.290Z rules=2/7 q_ids=[510,511,512,513,514,515,516] parent_ids=[null,510,511,null,null,null,null]
+
+[getById] 2026-07-09T05:06:23.324Z rules=2/7 q_ids=[510,511,512,513,514,515,516] parent_ids=[null,510,511,null,null,null,null]
+
+[getById] 2026-07-09T05:06:28.024Z rules=2/7 q_ids=[510,511,512,513,514,515,516] parent_ids=[null,510,511,null,null,null,null]
+
+[getById] 2026-07-09T05:06:46.870Z rules=2/7 q_ids=[510,511,512,513,514,515,516] parent_ids=[null,510,511,null,null,null,null]
+2026-07-09T05:06:52.002Z\n[
+  {
+    "id": 510,
+    "type": "RATING",
+    "label": "How engaged do you feel at work this quarter?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 511,
+    "type": "YES_NO",
+    "label": "Do you feel your contributions are recognised?",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 691,
+        "label": "Yes",
+        "value": "yes",
+        "order": 1
+      },
+      {
+        "id": 692,
+        "label": "No",
+        "value": "no",
+        "order": 2
+      }
+    ]
+  },
+  {
+    "id": 512,
+    "type": "SINGLE_CHOICE",
+    "label": "Which area needs the most improvement?",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "options": [
+      {
+        "id": 693,
+        "label": "Communication",
+        "value": "communication",
+        "order": 1
+      },
+      {
+        "id": 694,
+        "label": "Workload balance",
+        "value": "workload",
+        "order": 2
+      },
+      {
+        "id": 695,
+        "label": "Career growth",
+        "value": "growth",
+        "order": 3
+      },
+      {
+        "id": 696,
+        "label": "Team collaboration",
+        "value": "collaboration",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 513,
+    "type": "TEXT",
+    "label": "What's one thing we could do better?",
+    "order": 4,
+    "required": false,
+    "options": []
+  },
+  {
+    "id": 514,
+    "type": "TEXT",
+    "label": "Short Answer Question [short]",
+    "order": 5,
+    "required": false,
+    "options": []
+  },
+  {
+    "id": 515,
+    "type": "RATING",
+    "label": "Emoji Rating Question [emoji]",
+    "order": 6,
+    "required": false,
+    "options": []
+  },
+  {
+    "id": 516,
+    "type": "RATING",
+    "label": "Number Rating Scale [number]",
+    "order": 7,
+    "required": false,
+    "options": []
+  }
+]\n[transaction] 2026-07-09T05:06:52.022Z transaction completed successfully with 2 rules
+
+[getById] 2026-07-09T05:06:52.034Z rules=2/7 q_ids=[517,518,519,520,521,522,523] parent_ids=[null,517,518,null,null,null,null]
+
+[getById] 2026-07-09T05:06:52.067Z rules=2/7 q_ids=[517,518,519,520,521,522,523] parent_ids=[null,517,518,null,null,null,null]
+
+[getById] 2026-07-09T05:06:52.124Z rules=2/7 q_ids=[517,518,519,520,521,522,523] parent_ids=[null,517,518,null,null,null,null]
+
+[getById] 2026-07-09T05:07:06.051Z rules=2/7 q_ids=[517,518,519,520,521,522,523] parent_ids=[null,517,518,null,null,null,null]
+
+[getById] 2026-07-09T05:07:08.214Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T05:07:08.320Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T05:07:12.614Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T05:07:18.975Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T19:12:12.212Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T19:12:15.434Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T19:12:19.510Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T19:21:15.029Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T19:25:29.860Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T19:25:33.950Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T19:25:49.287Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T19:27:08.502Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T19:29:55.222Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T19:30:10.579Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T19:30:12.910Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T19:30:30.332Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T19:30:36.464Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-09T19:34:23.017Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-10T05:48:59.623Z rules=2/7 q_ids=[524,525,526,527,528,529,530] parent_ids=[null,524,525,null,null,null,null]
+
+[getById] 2026-07-22T12:00:05.279Z rules=2/7 q_ids=[517,518,519,520,521,522,523] parent_ids=[null,517,518,null,null,null,null]
+
+[getById] 2026-07-22T12:00:11.059Z rules=2/7 q_ids=[517,518,519,520,521,522,523] parent_ids=[null,517,518,null,null,null,null]
+
+[getById] 2026-07-22T12:00:35.605Z rules=2/7 q_ids=[517,518,519,520,521,522,523] parent_ids=[null,517,518,null,null,null,null]
+
+[getById] 2026-07-22T12:00:37.932Z rules=2/7 q_ids=[517,518,519,520,521,522,523] parent_ids=[null,517,518,null,null,null,null]
+
+[getById] 2026-07-22T12:00:45.428Z rules=2/7 q_ids=[517,518,519,520,521,522,523] parent_ids=[null,517,518,null,null,null,null]
+
+[getById] 2026-07-22T12:04:18.792Z rules=2/7 q_ids=[517,518,519,520,521,522,523] parent_ids=[null,517,518,null,null,null,null]
+
+[getById] 2026-07-27T04:35:05.739Z rules=2/7 q_ids=[517,518,519,520,521,522,523] parent_ids=[null,517,518,null,null,null,null]
+
+[getById] 2026-07-27T04:39:43.391Z rules=0/1 q_ids=[531] parent_ids=[null]
+
+[getById] 2026-07-27T04:39:43.424Z rules=0/1 q_ids=[531] parent_ids=[null]
+2026-07-27T04:40:01.283Z\n[
+  {
+    "id": 531,
+    "type": "TEXT",
+    "label": "what is your age",
+    "order": 1,
+    "required": false
+  }
+]\n[transaction] 2026-07-27T04:40:01.289Z transaction completed successfully with 0 rules
+
+[getById] 2026-07-27T04:40:01.296Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-27T04:40:01.309Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-27T04:40:05.518Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-27T04:40:14.417Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-27T04:40:25.537Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-27T04:53:09.083Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-28T09:18:48.194Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-28T10:20:31.753Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-28T10:20:38.250Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-28T10:20:44.233Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-28T10:20:48.720Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-28T10:20:55.322Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:13:50.488Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:13:56.258Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:14:03.758Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:14:14.998Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-30T05:14:18.308Z rules=0/1 q_ids=[451] parent_ids=[null]
+
+[getById] 2026-07-30T05:15:27.367Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:15:37.713Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:15:50.964Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:15:54.767Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:05.075Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:05.920Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:06.707Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:07.852Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:09.066Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:09.758Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:19.820Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:20.823Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:25.842Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:35.822Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:44.828Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:48.836Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:50.843Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:51.835Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:56.836Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:57.825Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:16:58.831Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:17:15.460Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:17:21.665Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:18:16.314Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:18:45.836Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:18:46.845Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:19:15.526Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:19:18.545Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:19:27.047Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:20:13.635Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:20:13.648Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:20:28.384Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:20:28.396Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:20:37.496Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:20:37.508Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:21:07.778Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:21:29.612Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:22:30.189Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:22:36.072Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:22:46.198Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:22:55.443Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:23:01.284Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:23:06.963Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:23:15.521Z rules=2/7 q_ids=[496,497,498,499,500,501,502] parent_ids=[null,496,497,null,null,null,null]
+
+[getById] 2026-07-30T05:23:55.624Z rules=2/7 q_ids=[496,497,498,499,500,501,502] parent_ids=[null,496,497,null,null,null,null]
+
+[getById] 2026-07-30T05:24:04.869Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:24:19.759Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:24:36.826Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:24:41.264Z rules=2/7 q_ids=[496,497,498,499,500,501,502] parent_ids=[null,496,497,null,null,null,null]
+
+[getById] 2026-07-30T05:25:06.285Z rules=2/7 q_ids=[496,497,498,499,500,501,502] parent_ids=[null,496,497,null,null,null,null]
+
+[getById] 2026-07-30T05:25:08.214Z rules=2/7 q_ids=[496,497,498,499,500,501,502] parent_ids=[null,496,497,null,null,null,null]
+
+[getById] 2026-07-30T05:25:51.743Z rules=2/7 q_ids=[496,497,498,499,500,501,502] parent_ids=[null,496,497,null,null,null,null]
+
+[getById] 2026-07-30T05:25:55.525Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:26:02.361Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:26:33.887Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:26:39.893Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:26:43.268Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:26:45.470Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:26:49.310Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:26:50.733Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:28:03.760Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:28:03.770Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:30:13.808Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:30:13.820Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:30:15.183Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:30:15.196Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:31:13.540Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:31:52.074Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:31:56.677Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:32:03.848Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:34:01.488Z rules=0/1 q_ids=[532] parent_ids=[null]
+
+[getById] 2026-07-30T05:34:10.560Z rules=2/7 q_ids=[517,518,519,520,521,522,523] parent_ids=[null,517,518,null,null,null,null]
+
+[getById] 2026-07-30T05:34:24.495Z rules=2/7 q_ids=[517,518,519,520,521,522,523] parent_ids=[null,517,518,null,null,null,null]
+
+[getById] 2026-07-30T05:34:32.700Z rules=2/7 q_ids=[517,518,519,520,521,522,523] parent_ids=[null,517,518,null,null,null,null]
+
+[getById] 2026-07-30T05:34:37.370Z rules=2/7 q_ids=[517,518,519,520,521,522,523] parent_ids=[null,517,518,null,null,null,null]
+
+[getById] 2026-07-30T05:34:41.720Z rules=0/1 q_ids=[532] parent_ids=[null]
+2026-07-30T05:34:53.509Z\n[
+  {
+    "id": 532,
+    "type": "TEXT",
+    "label": "what is your age",
+    "order": 1,
+    "required": false,
+    "options": []
+  }
+]\n[transaction] 2026-07-30T05:34:53.514Z transaction completed successfully with 0 rules
+
+[getById] 2026-07-30T05:34:53.520Z rules=0/1 q_ids=[533] parent_ids=[null]
+
+[getById] 2026-07-30T05:34:53.533Z rules=0/1 q_ids=[533] parent_ids=[null]
+
+[getById] 2026-07-30T05:34:53.576Z rules=0/1 q_ids=[533] parent_ids=[null]
+
+[getById] 2026-07-30T05:35:03.740Z rules=0/1 q_ids=[533] parent_ids=[null]
+
+[getById] 2026-07-30T05:35:06.572Z rules=0/1 q_ids=[533] parent_ids=[null]
+
+[getById] 2026-07-30T05:35:13.774Z rules=2/7 q_ids=[496,497,498,499,500,501,502] parent_ids=[null,496,497,null,null,null,null]
+
+[getById] 2026-07-30T05:35:16.683Z rules=2/7 q_ids=[496,497,498,499,500,501,502] parent_ids=[null,496,497,null,null,null,null]
+
+[getById] 2026-07-30T05:36:15.931Z rules=2/7 q_ids=[496,497,498,499,500,501,502] parent_ids=[null,496,497,null,null,null,null]
+
+[getById] 2026-07-30T05:36:18.813Z rules=2/7 q_ids=[496,497,498,499,500,501,502] parent_ids=[null,496,497,null,null,null,null]
+
+[getById] 2026-07-30T05:36:29.261Z rules=2/7 q_ids=[496,497,498,499,500,501,502] parent_ids=[null,496,497,null,null,null,null]
+
+[getById] 2026-07-30T05:36:36.491Z rules=0/1 q_ids=[533] parent_ids=[null]
+2026-07-30T05:36:38.693Z\n[
+  {
+    "id": 533,
+    "type": "TEXT",
+    "label": "what is your age",
+    "order": 1,
+    "required": false,
+    "options": []
+  }
+]\n[transaction] 2026-07-30T05:36:38.699Z transaction completed successfully with 0 rules
+
+[getById] 2026-07-30T05:36:38.710Z rules=0/1 q_ids=[534] parent_ids=[null]
+
+[getById] 2026-07-30T05:36:38.732Z rules=0/1 q_ids=[534] parent_ids=[null]
+
+[getById] 2026-07-30T05:36:38.781Z rules=0/1 q_ids=[534] parent_ids=[null]
+
+[getById] 2026-07-30T05:36:40.064Z rules=0/1 q_ids=[534] parent_ids=[null]
+
+[getById] 2026-07-30T05:36:47.836Z rules=0/1 q_ids=[534] parent_ids=[null]
+
+[getById] 2026-07-30T05:36:55.934Z rules=0/1 q_ids=[534] parent_ids=[null]
+
+[getById] 2026-07-30T05:37:15.082Z rules=0/1 q_ids=[535] parent_ids=[null]
+
+[getById] 2026-07-30T05:37:15.121Z rules=0/1 q_ids=[535] parent_ids=[null]
+
+[getById] 2026-07-30T05:37:43.102Z rules=0/1 q_ids=[535] parent_ids=[null]
+
+[getById] 2026-07-30T05:38:04.794Z rules=0/1 q_ids=[535] parent_ids=[null]
+
+[getById] 2026-07-30T05:38:18.379Z rules=0/1 q_ids=[534] parent_ids=[null]
+2026-07-30T05:38:20.768Z\n[
+  {
+    "id": 534,
+    "type": "TEXT",
+    "label": "what is your age",
+    "order": 1,
+    "required": false,
+    "options": []
+  }
+]\n[transaction] 2026-07-30T05:38:20.774Z transaction completed successfully with 0 rules
+
+[getById] 2026-07-30T05:38:20.784Z rules=0/1 q_ids=[536] parent_ids=[null]
+
+[getById] 2026-07-30T05:38:20.808Z rules=0/1 q_ids=[536] parent_ids=[null]
+
+[getById] 2026-07-30T05:38:20.841Z rules=0/1 q_ids=[536] parent_ids=[null]
+
+[getById] 2026-07-30T05:38:29.841Z rules=0/1 q_ids=[535] parent_ids=[null]
+
+[getById] 2026-07-30T05:38:57.787Z rules=0/1 q_ids=[535] parent_ids=[null]
+
+[getById] 2026-07-30T05:39:02.599Z rules=0/1 q_ids=[495] parent_ids=[null]
+
+[getById] 2026-07-30T05:39:25.187Z rules=0/1 q_ids=[495] parent_ids=[null]
+
+[getById] 2026-07-30T05:40:39.512Z rules=0/1 q_ids=[495] parent_ids=[null]
+
+[getById] 2026-07-30T05:40:40.711Z rules=0/1 q_ids=[495] parent_ids=[null]
+
+[getById] 2026-07-30T05:40:40.721Z rules=0/1 q_ids=[495] parent_ids=[null]
+
+[getById] 2026-07-30T05:40:45.609Z rules=0/1 q_ids=[495] parent_ids=[null]
+
+[getById] 2026-07-30T05:41:01.020Z rules=0/1 q_ids=[537] parent_ids=[null]
+
+[getById] 2026-07-30T05:41:01.058Z rules=0/1 q_ids=[537] parent_ids=[null]
+
+[getById] 2026-07-30T05:41:49.677Z rules=0/1 q_ids=[537] parent_ids=[null]
+
+[getById] 2026-07-30T05:41:51.970Z rules=0/1 q_ids=[537] parent_ids=[null]
+
+[getById] 2026-07-30T05:42:00.571Z rules=0/1 q_ids=[537] parent_ids=[null]
+
+[getById] 2026-07-30T05:42:52.350Z rules=0/1 q_ids=[537] parent_ids=[null]
+
+[getById] 2026-07-30T05:42:59.288Z rules=0/1 q_ids=[537] parent_ids=[null]
+2026-07-30T05:43:07.214Z\n[
+  {
+    "id": 537,
+    "type": "TEXT",
+    "label": "Your question here",
+    "order": 1,
+    "required": false
+  },
+  {
+    "id": 1785390074834,
+    "type": "MULTIPLE_CHOICE",
+    "label": "New Checkbox Question",
+    "order": 2,
+    "required": false,
+    "options": [
+      {
+        "label": "Option A",
+        "value": "option_a",
+        "order": 1
+      },
+      {
+        "label": "Option B",
+        "value": "option_b",
+        "order": 2
+      },
+      {
+        "label": "Option C",
+        "value": "option_c",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": 1785390079084,
+    "type": "RATING",
+    "label": "Star Rating Question",
+    "order": 3,
+    "required": false
+  }
+]\n[transaction] 2026-07-30T05:43:07.221Z transaction completed successfully with 0 rules
+
+[getById] 2026-07-30T05:43:07.231Z rules=0/3 q_ids=[538,539,540] parent_ids=[null,null,null]
+
+[getById] 2026-07-30T05:43:07.255Z rules=0/3 q_ids=[538,539,540] parent_ids=[null,null,null]
+
+[getById] 2026-07-30T05:43:09.875Z rules=0/3 q_ids=[538,539,540] parent_ids=[null,null,null]
+2026-07-30T05:43:19.971Z\n[
+  {
+    "id": 538,
+    "type": "TEXT",
+    "label": "Your question here",
+    "order": 1,
+    "required": false,
+    "options": []
+  },
+  {
+    "id": 539,
+    "type": "MULTIPLE_CHOICE",
+    "label": "New Checkbox Question",
+    "order": 2,
+    "required": false,
+    "options": [
+      {
+        "id": 709,
+        "label": "Option A",
+        "value": "option_a",
+        "order": 1
+      },
+      {
+        "id": 710,
+        "label": "Option B",
+        "value": "option_b",
+        "order": 2
+      },
+      {
+        "id": 711,
+        "label": "Option C",
+        "value": "option_c",
+        "order": 3
+      }
+    ]
+  },
+  {
+    "id": 540,
+    "type": "RATING",
+    "label": "Star Rating Question",
+    "order": 3,
+    "required": false,
+    "options": []
+  }
+]\n[transaction] 2026-07-30T05:43:19.979Z transaction completed successfully with 0 rules
+
+[getById] 2026-07-30T05:43:19.991Z rules=0/3 q_ids=[541,542,543] parent_ids=[null,null,null]
+
+[getById] 2026-07-30T05:43:20.026Z rules=0/3 q_ids=[541,542,543] parent_ids=[null,null,null]
+
+[getById] 2026-07-30T05:43:20.067Z rules=0/3 q_ids=[541,542,543] parent_ids=[null,null,null]
+
+[getById] 2026-07-30T05:43:25.517Z rules=0/3 q_ids=[541,542,543] parent_ids=[null,null,null]
+
+[getById] 2026-07-30T05:43:28.795Z rules=0/3 q_ids=[541,542,543] parent_ids=[null,null,null]
+
+[getById] 2026-07-30T05:44:10.907Z rules=0/3 q_ids=[541,542,543] parent_ids=[null,null,null]
+
+[getById] 2026-07-30T05:44:30.270Z rules=0/3 q_ids=[541,542,543] parent_ids=[null,null,null]
+
+[getById] 2026-07-30T05:44:33.243Z rules=0/3 q_ids=[541,542,543] parent_ids=[null,null,null]
+
+[getById] 2026-07-30T05:44:34.882Z rules=0/3 q_ids=[541,542,543] parent_ids=[null,null,null]
+
+[getById] 2026-07-30T05:44:43.910Z rules=0/3 q_ids=[541,542,543] parent_ids=[null,null,null]
+
+[getById] 2026-07-30T05:44:52.354Z rules=0/3 q_ids=[541,542,543] parent_ids=[null,null,null]
+
+[getById] 2026-07-30T05:45:07.276Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:45:07.310Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:45:48.846Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:45:54.062Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:46:38.859Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:47:00.713Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:47:01.935Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:47:01.949Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:48:02.056Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:48:03.069Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:48:03.098Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:48:09.065Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:48:34.677Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:48:36.983Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:48:54.230Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:49:23.964Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:49:27.306Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:49:46.190Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:49:47.223Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:49:47.233Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:49:48.053Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:50:22.874Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:50:47.951Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:50:49.048Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:50:49.059Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:51:01.867Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:51:03.580Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:51:07.756Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:51:29.511Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:51:50.840Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:51:52.069Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:52:10.836Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:52:12.198Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-30T05:52:23.393Z rules=0/1 q_ids=[544] parent_ids=[null]
+
+[getById] 2026-07-31T16:22:42.838Z rules=0/1 q_ids=[545] parent_ids=[null]
+
+[getById] 2026-07-31T16:22:42.889Z rules=0/1 q_ids=[545] parent_ids=[null]
+
+[getById] 2026-07-31T16:24:12.080Z rules=0/1 q_ids=[545] parent_ids=[null]
+
+[getById] 2026-07-31T16:24:33.839Z rules=0/1 q_ids=[545] parent_ids=[null]
+
+[getById] 2026-07-31T16:24:50.269Z rules=0/1 q_ids=[545] parent_ids=[null]
+
+[getById] 2026-07-31T16:25:20.218Z rules=0/1 q_ids=[545] parent_ids=[null]
+
+[getById] 2026-07-31T16:25:40.113Z rules=0/1 q_ids=[545] parent_ids=[null]
+
+[getById] 2026-07-31T16:25:53.946Z rules=0/1 q_ids=[545] parent_ids=[null]
+2026-07-31T16:26:10.241Z\n[
+  {
+    "id": 545,
+    "type": "TEXT",
+    "label": "Your question here",
+    "order": 1,
+    "required": false
+  },
+  {
+    "id": 1785515158218,
+    "type": "RATING",
+    "label": "Star Rating Question",
+    "order": 2,
+    "required": false,
+    "parent_question_id": 1
+  }
+]\n[transaction] 2026-07-31T16:26:10.253Z transaction completed successfully with 1 rules
+
+[getById] 2026-07-31T16:26:10.261Z rules=1/2 q_ids=[546,547] parent_ids=[null,546]
+
+[getById] 2026-07-31T16:26:10.284Z rules=1/2 q_ids=[546,547] parent_ids=[null,546]
+
+[getById] 2026-07-31T16:26:12.233Z rules=1/2 q_ids=[546,547] parent_ids=[null,546]
+
+[getById] 2026-07-31T16:28:38.121Z rules=1/2 q_ids=[546,547] parent_ids=[null,546]
+
+[getById] 2026-07-31T16:28:40.523Z rules=1/2 q_ids=[546,547] parent_ids=[null,546]
+
+[getById] 2026-07-31T16:28:51.265Z rules=1/2 q_ids=[546,547] parent_ids=[null,546]
+2026-07-31T16:28:58.384Z\n[
+  {
+    "id": 546,
+    "type": "TEXT",
+    "label": "Your question here",
+    "order": 1,
+    "required": false
+  },
+  {
+    "id": 547,
+    "type": "RATING",
+    "label": "Star Rating Question",
+    "order": 2,
+    "required": false,
+    "parent_question_id": 1
+  }
+]\n[transaction] 2026-07-31T16:28:58.396Z transaction completed successfully with 1 rules
+
+[getById] 2026-07-31T16:28:58.404Z rules=1/2 q_ids=[548,549] parent_ids=[null,548]
+
+[getById] 2026-07-31T16:28:58.420Z rules=1/2 q_ids=[548,549] parent_ids=[null,548]
+
+[getById] 2026-07-31T16:29:04.616Z rules=1/2 q_ids=[548,549] parent_ids=[null,548]
+
+[getById] 2026-07-31T16:29:19.056Z rules=3/4 q_ids=[463,464,465,466] parent_ids=[null,463,464,464]
+
+[getById] 2026-07-31T16:29:47.648Z rules=3/4 q_ids=[463,464,465,466] parent_ids=[null,463,464,464]
+
+[getById] 2026-07-31T16:29:49.512Z rules=3/4 q_ids=[550,551,552,553] parent_ids=[null,550,551,551]
+
+[getById] 2026-07-31T16:29:49.614Z rules=3/4 q_ids=[550,551,552,553] parent_ids=[null,550,551,551]
+2026-07-31T16:29:53.621Z\n[
+  {
+    "id": 550,
+    "type": "RATING",
+    "label": "How would you rate your overall satisfaction with our product?",
+    "order": 1,
+    "required": true
+  },
+  {
+    "id": 551,
+    "type": "SINGLE_CHOICE",
+    "label": "How likely are you to recommend us to a colleague?",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 715,
+        "label": "Very likely",
+        "value": "very_likely",
+        "order": 1
+      },
+      {
+        "id": 716,
+        "label": "Likely",
+        "value": "likely",
+        "order": 2
+      },
+      {
+        "id": 717,
+        "label": "Neutral",
+        "value": "neutral",
+        "order": 3
+      },
+      {
+        "id": 718,
+        "label": "Unlikely",
+        "value": "unlikely",
+        "order": 4
+      },
+      {
+        "id": 719,
+        "label": "Very unlikely",
+        "value": "very_unlikely",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": 552,
+    "type": "MULTIPLE_CHOICE",
+    "label": "Which areas need improvement? (Select all that apply)",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "options": [
+      {
+        "id": 720,
+        "label": "Customer support",
+        "value": "support",
+        "order": 1
+      },
+      {
+        "id": 721,
+        "label": "Product features",
+        "value": "features",
+        "order": 2
+      },
+      {
+        "id": 722,
+        "label": "Pricing",
+        "value": "pricing",
+        "order": 3
+      },
+      {
+        "id": 723,
+        "label": "User experience",
+        "value": "ux",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 553,
+    "type": "TEXT",
+    "label": "Any additional feedback?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 4
+  }
+]\n[transaction] 2026-07-31T16:29:53.638Z transaction completed successfully with 3 rules
+
+[getById] 2026-07-31T16:29:53.646Z rules=3/4 q_ids=[554,555,556,557] parent_ids=[null,554,555,555]
+
+[getById] 2026-07-31T16:29:53.665Z rules=3/4 q_ids=[554,555,556,557] parent_ids=[null,554,555,555]
+
+[getById] 2026-07-31T16:30:18.587Z rules=3/4 q_ids=[554,555,556,557] parent_ids=[null,554,555,555]
+2026-07-31T16:30:26.533Z\n[
+  {
+    "id": 554,
+    "type": "RATING",
+    "label": "How would you rate your overall satisfaction with our product?",
+    "order": 1,
+    "required": true,
+    "options": []
+  },
+  {
+    "id": 555,
+    "type": "SINGLE_CHOICE",
+    "label": "How likely are you to recommend us to a colleague?",
+    "order": 2,
+    "required": true,
+    "parent_question_id": 1,
+    "options": [
+      {
+        "id": 724,
+        "label": "Very likely",
+        "value": "very_likely",
+        "order": 1
+      },
+      {
+        "id": 725,
+        "label": "Likely",
+        "value": "likely",
+        "order": 2
+      },
+      {
+        "id": 726,
+        "label": "Neutral",
+        "value": "neutral",
+        "order": 3
+      },
+      {
+        "id": 727,
+        "label": "Unlikely",
+        "value": "unlikely",
+        "order": 4
+      },
+      {
+        "id": 728,
+        "label": "Very unlikely",
+        "value": "very_unlikely",
+        "order": 5
+      }
+    ]
+  },
+  {
+    "id": 556,
+    "type": "MULTIPLE_CHOICE",
+    "label": "Which areas need improvement? (Select all that apply)",
+    "order": 3,
+    "required": false,
+    "parent_question_id": 2,
+    "options": [
+      {
+        "id": 729,
+        "label": "Customer support",
+        "value": "support",
+        "order": 1
+      },
+      {
+        "id": 730,
+        "label": "Product features",
+        "value": "features",
+        "order": 2
+      },
+      {
+        "id": 731,
+        "label": "Pricing",
+        "value": "pricing",
+        "order": 3
+      },
+      {
+        "id": 732,
+        "label": "User experience",
+        "value": "ux",
+        "order": 4
+      }
+    ]
+  },
+  {
+    "id": 557,
+    "type": "TEXT",
+    "label": "Any additional feedback?",
+    "order": 4,
+    "required": false,
+    "parent_question_id": 2,
+    "trigger_option_id": 4,
+    "options": []
+  }
+]\n[transaction] 2026-07-31T16:30:26.556Z transaction completed successfully with 3 rules
+
+[getById] 2026-07-31T16:30:26.567Z rules=3/4 q_ids=[558,559,560,561] parent_ids=[null,558,559,559]
+
+[getById] 2026-07-31T16:30:26.587Z rules=3/4 q_ids=[558,559,560,561] parent_ids=[null,558,559,559]
+
+[getById] 2026-07-31T16:30:26.622Z rules=3/4 q_ids=[558,559,560,561] parent_ids=[null,558,559,559]
+
+[getById] 2026-07-31T16:30:32.403Z rules=3/4 q_ids=[558,559,560,561] parent_ids=[null,558,559,559]
+
+[getById] 2026-08-01T06:58:35.965Z rules=3/4 q_ids=[558,559,560,561] parent_ids=[null,558,559,559]
+
+[getById] 2026-08-07T12:06:37.013Z rules=3/4 q_ids=[558,559,560,561] parent_ids=[null,558,559,559]
+
+[getById] 2026-08-11T07:27:18.347Z rules=0/1 q_ids=[569] parent_ids=[null]
+
+[getById] 2026-08-11T07:27:18.767Z rules=0/1 q_ids=[569] parent_ids=[null]
+2026-08-11T07:27:56.690Z
+[
+  {
+    "id": 569,
+    "type": "TEXT",
+    "label": "Your question here",
+    "order": 1,
+    "required": false
+  },
+  {
+    "type": "TEXT",
+    "label": "Short Answer Question",
+    "order": 2,
+    "required": false
+  },
+  {
+    "type": "TEXT",
+    "label": "Long Answer Question",
+    "order": 3,
+    "required": false
+  }
+]
+[transaction] 2026-08-11T07:27:56.700Z transaction completed successfully with 0 rules
+
+[getById] 2026-08-11T07:27:56.716Z rules=0/3 q_ids=[570,571,572] parent_ids=[null,null,null]
+
+[getById] 2026-08-11T07:27:56.770Z rules=0/3 q_ids=[570,571,572] parent_ids=[null,null,null]
+2026-08-11T07:28:02.104Z
+[
+  {
+    "id": 570,
+    "type": "TEXT",
+    "label": "Your question here",
+    "order": 1,
+    "required": false
+  },
+  {
+    "id": 571,
+    "type": "TEXT",
+    "label": "Short Answer Question",
+    "order": 2,
+    "required": false
+  },
+  {
+    "id": 572,
+    "type": "TEXT",
+    "label": "Long Answer Question",
+    "order": 3,
+    "required": false
+  }
+]
+[transaction] 2026-08-11T07:28:02.114Z transaction completed successfully with 0 rules
+
+[getById] 2026-08-11T07:28:02.127Z rules=0/3 q_ids=[573,574,575] parent_ids=[null,null,null]
+
+[getById] 2026-08-11T07:28:02.172Z rules=0/3 q_ids=[573,574,575] parent_ids=[null,null,null]
+
+[getById] 2026-08-11T12:01:15.468Z rules=0/1 q_ids=[563] parent_ids=[null]
+
+[getById] 2026-08-11T12:02:43.857Z rules=0/1 q_ids=[563] parent_ids=[null]
+
+[getById] 2026-08-13T08:11:35.925Z rules=3/4 q_ids=[558,559,560,561] parent_ids=[null,558,559,559]
+
+[getById] 2026-08-13T08:11:38.075Z rules=3/4 q_ids=[558,559,560,561] parent_ids=[null,558,559,559]
+
+[getById] 2026-08-13T08:11:38.396Z rules=3/4 q_ids=[562,563,564,565] parent_ids=[null,562,563,563]

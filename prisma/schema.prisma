@@ -1,0 +1,2694 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  Int                     @id @default(autoincrement())
+  username            String?
+  email               String                  @unique
+  password            String
+  status              Boolean                 @default(true)
+  is_deleted          Boolean                 @default(false)
+  deleted_at          DateTime?
+  created_at          DateTime                @default(now())
+  updated_at          DateTime                @updatedAt
+  last_login          DateTime?
+  failed_login_attempts Int                   @default(0)
+  lockout_until        DateTime?
+  sessionToken        String?                 @map("session_token")
+  activityLogs        ActivityLog[]
+  announcements       announcements[]
+  issuedAssignments   AssetAssignment[]       @relation("AssetIssuer")
+  assetAssignments    AssetAssignment[]       @relation("UserAssetAssignments")
+  assetHistoryChanges AssetHistory[]          @relation("AssetHistoryModifier")
+  assetApprovals      AssetRequest[]          @relation("AssetApprover")
+  assetRequests       AssetRequest[]          @relation("UserAssetRequests")
+  attendance          Attendance[]
+  bgvCasesReviewed    BgvCase[]               @relation("BgvReviewer")
+  bgvReviews          BgvReview[]
+  company_news        company_news[]
+  department          department[]
+  uploadedDocuments   Document[]              @relation("DocumentUploader")
+  ownerDocuments      Document[]              @relation("DocumentOwner")
+  managedExitRequests ExitRequest[]           @relation("ManagerExitRequests")
+  exitRequests        ExitRequest[]           @relation("UserExitRequests")
+  ktAssigneeExitRequests ExitRequest[]        @relation("KTAssigneeExitRequests")
+  ktVerifiedByExitRequests ExitRequest[]      @relation("KTVerifiedByExitRequests")
+  exitWorkflowActions ExitWorkflowHistory[]
+  expenseClaims       ExpenseClaim[]
+  interviews          InterviewInterviewer[]
+  leaveBalances       LeaveBalance[]
+  approvedLeaves      LeaveRequest[]          @relation("LeaveApprover")
+  managedLeaves       LeaveRequest[]          @relation("ReportingManagerLeave")
+  leaveRequests       LeaveRequest[]          @relation("UserLeaveRequests")
+  lmsAssignments      LmsAssignment[]
+  lmsCertificates     LmsCertificate[]
+  lmsCourses          LmsCourse[]             @relation("CourseInstructor")
+  lmsProgress         LmsProgress[]
+  lmsQuizAttempts     LmsQuizAttempt[]
+  notifications       Notification[]
+  createdVersions     OfferVersion[]
+  reviewerOffers      Offer[]                 @relation("ReviewerOffers")
+  recruiterOffers     Offer[]                 @relation("RecruiterOffers")
+  payslips            Payslip[]
+  priorEmployments    PriorEmploymentIncome[]
+  feedback            Feedback[]
+  surveyResponses     SurveyResponse[]
+  surveysCreated      Survey[]
+  taxDeclarations     TaxDeclaration[]
+  team                team[]
+  managed_by          UserDetail[]            @relation("ReportingManager")
+  details             UserDetail?
+  employeeChangeRequests EmployeeChangeRequest[]
+  roles               UserRole[]
+  loanManagerApprovals   Loan[]               @relation("LoanReportingManager")
+  loanHRApprovals        Loan[]               @relation("LoanHRApprover")
+  loanFinanceApprovals   Loan[]               @relation("LoanFinanceApprover")
+  advanceManagerApprovals Advance[]           @relation("AdvanceReportingManager")
+  advanceHRApprovals      Advance[]           @relation("AdvanceHRApprover")
+  advanceFinanceApprovals Advance[]           @relation("AdvanceFinanceApprover")
+  loanApprovals          LoanApproval[]
+  loginSessions          LoginSession[]
+
+  @@map("users")
+}
+
+model LoginSession {
+  id             Int      @id @default(autoincrement())
+  user_id        Int
+  token          String   @unique
+  ip_address     String?
+  user_agent     String?
+  is_active      Boolean  @default(true)
+  expires_at     DateTime
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  last_active_at DateTime?
+
+  user           User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id], map: "login_sessions_user_id_idx")
+  @@index([is_active], map: "login_sessions_is_active_idx")
+  @@map("login_sessions")
+}
+
+model UserDetail {
+  id                     Int           @id @default(autoincrement())
+  user_id                Int           @unique
+  first_name             String?
+  middle_name            String?
+  last_name              String?
+  date_of_birth          DateTime?
+  gender                 String?
+  nationality            String?
+  marital_status         String?
+  blood_group            String?
+  phone                  String?
+  secondary_phone        String?
+  secondary_email        String?
+  address                String?       @db.Text
+  city                   String?
+  state                  String?
+  zip                    String?
+  country                String?
+  secondary_address      String?       @db.Text
+  secondary_city         String?
+  secondary_state        String?
+  secondary_zip          String?
+  secondary_country      String?
+  emergency_contact      String?
+  emergency_relationship String?
+  emergency_phone        String?
+  emergency_email        String?
+  employee_id            String?       @unique
+  department_id          Int?
+  role_id                Int?
+  employment_type        String?
+  start_date             DateTime?
+  work_location          String?
+  work_schedule          String?
+  reporting_manager_id   Int?
+  probation_period       Int?
+  base_salary            Decimal?      @db.Decimal(15, 2)
+  currency               String?       @default("USD")
+  salary_frequency       String?
+  compensation_breakdown Json?
+  family_members         Json?
+  education              Json?
+  employment_history     Json?
+  passport_number        String?
+  passport_expiry_date   DateTime?
+  driving_license_number String?
+  license_expiry_date    DateTime?
+  pan_number             String?
+  aadhaar_number         String?
+  bank_name              String?
+  branch_name            String?
+  account_holder_name    String?
+  account_number         String?
+  ifsc_code              String?
+  skills                 Json?
+  certifications         Json?
+  languages              Json?
+  profile_picture        String?
+  resume                 String?
+  certificate_files      Json?
+  documents              Json?
+  passport_doc           String?
+  dl_doc                 String?
+  pan_doc                String?
+  aadhaar_doc            String?
+  created_at             DateTime      @default(now())
+  updated_at             DateTime      @updatedAt
+  designation_id         Int?
+  esi_number             String?
+  exit_date              DateTime?
+  is_draft               Boolean       @default(false)
+  is_nri                 Boolean       @default(false)
+  is_senior_citizen      Boolean       @default(false)
+  joining_date           DateTime?
+  payroll_group_id       Int?
+  pf_uan                 String?
+  shift_id               String?
+  tax_regime             String?       @default("New")
+  tax_regime_changed_at  DateTime?
+  team_id                Int?
+  user_type_id           Int?
+  verification_statuses  Json?
+  absence_status         String?
+  sub_status             String?
+  advances               Advance[]
+  loans                  Loan[]
+  loanApplications       LoanApplication[]
+  department             department?   @relation(fields: [department_id], references: [id])
+  designation            Designation?  @relation(fields: [designation_id], references: [id], map: "user_details_designation_id_fkey")
+  payroll_group          PayrollGroup? @relation(fields: [payroll_group_id], references: [id])
+  reporting_manager      User?         @relation("ReportingManager", fields: [reporting_manager_id], references: [id])
+  role                   Role?         @relation(fields: [role_id], references: [id])
+  team                   team?         @relation(fields: [team_id], references: [id])
+  user                           User          @relation(fields: [user_id], references: [id])
+  user_types                     user_types?   @relation(fields: [user_type_id], references: [id])
+  secondary_reporting_to         Designation[] @relation("SecondaryReportingEmployee")
+
+  @@index([department_id], map: "user_details_department_id_fkey")
+  @@index([payroll_group_id], map: "user_details_payroll_group_id_fkey")
+  @@index([reporting_manager_id], map: "user_details_reporting_manager_id_fkey")
+  @@index([role_id], map: "user_details_role_id_fkey")
+  @@index([team_id], map: "user_details_team_id_fkey")
+  @@index([designation_id], map: "user_details_designation_id_fkey")
+  @@index([user_type_id], map: "user_details_user_type_id_fkey")
+  @@map("user_details")
+}
+
+model EmployeeChangeRequest {
+  id                   Int        @id @default(autoincrement())
+  user_id              Int
+  requested_changes    Json
+  status               String     @default("PENDING_MANAGER")
+  manager_id           Int?
+  manager_status       String?
+  manager_note         String?    @db.Text
+  manager_actioned_at  DateTime?
+  hr_id                Int?
+  hr_status            String?
+  hr_note              String?    @db.Text
+  hr_actioned_at       DateTime?
+  applied_at           DateTime?
+  created_at           DateTime   @default(now())
+  updated_at           DateTime   @updatedAt
+
+  user                 User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id], map: "employee_change_requests_user_id_idx")
+  @@index([status], map: "employee_change_requests_status_idx")
+  @@index([manager_id], map: "employee_change_requests_manager_id_idx")
+  @@map("employee_change_requests")
+}
+
+model Bank {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("banks")
+}
+
+model Role {
+  id                 Int                 @id @default(autoincrement())
+  role_name          String
+  description        String?             @db.Text
+  status             Boolean             @default(true)
+  created_at         DateTime            @default(now())
+  updated_at         DateTime            @updatedAt
+  organization_id    Int?
+  reimbursementTypes ReimbursementType[]
+  loanTypes          LoanType[]
+  permissions        RolePermission[]
+  organizations      Organization?       @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  userDetails        UserDetail[]
+  users              UserRole[]
+
+  @@unique([organization_id, role_name])
+  @@index([organization_id])
+  @@map("roles")
+}
+
+model Module {
+  id          String       @id
+  label       String
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @updatedAt
+  permissions Permission[]
+
+  @@map("modules")
+}
+
+model Permission {
+  id                    Int                     @id @default(autoincrement())
+  permission_name       String
+  key_name              String?                 @unique
+  description           String?                 @db.Text
+  created_at            DateTime                @default(now())
+  updated_at            DateTime                @updatedAt
+  moduleId              String?
+  module                Module?                 @relation(fields: [moduleId], references: [id])
+  roles                 RolePermission[]
+  user_type_permissions user_type_permissions[]
+
+  @@index([moduleId], map: "permissions_moduleId_fkey")
+  @@map("permissions")
+}
+
+model UserRole {
+  id          Int      @id @default(autoincrement())
+  user_id     Int
+  role_id     Int
+  assigned_at DateTime @default(now())
+  assigned_by Int?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  role        Role     @relation(fields: [role_id], references: [id])
+  user        User     @relation(fields: [user_id], references: [id])
+
+  @@unique([user_id, role_id])
+  @@index([role_id], map: "user_roles_role_id_fkey")
+  @@map("user_roles")
+}
+
+model RolePermission {
+  id            Int             @id @default(autoincrement())
+  role_id       Int
+  permission_id Int
+  scope         PermissionScope @default(GLOBAL)
+  created_at    DateTime        @default(now())
+  updated_at    DateTime        @updatedAt
+  permission    Permission      @relation(fields: [permission_id], references: [id])
+  role          Role            @relation(fields: [role_id], references: [id])
+
+  @@unique([role_id, permission_id])
+  @@index([permission_id], map: "role_permissions_permission_id_fkey")
+  @@map("role_permissions")
+}
+
+model OtpVerification {
+  id         Int      @id @default(autoincrement())
+  email      String
+  otp        String
+  expires_at DateTime
+  verified   Boolean  @default(false)
+  created_at DateTime @default(now())
+
+  @@index([email])
+  @@map("otp_verification")
+}
+
+model PasswordResetToken {
+  id         Int      @id @default(autoincrement())
+  email      String
+  token      String   @unique
+  expires_at DateTime
+  used       Boolean  @default(false)
+  created_at DateTime @default(now())
+
+  @@index([email])
+  @@map("password_reset_tokens")
+}
+
+model Organization {
+  id                              Int                      @id @default(autoincrement())
+  user_id                         Int?
+  entity_name                     String
+  company_code                    String?
+  company_type                    String?
+  slug                            String?                  @unique
+  jurisdiction                    String?
+  currency                        String
+  fiscal_year_end                 String?
+  pan                             String?
+  tin                             String?
+  sin                             String?
+  ein                             String?
+  siret                           String?
+  other_tax_id                    String?
+  address                         String                   @db.Text
+  city                            String
+  state                           String
+  country                         String
+  zip                             String
+  business_unit                   String?
+  cost_center                     String?
+  job_architecture                Boolean                  @default(false)
+  payroll_statutory_unit          String?
+  legal_employer                  String?
+  legislative_data_group          String?
+  pay_frequency                   String?
+  standard_working_hours_per_week Float
+  working_days                    Json
+  public_holidays                 Json
+  logo_url                        String?                  @db.LongText
+  is_deleted                      Boolean                  @default(false)
+  deleted_at                      DateTime?
+  created_at                      DateTime                 @default(now())
+  updated_at                      DateTime                 @updatedAt
+  fixed_break_time                Int?                     @default(60)
+  fixed_end_time                  String?
+  fixed_start_time                String?
+  flex_core_end_time              String?                  @default("16:00")
+  flex_core_start_time            String?                  @default("11:00")
+  flex_max_hours                  Int?                     @default(12)
+  flex_max_login_time             String?                  @default("11:00")
+  flex_min_login_time             String?                  @default("07:00")
+  flex_required_hours             Int?                     @default(8)
+  schedule_type                   String?                  @default("fixed")
+  enable_shifts                   Boolean                  @default(false)
+  shifts                          Json?
+  assetAssignments                AssetAssignment[]
+  assetCategories                 AssetCategory[]
+  assetDocuments                  AssetDocument[]
+  assetHistory                    AssetHistory[]
+  assetRequests                   AssetRequest[]
+  assets                          Asset[]
+  branches                        Branch[]
+  designations                    Designation[]
+  expenseClaims                   ExpenseClaim[]
+  jobs                            Job[]
+  lmsCourses                      LmsCourse[]
+  lmsLearningPaths                LmsLearningPath[]
+  payCycles                       PayCycle[]
+  paymentCategories               PaymentCategory[]
+  payrollGroups                   PayrollGroup[]
+  payslips                        Payslip[]
+  reimbursementTypes              ReimbursementType[]
+  loanTypes                       LoanType[]
+  roles                           Role[]
+  salaryComponents                SalaryComponent[]
+  salaryStructureHistories        SalaryStructureHistory[]
+  salaryStructures                SalaryStructure[]
+  taxDeclarations                 TaxDeclaration[]
+  taxSections                     TaxSection[]
+  user_types                      user_types[]
+  config                          OrganizationConfig?
+
+  @@map("organizations")
+}
+
+model OrganizationConfig {
+  id                    Int          @id @default(autoincrement())
+  organization_id       Int          @unique
+  organization          Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  // Branding
+  primary_color         String?      @default("#3B82F6")
+  secondary_color       String?      @default("#1E40AF")
+  custom_domain         String?
+
+  // Security, SSO & MFA
+  sso_provider          String?      @default("local")
+  mfa_policy            String?      @default("email_otp")
+  mfa_required_admins   Boolean      @default(true)
+
+  // Billing Contacts
+  billing_contact       String?
+  finance_contact       String?
+  technical_contact     String?
+  legal_contact         String?
+
+  // Preferences
+  theme                 String?      @default("light")
+  language              String?      @default("en-IN")
+  date_format           String?      @default("DD/MM/YYYY")
+  week_start_day        String?      @default("monday")
+  default_landing_page  String?      @default("dashboard")
+
+  // Notifications
+  email_notifications    Boolean     @default(true)
+  sms_notifications      Boolean     @default(false)
+  in_app_notifications   Boolean     @default(true)
+  webhooks_enabled       Boolean     @default(false)
+  notification_frequency String?     @default("daily")
+
+  // Maintenance Window
+  maintenance_day       String?      @default("Saturday")
+  maintenance_start     String?      @default("02:00")
+  maintenance_end       String?      @default("06:00")
+
+  // Backup & DR
+  backup_frequency      String?      @default("daily")
+  backup_retention_days Int?         @default(30)
+  rpo_minutes           Int?         @default(60)
+  rto_minutes           Int?         @default(240)
+
+  created_at            DateTime     @default(now())
+  updated_at            DateTime     @updatedAt
+
+  @@map("organization_config")
+}
+
+model Branch {
+  id                 Int                 @id @default(autoincrement())
+  organization_id    Int
+  branch_name        String
+  branch_code        String
+  address            String              @db.Text
+  city               String
+  state              String
+  zip                String
+  country            String
+  time_zone          String
+  tax_location       String
+  gst                String?
+  is_deleted         Boolean             @default(false)
+  deleted_at         DateTime?
+  created_at         DateTime            @default(now())
+  updated_at         DateTime            @updatedAt
+  organization       Organization        @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  department         department[]
+  reimbursementTypes ReimbursementType[]
+  loanTypes          LoanType[]
+
+  @@index([organization_id])
+  @@map("branches")
+}
+
+model LeavePolicy {
+  id                   Int            @id @default(autoincrement())
+  policy_name          String         @unique
+  leave_type           String?
+  days_per_year        Int            @default(0)
+  carry_forward_days   Int            @default(0)
+  accrual_rate         Decimal        @default(0.00) @db.Decimal(10, 2)
+  leave_category       String         @default("paid")
+  leave_color          String?
+  eligibility_criteria String?        @db.Text
+  description          String?        @db.Text
+  requires_document    Boolean        @default(false)
+  document_url         String?        @db.Text
+  created_at           DateTime       @default(now())
+  updated_at           DateTime       @updatedAt
+  leaveBalances        LeaveBalance[]
+  leaveRequests        LeaveRequest[]
+
+  @@map("leave_policies")
+}
+
+model LeaveRequest {
+  id                   Int         @id @default(autoincrement())
+  user_id              Int
+  leave_policy_id      Int
+  start_date           DateTime
+  end_date             DateTime
+  duration             Float
+  reason               String?     @db.Text
+  status               String      @default("PENDING")
+  reporting_manager_id Int?
+  approved_by          Int?
+  rejection_reason     String?     @db.Text
+  attachment_url       String?     @db.Text
+  applied_at           DateTime    @default(now())
+  created_at           DateTime    @default(now())
+  updated_at           DateTime    @updatedAt
+  approver             User?       @relation("LeaveApprover", fields: [approved_by], references: [id])
+  leave_policy         LeavePolicy @relation(fields: [leave_policy_id], references: [id])
+  manager              User?       @relation("ReportingManagerLeave", fields: [reporting_manager_id], references: [id])
+  user                 User        @relation("UserLeaveRequests", fields: [user_id], references: [id])
+
+  @@index([user_id])
+  @@index([leave_policy_id])
+  @@index([approved_by], map: "leave_requests_approved_by_fkey")
+  @@index([reporting_manager_id], map: "leave_requests_reporting_manager_id_fkey")
+  @@map("leave_requests")
+}
+
+model LeaveBalance {
+  id              Int         @id @default(autoincrement())
+  user_id         Int
+  leave_policy_id Int
+  balance         Float       @default(0)
+  used            Float       @default(0)
+  year            Int
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @updatedAt
+  leave_policy    LeavePolicy @relation(fields: [leave_policy_id], references: [id])
+  user            User        @relation(fields: [user_id], references: [id])
+
+  @@unique([user_id, leave_policy_id, year])
+  @@index([leave_policy_id], map: "leave_balances_leave_policy_id_fkey")
+  @@map("leave_balances")
+}
+
+model Attendance {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  date       DateTime  @db.Date
+  check_in   DateTime?
+  check_out  DateTime?
+  work_hours Float     @default(0)
+  status     String    @default("PRESENT")
+  location   String?
+  remarks    String?   @db.Text
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  user       User      @relation(fields: [user_id], references: [id])
+
+  @@unique([user_id, date])
+  @@index([user_id])
+  @@map("attendance")
+}
+
+model CustomField {
+  id         Int      @id @default(autoincrement())
+  module     String
+  label      String
+  type       String
+  options    Json?
+  required   Boolean  @default(false)
+  status     Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("custom_fields")
+}
+
+model Integration {
+  id         Int      @id @default(autoincrement())
+  name       String
+  provider   String
+  config     Json?
+  status     Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("integrations")
+}
+
+model ActivityLog {
+  id          Int      @id @default(autoincrement())
+  user_id     Int?
+  action      String
+  module      String
+  description String?  @db.Text
+  ip_address  String?
+  created_at  DateTime @default(now())
+  user        User?    @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+  @@index([module])
+  @@map("activity_logs")
+}
+
+model Notification {
+  id             Int       @id @default(autoincrement())
+  user_id        Int
+  title          String
+  message        String    @db.Text
+  type           String    @default("INFO")
+  metadata       Json?
+  related_module String?
+  related_id     Int?
+  is_read        Boolean   @default(false)
+  read_at        DateTime?
+  created_at     DateTime  @default(now())
+  updated_at     DateTime  @updatedAt
+  user           User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([is_read])
+  @@map("notifications")
+}
+
+model SalaryComponent {
+  id               Int                        @id @default(autoincrement())
+  name             String
+  type             String
+  calculation_type String
+  value            Decimal                    @db.Decimal(15, 2)
+  is_taxable       Boolean                    @default(true)
+  is_statutory     Boolean                    @default(false)
+  is_default       Boolean                    @default(false)
+  status           Boolean                    @default(true)
+  created_at       DateTime                   @default(now())
+  updated_at       DateTime                   @updatedAt
+  organization_id  Int?
+  organization     Organization?              @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  structures       SalaryStructureComponent[]
+  pending_changes  SalaryComponentChange[]
+
+  @@unique([organization_id, name])
+  @@map("salary_components")
+}
+
+model SalaryComponentChange {
+  id                   Int            @id @default(autoincrement())
+  salary_component_id  Int
+  component            SalaryComponent @relation(fields: [salary_component_id], references: [id], onDelete: Cascade)
+  proposed_name        String?
+  proposed_type        String?
+  proposed_calculation_type String?
+  proposed_value       Decimal?       @db.Decimal(15, 2)
+  proposed_is_taxable  Boolean?
+  proposed_is_statutory Boolean?
+  status               String         @default("pending") // pending | approved | rejected
+  requested_by         Int?
+  approved_by          Int?
+  created_at           DateTime       @default(now())
+  updated_at           DateTime       @updatedAt
+
+  @@map("salary_component_changes")
+}
+
+model SalaryStructure {
+  id              Int                        @id @default(autoincrement())
+  name            String
+  level           String                     @default("role")
+  role_id         Int?
+  employee_id     Int?
+  status          Boolean                    @default(true)
+  created_at      DateTime                   @default(now())
+  updated_at      DateTime                   @updatedAt
+  organization_id Int?
+  groups          PayrollGroup[]
+  components      SalaryStructureComponent[]
+  histories       SalaryStructureHistory[]
+  organization    Organization?              @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, name])
+  @@map("salary_structures")
+}
+
+model SalaryStructureComponent {
+  id                  Int             @id @default(autoincrement())
+  salary_structure_id Int
+  salary_component_id Int
+  order               Int             @default(0)
+  salary_component    SalaryComponent @relation(fields: [salary_component_id], references: [id], onDelete: Cascade)
+  salary_structure    SalaryStructure @relation(fields: [salary_structure_id], references: [id], onDelete: Cascade)
+
+  @@unique([salary_structure_id, salary_component_id])
+  @@index([salary_component_id], map: "salary_structure_components_salary_component_id_fkey")
+  @@map("salary_structure_components")
+}
+
+model PayrollGroup {
+  id                  Int                 @id @default(autoincrement())
+  name                String
+  criteria            Json?
+  salary_structure_id Int?
+  status              Boolean             @default(true)
+  created_at          DateTime            @default(now())
+  updated_at          DateTime            @updatedAt
+  organization_id     Int?
+  payment_category_id Int?
+  organization        Organization?       @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  payment_category    PaymentCategory?    @relation(fields: [payment_category_id], references: [id])
+  salary_structure    SalaryStructure?    @relation(fields: [salary_structure_id], references: [id])
+  reimbursement_types ReimbursementType[]
+  userDetails         UserDetail[]
+
+  @@unique([organization_id, name])
+  @@index([payment_category_id], map: "payroll_groups_payment_category_id_fkey")
+  @@index([salary_structure_id], map: "payroll_groups_salary_structure_id_fkey")
+  @@map("payroll_groups")
+}
+
+model TaxSection {
+  id              Int           @id @default(autoincrement())
+  section         String
+  label           String
+  limit           Decimal       @db.Decimal(15, 2)
+  instruments     Json?
+  status          Boolean       @default(true)
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+  organization_id Int?
+  organization    Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, section])
+  @@map("tax_sections")
+}
+
+model ReimbursementType {
+  id               Int           @id @default(autoincrement())
+  type             String
+  label            String
+  limit            Decimal       @db.Decimal(15, 2)
+  period           String        @default("Monthly")
+  status           Boolean       @default(true)
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
+  branch_id        Int?
+  department_id    Int?
+  organization_id  Int?
+  payroll_group_id Int?
+  role_id          Int?
+  branch           Branch?       @relation(fields: [branch_id], references: [id])
+  department       department?   @relation(fields: [department_id], references: [id])
+  organization     Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  payroll_group    PayrollGroup? @relation(fields: [payroll_group_id], references: [id])
+  role             Role?         @relation(fields: [role_id], references: [id])
+
+  @@index([branch_id], map: "reimbursement_types_branch_id_fkey")
+  @@index([department_id], map: "reimbursement_types_department_id_fkey")
+  @@index([organization_id], map: "reimbursement_types_organization_id_fkey")
+  @@index([payroll_group_id], map: "reimbursement_types_payroll_group_id_fkey")
+  @@index([role_id], map: "reimbursement_types_role_id_fkey")
+  @@map("reimbursement_types")
+}
+
+model PaymentCategory {
+  id              Int            @id @default(autoincrement())
+  name            String
+  frequency       String         @default("Monthly")
+  pay_day         String?
+  status          Boolean        @default(true)
+  created_at      DateTime       @default(now())
+  updated_at      DateTime       @updatedAt
+  organization_id Int?
+  organization    Organization?  @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  payroll_groups  PayrollGroup[]
+
+  @@unique([organization_id, name])
+  @@map("payment_categories")
+}
+
+model PayCycle {
+  id                   Int           @id @default(autoincrement())
+  frequency            String        @default("monthly")
+  pay_day              String        @default("last")
+  attendance_start_day String?
+  attendance_end_day   String?
+  cutoff_day           String?
+  updated_at           DateTime      @updatedAt
+  created_at           DateTime      @default(now())
+  organization_id      Int?
+  organization         Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id], map: "pay_cycles_organization_id_fkey")
+  @@map("pay_cycles")
+}
+
+model Payslip {
+  id               Int           @id @default(autoincrement())
+  user_id          Int
+  month            String
+  gross_amount     Decimal       @db.Decimal(15, 2)
+  deduction_amount Decimal       @db.Decimal(15, 2)
+  net_amount       Decimal       @db.Decimal(15, 2)
+  employer_pf      Decimal?      @db.Decimal(15, 2)
+  employer_eps     Decimal?      @db.Decimal(15, 2)
+  employer_esi     Decimal?      @db.Decimal(15, 2)
+  status           String        @default("DRAFT")
+  breakdown        Json?
+  created_at       DateTime      @default(now())
+  updated_at       DateTime      @updatedAt
+  organization_id  Int?
+  organization     Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  user             User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, month, organization_id])
+  @@index([user_id])
+  @@index([organization_id])
+  @@map("payslips")
+}
+
+model TaxDeclaration {
+  id              Int           @id @default(autoincrement())
+  user_id         Int
+  section         String
+  instrument      String
+  amount          Decimal       @db.Decimal(15, 2)
+  status          String        @default("pending")
+  proof_url       String?
+  financial_year  String
+  submitted_on    DateTime      @default(now())
+  remarks         String?       @db.Text
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+  organization_id Int?
+  organization    Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  user            User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([organization_id])
+  @@map("tax_declarations")
+}
+
+model ExpenseClaim {
+  id                Int           @id @default(autoincrement())
+  user_id           Int
+  type              String
+  amount            Decimal       @db.Decimal(15, 2)
+  description       String?       @db.Text
+  expense_date      DateTime      @db.Date
+  status            String        @default("pending")
+  proof_url         String?
+  submitted_on      DateTime      @default(now())
+  remarks           String?       @db.Text
+  created_at        DateTime      @default(now())
+  updated_at        DateTime      @updatedAt
+  organization_id   Int?
+  payment_status    String?       @default("Pending Approval")
+  payment_mode      String?       @default("Salary Payroll")
+  payroll_id        Int?
+  payment_date      DateTime?
+  payment_reference String?
+  paid_by           Int?
+  organization      Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  user              User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([organization_id])
+  @@map("expense_claims")
+}
+
+model ExitRequest {
+  id                   Int                    @id @default(autoincrement())
+  user_id              Int
+  reporting_manager_id Int?
+  exit_type            String
+  notice_date          DateTime
+  last_working_day     DateTime
+  primary_reason       String
+  explanation          String?                @db.Text
+  notice_waiver        Boolean                @default(false)
+  interview_pref       String?
+  handover_notes       String?                @db.Text
+  status               String                 @default("PENDING_ACCEPTANCE")
+  acknowledged         Boolean                @default(false)
+  created_at           DateTime               @default(now())
+  updated_at           DateTime               @updatedAt
+  is_hr_override       Boolean                @default(false)
+  negotiated_lwd       DateTime?
+  notice_period_days   Int                    @default(30)
+  progress_percentage  Int                    @default(0)
+  rejection_reason     String?                @db.Text
+  sla_deadline         DateTime?
+  assets               ExitAsset[]
+  clearance_tasks      ExitClearanceTask[]
+  documents            ExitDocument[]
+  interview_responses  ExitInterviewResponse?
+  reporting_manager    User?                  @relation("ManagerExitRequests", fields: [reporting_manager_id], references: [id])
+  user                 User                   @relation("UserExitRequests", fields: [user_id], references: [id])
+  kt_status            String?
+  kt_assignee_id       Int?
+  kt_description       String?                @db.Text
+  kt_completion_date   DateTime?
+  kt_verified_by_id    Int?
+  kt_remarks           String?                @db.Text
+  kt_assignee          User?                  @relation("KTAssigneeExitRequests", fields: [kt_assignee_id], references: [id])
+  kt_verified_by       User?                  @relation("KTVerifiedByExitRequests", fields: [kt_verified_by_id], references: [id])
+  settlement_data      ExitSettlement?
+  workflow_history     ExitWorkflowHistory[]
+
+  @@index([reporting_manager_id], map: "exit_requests_reporting_manager_id_fkey")
+  @@index([user_id], map: "exit_requests_user_id_fkey")
+  @@index([kt_assignee_id], map: "exit_requests_kt_assignee_id_fkey")
+  @@index([kt_verified_by_id], map: "exit_requests_kt_verified_by_id_fkey")
+  @@map("exit_requests")
+}
+
+model ExitAsset {
+  id              Int         @id @default(autoincrement())
+  exit_request_id Int
+  asset_name      String
+  asset_serial_no String?
+  category        String?
+  return_status   Boolean     @default(false)
+  asset_id        Int?
+  assignment_id   Int?
+  return_date     DateTime?
+  condition       String?
+  exit_request    ExitRequest @relation(fields: [exit_request_id], references: [id], onDelete: Cascade)
+
+  @@index([exit_request_id], map: "exit_assets_exit_request_id_fkey")
+  @@map("exit_assets")
+}
+
+model ExitDocument {
+  id              Int         @id @default(autoincrement())
+  exit_request_id Int
+  file_name       String
+  file_path       String
+  file_type       String?
+  exit_request    ExitRequest @relation(fields: [exit_request_id], references: [id], onDelete: Cascade)
+
+  @@index([exit_request_id], map: "exit_documents_exit_request_id_fkey")
+  @@map("exit_documents")
+}
+
+model ExitWorkflowHistory {
+  id              Int         @id @default(autoincrement())
+  exit_request_id Int
+  action          String
+  comments        String?     @db.Text
+  actor_id        Int
+  created_at      DateTime    @default(now())
+  actor           User        @relation(fields: [actor_id], references: [id])
+  exit_request    ExitRequest @relation(fields: [exit_request_id], references: [id], onDelete: Cascade)
+
+  @@index([actor_id], map: "exit_workflow_history_actor_id_fkey")
+  @@index([exit_request_id], map: "exit_workflow_history_exit_request_id_fkey")
+  @@map("exit_workflow_history")
+}
+
+model ExitClearanceTask {
+  id               Int         @id @default(autoincrement())
+  exit_request_id  Int
+  task_name        String
+  department       String
+  status           String      @default("PENDING")
+  assigned_to_id   Int?
+  assigned_to_name String?
+  completion_date  DateTime?
+  remarks          String?     @db.Text
+  created_at       DateTime    @default(now())
+  updated_at       DateTime    @updatedAt
+  proof_type       String?
+  proof_url        String?
+  sla_deadline     DateTime?
+  exit_request     ExitRequest @relation(fields: [exit_request_id], references: [id], onDelete: Cascade)
+
+  @@index([exit_request_id], map: "exit_clearance_tasks_exit_request_id_fkey")
+  @@map("exit_clearance_tasks")
+}
+
+model ExitInterviewResponse {
+  id              Int         @id @default(autoincrement())
+  exit_request_id Int         @unique
+  data            Json
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @updatedAt
+  exit_request    ExitRequest @relation(fields: [exit_request_id], references: [id], onDelete: Cascade)
+
+  @@map("exit_interview_responses")
+}
+
+model ExitSettlement {
+  id               Int         @id @default(autoincrement())
+  exit_request_id  Int         @unique
+  total_earnings   Decimal     @db.Decimal(15, 2)
+  total_deductions Decimal     @db.Decimal(15, 2)
+  net_payable      Decimal     @db.Decimal(15, 2)
+  gratuity         Decimal?    @db.Decimal(15, 2)
+  leave_encashment Decimal?    @db.Decimal(15, 2)
+  notice_pay       Decimal?    @db.Decimal(15, 2)
+  data             Json?
+  created_at       DateTime    @default(now())
+  updated_at       DateTime    @updatedAt
+  exit_request     ExitRequest @relation(fields: [exit_request_id], references: [id], onDelete: Cascade)
+
+  @@map("exit_settlements")
+}
+
+model PriorEmploymentIncome {
+  id             Int      @id @default(autoincrement())
+  user_id        Int
+  financial_year String
+  gross_income   Decimal  @db.Decimal(15, 2)
+  pf_deducted    Decimal  @db.Decimal(15, 2)
+  tds_deducted   Decimal  @db.Decimal(15, 2)
+  pt_deducted    Decimal  @db.Decimal(15, 2)
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  user           User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@map("prior_employment_income")
+}
+
+model StateProfessionalTax {
+  id         Int      @id @default(autoincrement())
+  state      String   @unique
+  slabs      Json
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("state_professional_tax")
+}
+
+model SalaryStructureHistory {
+  id                  Int             @id @default(autoincrement())
+  organization_id     Int?
+  salary_structure_id Int
+  version             Int
+  components_data     Json
+  effective_from      DateTime
+  effective_to        DateTime?
+  created_at          DateTime        @default(now())
+  organization        Organization?   @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  salary_structure    SalaryStructure @relation(fields: [salary_structure_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id], map: "salary_structure_history_organization_id_fkey")
+  @@index([salary_structure_id], map: "salary_structure_history_salary_structure_id_fkey")
+  @@map("salary_structure_history")
+}
+
+model SystemSetting {
+  id         Int      @id @default(autoincrement())
+  key        String   @unique
+  value      String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("system_settings")
+}
+
+model AssetCategory {
+  id                Int            @id @default(autoincrement())
+  organization_id   Int
+  name              String
+  description       String?        @db.Text
+  depreciation_rate Float?         @default(0)
+  useful_life_years Int?
+  is_deleted        Boolean        @default(false)
+  created_at        DateTime       @default(now())
+  updated_at        DateTime       @updatedAt
+  organization      Organization   @relation(fields: [organization_id], references: [id])
+  requests          AssetRequest[]
+  assets            Asset[]
+
+  @@index([organization_id])
+  @@map("asset_categories")
+}
+
+model AssetLocation {
+  id              Int      @id @default(autoincrement())
+  organization_id Int
+  name            String
+  location_type   String?  @default("OFFICE")
+  address         String?  @db.Text
+  latitude        Float?
+  longitude       Float?
+  is_deleted      Boolean  @default(false)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  assets          Asset[]
+
+  @@index([organization_id])
+  @@map("asset_locations")
+}
+
+model Asset {
+  id                   Int               @id @default(autoincrement())
+  organization_id      Int
+  name                 String
+  description          String?           @db.Text
+  category_id          Int
+  location_id          Int
+  serial_number        String
+  asset_tag            String?
+  barcode              String?
+  qr_code              String?           @db.Text
+  manufacturer         String?
+  model                String?
+  status               String            @default("AVAILABLE")
+  purchase_date        DateTime?
+  purchase_price       Decimal?          @db.Decimal(15, 2)
+  current_value        Decimal?          @db.Decimal(15, 2)
+  warranty_expiry      DateTime?
+  depreciation_rate    Float?            @default(0)
+  is_deleted           Boolean           @default(false)
+  created_at           DateTime          @default(now())
+  updated_at           DateTime          @updatedAt
+  image_url            String?           @db.Text
+  specifications       Json?
+  asset_code           String?           @unique
+  assignments          AssetAssignment[]
+  documents            AssetDocument[]
+  history              AssetHistory[]
+  fulfillment_requests AssetRequest[]    @relation("AssignedAsset")
+  requests             AssetRequest[]    @relation("SpecificAsset")
+  category             AssetCategory     @relation(fields: [category_id], references: [id])
+  location             AssetLocation     @relation(fields: [location_id], references: [id])
+  organization         Organization      @relation(fields: [organization_id], references: [id])
+
+  @@unique([serial_number, organization_id])
+  @@index([organization_id])
+  @@index([status])
+  @@index([asset_tag])
+  @@index([category_id], map: "assets_category_id_fkey")
+  @@index([location_id], map: "assets_location_id_fkey")
+  @@map("assets")
+}
+
+model AssetAssignment {
+  id              Int          @id @default(autoincrement())
+  organization_id Int
+  asset_id        Int
+  user_id         Int
+  assigned_by     Int?
+  issue_date      DateTime     @default(now())
+  expected_return DateTime?
+  return_date     DateTime?
+  status          String       @default("ACTIVE")
+  notes           String?      @db.Text
+  is_deleted      Boolean      @default(false)
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
+  asset           Asset        @relation(fields: [asset_id], references: [id])
+  issuer          User?        @relation("AssetIssuer", fields: [assigned_by], references: [id])
+  organization    Organization @relation(fields: [organization_id], references: [id])
+  user            User         @relation("UserAssetAssignments", fields: [user_id], references: [id])
+
+  @@index([asset_id])
+  @@index([user_id])
+  @@index([organization_id])
+  @@index([assigned_by], map: "asset_assignments_assigned_by_fkey")
+  @@map("asset_assignments")
+}
+
+model AssetHistory {
+  id              Int          @id @default(autoincrement())
+  organization_id Int
+  asset_id        Int
+  action_type     String       @default("UPDATE")
+  field_changed   String?
+  old_value       String?      @db.Text
+  new_value       String?      @db.Text
+  changed_by_id   Int?
+  created_at      DateTime     @default(now())
+  asset           Asset        @relation(fields: [asset_id], references: [id])
+  changed_by      User?        @relation("AssetHistoryModifier", fields: [changed_by_id], references: [id])
+  organization    Organization @relation(fields: [organization_id], references: [id])
+
+  @@index([asset_id])
+  @@index([organization_id])
+  @@index([changed_by_id], map: "asset_history_changed_by_id_fkey")
+  @@map("asset_history")
+}
+
+model AssetDocument {
+  id              Int          @id @default(autoincrement())
+  organization_id Int
+  asset_id        Int
+  file_name       String
+  file_url        String       @db.Text
+  file_type       String?
+  file_size       Int?
+  uploaded_by     Int?
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
+  asset           Asset        @relation(fields: [asset_id], references: [id])
+  organization    Organization @relation(fields: [organization_id], references: [id])
+
+  @@index([asset_id])
+  @@index([organization_id])
+  @@map("asset_documents")
+}
+
+model AssetTrackingLog {
+  id              Int      @id @default(autoincrement())
+  organization_id Int
+  asset_id        Int
+  location_id     Int?
+  location_name   String?
+  latitude        Float?
+  longitude       Float?
+  source          String?  @default("MANUAL")
+  notes           String?  @db.Text
+  tracked_by      Int?
+  created_at      DateTime @default(now())
+
+  @@index([asset_id])
+  @@index([organization_id])
+  @@index([location_id], map: "asset_tracking_logs_location_id_fkey")
+  @@map("asset_tracking_logs")
+}
+
+model Vendor {
+  id                 Int      @id @default(autoincrement())
+  organization_id    Int
+  name               String
+  contact_person     String?
+  email              String?
+  phone              String?
+  address            String?  @db.Text
+  sla_terms          String?  @db.Text
+  performance_rating Float?   @default(0)
+  status             String   @default("ACTIVE")
+  is_deleted         Boolean  @default(false)
+  created_at         DateTime @default(now())
+  updated_at         DateTime @updatedAt
+
+  @@index([organization_id])
+  @@map("vendors")
+}
+
+model WorkOrder {
+  id              Int       @id @default(autoincrement())
+  organization_id Int
+  asset_id        Int
+  vendor_id       Int?
+  title           String
+  description     String?   @db.Text
+  priority        String    @default("MEDIUM")
+  status          String    @default("OPEN")
+  type            String    @default("CORRECTIVE")
+  estimated_cost  Decimal?  @db.Decimal(15, 2)
+  actual_cost     Decimal?  @db.Decimal(15, 2)
+  scheduled_date  DateTime?
+  completed_date  DateTime?
+  created_by      Int
+  assigned_to     Int?
+  is_deleted      Boolean   @default(false)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  @@index([asset_id])
+  @@index([organization_id])
+  @@index([status])
+  @@index([assigned_to], map: "work_orders_assigned_to_fkey")
+  @@index([created_by], map: "work_orders_created_by_fkey")
+  @@index([vendor_id], map: "work_orders_vendor_id_fkey")
+  @@map("work_orders")
+}
+
+model ProcurementOrder {
+  id                Int       @id @default(autoincrement())
+  organization_id   Int
+  vendor_id         Int?
+  order_number      String
+  title             String
+  description       String?   @db.Text
+  status            String    @default("DRAFT")
+  total_amount      Decimal?  @db.Decimal(15, 2)
+  currency          String    @default("USD")
+  order_date        DateTime?
+  expected_delivery DateTime?
+  actual_delivery   DateTime?
+  created_by        Int?
+  approved_by       Int?
+  is_deleted        Boolean   @default(false)
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+
+  @@unique([order_number, organization_id])
+  @@index([organization_id])
+  @@index([status])
+  @@index([vendor_id], map: "procurement_orders_vendor_id_fkey")
+  @@map("procurement_orders")
+}
+
+model ProcurementItem {
+  id                   Int      @id @default(autoincrement())
+  procurement_order_id Int
+  item_name            String
+  description          String?  @db.Text
+  quantity             Int      @default(1)
+  unit_price           Decimal? @db.Decimal(15, 2)
+  total_price          Decimal? @db.Decimal(15, 2)
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+
+  @@index([procurement_order_id])
+  @@map("procurement_items")
+}
+
+model ImportJob {
+  id              Int      @id @default(autoincrement())
+  organization_id Int
+  file_url        String   @db.Text
+  file_name       String?
+  entity_type     String   @default("ASSET")
+  status          String   @default("PENDING")
+  total_rows      Int?
+  processed_rows  Int?     @default(0)
+  failed_rows     Int?     @default(0)
+  error_log       Json?
+  created_by      Int?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@index([organization_id])
+  @@index([status])
+  @@map("import_jobs")
+}
+
+model AssetRequest {
+  id                Int            @id @default(autoincrement())
+  organization_id   Int
+  user_id           Int
+  asset_category_id Int?
+  specific_asset_id Int?
+  request_type      String         @default("NEW")
+  sub_category      String?
+  reason            String?        @db.Text
+  priority          String         @default("MEDIUM")
+  status            String         @default("PENDING")
+  assigned_asset_id Int?
+  approved_by       Int?
+  notes             String?        @db.Text
+  created_at        DateTime       @default(now())
+  updated_at        DateTime       @updatedAt
+  approver          User?          @relation("AssetApprover", fields: [approved_by], references: [id])
+  asset_category    AssetCategory? @relation(fields: [asset_category_id], references: [id])
+  assigned_asset    Asset?         @relation("AssignedAsset", fields: [assigned_asset_id], references: [id])
+  organization      Organization   @relation(fields: [organization_id], references: [id])
+  specific_asset    Asset?         @relation("SpecificAsset", fields: [specific_asset_id], references: [id])
+  user              User           @relation("UserAssetRequests", fields: [user_id], references: [id])
+
+  @@index([organization_id])
+  @@index([user_id])
+  @@index([status])
+  @@index([approved_by], map: "asset_requests_approved_by_fkey")
+  @@index([asset_category_id], map: "asset_requests_asset_category_id_fkey")
+  @@index([assigned_asset_id], map: "asset_requests_assigned_asset_id_fkey")
+  @@index([specific_asset_id], map: "asset_requests_specific_asset_id_fkey")
+  @@map("asset_requests")
+}
+
+model LmsCourse {
+  id                  Int                     @id @default(autoincrement())
+  organization_id     Int
+  instructor_id       Int
+  title               String
+  description         String?                 @db.Text
+  thumbnail_url       String?                 @db.Text
+  status              String                  @default("DRAFT")
+  is_deleted          Boolean                 @default(false)
+  created_at          DateTime                @default(now())
+  updated_at          DateTime                @updatedAt
+  duration            String?                 @db.VarChar(50)
+  learning_objectives Json?
+  level               String                  @default("BEGINNER")
+  curriculum_type     String                  @default("VIDEO")
+  course_type         String                  @default("TECHNICAL")
+  prerequisites       Json?
+  auto_assign_rules   Json?
+  assignments         LmsAssignment[]
+  certificates        LmsCertificate[]
+  instructor          User                    @relation("CourseInstructor", fields: [instructor_id], references: [id])
+  organization        Organization            @relation(fields: [organization_id], references: [id])
+  learningPaths       LmsLearningPathCourse[]
+  modules             LmsModule[]
+  quizzes             LmsQuiz[]
+
+  @@index([instructor_id], map: "lms_courses_instructor_id_fkey")
+  @@index([organization_id], map: "lms_courses_organization_id_fkey")
+  @@map("lms_courses")
+}
+
+model LmsModule {
+  id          Int           @id @default(autoincrement())
+  course_id   Int
+  title       String
+  order       Int           @default(0)
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  description String?       @db.Text
+  contents    LmsContent[]
+  course      LmsCourse     @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  progress    LmsProgress[]
+
+  @@index([course_id], map: "lms_modules_course_id_fkey")
+  @@map("lms_modules")
+}
+
+model LmsContent {
+  id             Int           @id @default(autoincrement())
+  module_id      Int
+  title          String
+  content_type   String        @default("TEXT")
+  content_url    String?       @db.Text
+  content_body   String?       @db.LongText
+  order          Int           @default(0)
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @updatedAt
+  meeting_config Json?
+  module         LmsModule     @relation(fields: [module_id], references: [id], onDelete: Cascade)
+  progress       LmsProgress[]
+
+  @@index([module_id], map: "lms_contents_module_id_fkey")
+  @@map("lms_contents")
+}
+
+model LmsLearningPath {
+  id                Int                     @id @default(autoincrement())
+  organization_id   Int
+  title             String
+  description       String?                 @db.Text
+  thumbnail_url     String?                 @db.Text
+  created_at        DateTime                @default(now())
+  updated_at        DateTime                @updatedAt
+  auto_assign_rules Json?
+  assignments       LmsAssignment[]
+  courses           LmsLearningPathCourse[]
+  organization      Organization            @relation(fields: [organization_id], references: [id])
+
+  @@index([organization_id], map: "lms_learning_paths_organization_id_fkey")
+  @@map("lms_learning_paths")
+}
+
+model LmsLearningPathCourse {
+  id               Int             @id @default(autoincrement())
+  learning_path_id Int
+  course_id        Int
+  order            Int             @default(0)
+  course           LmsCourse       @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  learning_path    LmsLearningPath @relation(fields: [learning_path_id], references: [id], onDelete: Cascade)
+
+  @@unique([learning_path_id, course_id])
+  @@index([course_id], map: "lms_learning_path_courses_course_id_fkey")
+  @@map("lms_learning_path_courses")
+}
+
+model LmsAssignment {
+  id               Int              @id @default(autoincrement())
+  user_id          Int
+  course_id        Int?
+  learning_path_id Int?
+  assigned_by      Int?
+  status           String           @default("ASSIGNED")
+  due_date         DateTime?
+  created_at       DateTime         @default(now())
+  updated_at       DateTime         @updatedAt
+  course           LmsCourse?       @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  learning_path    LmsLearningPath? @relation(fields: [learning_path_id], references: [id], onDelete: Cascade)
+  user             User             @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([course_id], map: "lms_assignments_course_id_fkey")
+  @@index([learning_path_id], map: "lms_assignments_learning_path_id_fkey")
+  @@index([user_id], map: "lms_assignments_user_id_fkey")
+  @@map("lms_assignments")
+}
+
+model LmsProgress {
+  id              Int        @id @default(autoincrement())
+  user_id         Int
+  module_id       Int
+  content_id      Int
+  completed       Boolean    @default(false)
+  time_spent      Int        @default(0)
+  completed_at    DateTime?
+  updated_at      DateTime   @updatedAt
+  engagement_data Json?
+  content         LmsContent @relation(fields: [content_id], references: [id], onDelete: Cascade)
+  module          LmsModule  @relation(fields: [module_id], references: [id], onDelete: Cascade)
+  user            User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, content_id])
+  @@index([content_id], map: "lms_progress_content_id_fkey")
+  @@index([module_id], map: "lms_progress_module_id_fkey")
+  @@map("lms_progress")
+}
+
+model LmsQuiz {
+  id            Int           @id @default(autoincrement())
+  course_id     Int
+  title         String
+  description   String?       @db.Text
+  passing_score Int           @default(70)
+  time_limit    Int?
+  created_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
+  max_attempts  Int           @default(0)
+  questions     LmsQuestion[]
+  course        LmsCourse     @relation(fields: [course_id], references: [id], onDelete: Cascade)
+
+  @@index([course_id], map: "lms_quizzes_course_id_fkey")
+  @@map("lms_quizzes")
+}
+
+model LmsQuestion {
+  id             Int      @id @default(autoincrement())
+  quiz_id        Int
+  question_text  String   @db.Text
+  question_type  String   @default("MCQ")
+  options        Json
+  correct_answer Json
+  explanation    String?  @db.Text
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  quiz           LmsQuiz  @relation(fields: [quiz_id], references: [id], onDelete: Cascade)
+
+  @@index([quiz_id], map: "lms_questions_quiz_id_fkey")
+  @@map("lms_questions")
+}
+
+model LmsQuizAttempt {
+  id           Int      @id @default(autoincrement())
+  user_id      Int
+  quiz_id      Int
+  score        Int
+  status       String
+  attempt_date DateTime @default(now())
+  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id], map: "lms_quiz_attempts_user_id_fkey")
+  @@map("lms_quiz_attempts")
+}
+
+model LmsCertificate {
+  id             Int       @id @default(autoincrement())
+  user_id        Int
+  course_id      Int
+  certificate_id String    @unique
+  issue_date     DateTime  @default(now())
+  expiry_date    DateTime?
+  created_at     DateTime  @default(now())
+  course         LmsCourse @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  user           User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([course_id], map: "lms_certificates_course_id_fkey")
+  @@index([user_id], map: "lms_certificates_user_id_fkey")
+  @@map("lms_certificates")
+}
+
+model department {
+  id                   Int                 @id @default(autoincrement())
+  department_name      String
+  department_code      String
+  branch_id            Int
+  description          String?
+  parent_department_id Int?
+  annual_budget        Decimal?
+  manager_id           Int?
+  cost_center          String?
+  is_deleted           Boolean             @default(false)
+  deleted_at           DateTime?
+  created_at           DateTime            @default(now())
+  updated_at           DateTime            @default(now()) @updatedAt
+  branches             Branch              @relation(fields: [branch_id], references: [id], map: "Department_branch_id_fkey")
+  users                User?               @relation(fields: [manager_id], references: [id], map: "Department_manager_id_fkey")
+  designations         Designation[]
+  reimbursementTypes   ReimbursementType[]
+  loanTypes            LoanType[]
+  team                 team[]
+  userDetails          UserDetail[]
+  company_news_departments company_news_departments[]
+
+  @@index([branch_id], map: "Department_branch_id_idx")
+  @@index([manager_id], map: "Department_manager_id_fkey")
+}
+
+model team {
+  id            Int          @id @default(autoincrement())
+  department_id Int
+  team_name     String
+  description   String?
+  team_lead_id  Int?
+  is_deleted    Boolean      @default(false)
+  deleted_at    DateTime?
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @default(now()) @updatedAt
+  department    department   @relation(fields: [department_id], references: [id], map: "Team_department_id_fkey")
+  users         User?        @relation(fields: [team_lead_id], references: [id], map: "Team_team_lead_id_fkey")
+  userDetails   UserDetail[]
+
+  @@index([department_id], map: "Team_department_id_fkey")
+  @@index([team_lead_id], map: "Team_team_lead_id_fkey")
+}
+
+model Designation {
+  id                    Int           @id @default(autoincrement())
+  organization_id       Int?
+  designation_name      String
+  designation_code      String
+  description           String?       @db.Text
+  parent_designation_id           Int?
+  secondary_parent_designation_id  Int?
+  secondary_reporting_employee_id  Int?
+  department_id                    Int?
+  is_deleted                       Boolean       @default(false)
+  deleted_at                       DateTime?
+  created_at                       DateTime      @default(now())
+  updated_at                       DateTime      @default(now()) @updatedAt
+  parent                           Designation?  @relation("DesignationTree", fields: [parent_designation_id], references: [id], map: "Designation_parent_designation_id_fkey")
+  secondary_parent                 Designation?  @relation("SecondaryDesignationTree", fields: [secondary_parent_designation_id], references: [id])
+  secondary_reporting_employee     UserDetail?   @relation("SecondaryReportingEmployee", fields: [secondary_reporting_employee_id], references: [id])
+  children                         Designation[] @relation("DesignationTree")
+  secondary_children               Designation[] @relation("SecondaryDesignationTree")
+  department                       department?   @relation(fields: [department_id], references: [id])
+  organizations                    Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  userDetails                      UserDetail[]
+  loanTypes                        LoanType[]
+
+  @@unique([organization_id, designation_code])
+  @@unique([organization_id, designation_name])
+  @@index([parent_designation_id], map: "Designation_parent_designation_id_idx")
+  @@index([secondary_parent_designation_id], map: "Designation_secondary_parent_designation_id_idx")
+  @@index([secondary_reporting_employee_id], map: "Designation_secondary_reporting_employee_id_idx")
+  @@index([department_id], map: "Designation_department_id_idx")
+  @@index([organization_id], map: "Designation_organization_id_idx")
+  @@map("designations")
+}
+
+model Job {
+  id                    Int                    @id @default(autoincrement())
+  organization_id       Int
+  title                 String
+  description           String                 @db.Text
+  department            String
+  location              String
+  employment_type       String
+  experience_level      String
+  experience_required   String?
+  openings_count        Int                    @default(1)
+  remote_option         String
+  salary_type           String
+  currency              String                 @default("INR")
+  min_salary            Decimal?               @db.Decimal(15, 2)
+  max_salary            Decimal?               @db.Decimal(15, 2)
+  salary_period         String?
+  job_summary           String                 @db.Text
+  responsibilities      Json?
+  requirements          Json?
+  required_skills       Json?
+  preferred_skills      Json?
+  benefits              Json?
+  hiring_manager_id     Int?
+  assigned_recruiter_id Int?
+  application_deadline  DateTime?
+  target_start_date     DateTime?
+  interview_rounds      Int?
+  travel_required       String?
+  status                String                 @default("OPEN")
+  is_deleted            Boolean                @default(false)
+  deleted_at            DateTime?
+  created_at            DateTime               @default(now())
+  updated_at            DateTime               @updatedAt
+  applications          CandidateApplication[]
+  interviews            Interview[]
+  organization          Organization           @relation(fields: [organization_id], references: [id])
+  offers                Offer[]
+
+  @@index([id])
+  @@index([status])
+  @@index([organization_id], map: "jobs_organization_id_fkey")
+  @@map("jobs")
+}
+
+model Interview {
+  id               Int                    @id @default(autoincrement())
+  uuid             String                 @unique @default(uuid())
+  candidate_id     Int
+  job_id           Int
+  application_id   Int?
+  round_number     Int
+  type             InterviewType
+  scheduled_at     DateTime
+  duration_minutes Int
+  meeting_link     String?
+  status           InterviewStatus        @default(SCHEDULED)
+  notes            String?
+  created_at       DateTime               @default(now())
+  updated_at       DateTime               @updatedAt
+  is_deleted       Boolean                @default(false)
+  deleted_at       DateTime?
+  events           InterviewEvent[]
+  feedback         InterviewFeedback?
+  interviewers     InterviewInterviewer[]
+  application      CandidateApplication?  @relation(fields: [application_id], references: [id])
+  candidate        Candidate              @relation(fields: [candidate_id], references: [id])
+  job              Job                    @relation(fields: [job_id], references: [id])
+
+  @@index([candidate_id])
+  @@index([job_id])
+  @@index([application_id])
+  @@index([status])
+  @@index([scheduled_at])
+  @@map("interviews")
+}
+
+model InterviewInterviewer {
+  interview_id Int
+  user_id      Int
+  role         String
+  interview    Interview @relation(fields: [interview_id], references: [id])
+  user         User      @relation(fields: [user_id], references: [id])
+
+  @@id([interview_id, user_id])
+  @@index([user_id], map: "interview_interviewers_user_id_fkey")
+  @@map("interview_interviewers")
+}
+
+model InterviewFeedback {
+  id                     Int            @id @default(autoincrement())
+  interview_id           Int            @unique
+  technical_rating       Int            @default(0)
+  communication_rating   Int            @default(0)
+  problem_solving_rating Int            @default(0)
+  culture_fit_rating     Int            @default(0)
+  recommendation         Recommendation
+  strengths              String?
+  weaknesses             String?
+  additional_notes       String?
+  created_at             DateTime       @default(now())
+  updated_at             DateTime       @updatedAt
+  interview              Interview      @relation(fields: [interview_id], references: [id])
+
+  @@index([interview_id])
+  @@map("interview_feedbacks")
+}
+
+model InterviewEvent {
+  id           Int                @id @default(autoincrement())
+  interview_id Int
+  event_type   InterviewEventType
+  actor_id     Int?
+  actor_role   String?
+  timestamp    DateTime           @default(now())
+  details      Json?
+  interview    Interview          @relation(fields: [interview_id], references: [id])
+
+  @@index([interview_id])
+  @@map("interview_events")
+}
+
+model Candidate {
+  id                  Int                    @id @default(autoincrement())
+  uuid                String                 @unique @default(uuid())
+  organization_id     Int?
+  first_name          String
+  last_name           String
+  email               String                 @unique
+  phone               String?
+  joining_date        DateTime?
+  otp_secret          String?
+  otp_attempts        Int                    @default(0)
+  policies_accepted   Boolean                @default(false)
+  bank_details        Json?
+  is_draft            Boolean                @default(false)
+  experience_history  Json?
+  education_history   Json?
+  gender              String?
+  dob                 DateTime?
+  address             String?
+  experience_years    Decimal?               @db.Decimal(5, 2)
+  current_company     String?
+  current_designation String?
+  current_location    String?
+  linkedin_url        String?
+  portfolio_url       String?
+  github_url          String?
+  current_ctc         Decimal?               @db.Decimal(15, 2)
+  expected_ctc        Decimal?               @db.Decimal(15, 2)
+  notice_period_days  Int?
+  skills              String?
+  resume_url          String?
+  source              String?
+  highest_degree      String?
+  specialization      String?
+  university          String?
+  graduation_year     Int?
+  gpa_percentage      Decimal?               @db.Decimal(5, 2)
+  is_deleted          Boolean                @default(false)
+  deleted_at          DateTime?
+  created_at          DateTime               @default(now())
+  updated_at          DateTime               @updatedAt
+  bgv_cases           BgvCase[]
+  applications        CandidateApplication[]
+  documents           CandidateDocument[]
+  interviews          Interview[]
+  offers              Offer[]
+
+  @@index([email])
+  @@index([uuid])
+  @@map("candidates")
+}
+
+model CandidateApplication {
+  id           Int         @id @default(autoincrement())
+  uuid         String      @unique @default(uuid())
+  candidate_id Int
+  job_id       Int
+  status       String      @default("APPLIED")
+  answers      Json?
+  version      Int         @default(1)
+  is_deleted   Boolean     @default(false)
+  deleted_at   DateTime?
+  applied_at   DateTime    @default(now())
+  updated_at   DateTime    @updatedAt
+  bgv_case     BgvCase?
+  candidate    Candidate   @relation(fields: [candidate_id], references: [id], onDelete: Cascade)
+  job          Job         @relation(fields: [job_id], references: [id], onDelete: Cascade)
+  interviews   Interview[]
+  offers       Offer[]
+
+  @@index([candidate_id])
+  @@index([job_id])
+  @@index([uuid])
+  @@index([status])
+  @@map("candidate_applications")
+}
+
+model Offer {
+  id             String               @id @default(uuid())
+  candidate_id   Int
+  job_id         Int
+  application_id Int
+  recruiter_id   Int?
+  hr_reviewer_id Int?
+  status         OfferStatus          @default(DRAFT)
+  expiry_date    DateTime
+  joining_date   DateTime
+  is_deleted     Boolean              @default(false)
+  deleted_at     DateTime?
+  created_at     DateTime             @default(now())
+  updated_at     DateTime             @updatedAt
+  negotiations   Negotiation[]
+  versions       OfferVersion[]
+  application    CandidateApplication @relation(fields: [application_id], references: [id])
+  candidate      Candidate            @relation(fields: [candidate_id], references: [id])
+  reviewer       User?                @relation("ReviewerOffers", fields: [hr_reviewer_id], references: [id])
+  job            Job                  @relation(fields: [job_id], references: [id])
+  recruiter      User?                @relation("RecruiterOffers", fields: [recruiter_id], references: [id])
+
+  @@index([candidate_id])
+  @@index([job_id])
+  @@index([application_id])
+  @@index([status])
+  @@index([expiry_date])
+  @@index([hr_reviewer_id], map: "offers_hr_reviewer_id_fkey")
+  @@index([recruiter_id], map: "offers_recruiter_id_fkey")
+  @@map("offers")
+}
+
+model OfferVersion {
+  id                String                  @id @default(uuid())
+  offer_id          String
+  version_number    Int                     @default(1)
+  created_by_id     Int
+  created_at        DateTime                @default(now())
+  joining_date      DateTime
+  expiry_date       DateTime
+  work_location     String
+  work_mode         String
+  probation_period  Int                     @default(0)
+  reporting_manager String
+  notice_clauses    String?                 @db.Text
+  confidentiality   String?                 @db.Text
+  employment_conds  String?                 @db.Text
+  additional_terms  String?                 @db.Text
+  compensation      CompensationComponent[]
+  documents         OfferDocument[]
+  created_by        User                    @relation(fields: [created_by_id], references: [id])
+  offer             Offer                   @relation(fields: [offer_id], references: [id])
+
+  @@index([offer_id])
+  @@index([created_by_id], map: "offer_versions_created_by_id_fkey")
+  @@map("offer_versions")
+}
+
+model CompensationComponent {
+  id               String                @id @default(uuid())
+  offer_version_id String
+  type             String
+  amount           Decimal               @db.Decimal(15, 2)
+  currency         String                @default("INR")
+  frequency        CompensationFrequency @default(ANNUAL)
+  description      String?
+  offer_version    OfferVersion          @relation(fields: [offer_version_id], references: [id], onDelete: Cascade)
+
+  @@index([offer_version_id])
+  @@map("compensation_components")
+}
+
+model OfferDocument {
+  id               String       @id @default(uuid())
+  offer_version_id String
+  file_path        String       @db.Text
+  original_name    String
+  mime_type        String
+  token            String?      @unique
+  created_at       DateTime     @default(now())
+  offer_version    OfferVersion @relation(fields: [offer_version_id], references: [id], onDelete: Cascade)
+
+  @@index([offer_version_id])
+  @@map("offer_documents")
+}
+
+model Negotiation {
+  id             String   @id @default(uuid())
+  offer_id       String
+  requester_role String
+  comment        String   @db.Text
+  created_at     DateTime @default(now())
+  offer          Offer    @relation(fields: [offer_id], references: [id])
+
+  @@index([offer_id])
+  @@map("negotiations")
+}
+
+model OfferEvent {
+  id         String   @id @default(uuid())
+  offer_id   String
+  event_type String
+  actor_id   Int?
+  actor_role String?
+  timestamp  DateTime @default(now())
+  details    Json?
+
+  @@index([offer_id])
+  @@map("offer_events")
+}
+
+model CandidateDocument {
+  id            Int       @id @default(autoincrement())
+  candidate_id  Int
+  document_type String
+  file_url      String    @db.Text
+  status        String    @default("PENDING_VERIFICATION")
+  uploaded_at   DateTime  @default(now())
+  verified_at   DateTime?
+  candidate     Candidate @relation(fields: [candidate_id], references: [id], onDelete: Cascade)
+
+  @@index([candidate_id])
+  @@map("candidate_documents")
+}
+
+model AuditEvent {
+  id             Int      @id @default(autoincrement())
+  actor_id       Int?
+  actor_type     String?
+  entity_type    String
+  entity_id      Int
+  action_type    String
+  previous_state String?
+  new_state      String?
+  comments       String?  @db.Text
+  ip_address     String?
+  correlation_id String?
+  timestamp      DateTime @default(now())
+
+  @@index([entity_type, entity_id])
+  @@index([actor_id])
+  @@map("audit_events")
+}
+
+model Survey {
+  id          String           @id @default(uuid())
+  title       String
+  description String?
+  is_active       Boolean          @default(true)
+  access          String           @default("private")
+  survey_password String?
+  theme_preset    String?
+  theme_config    String?       @db.Text
+  start_date      DateTime?
+  end_date        DateTime?
+  target_department String?     @default("All Departments")
+  created_at      DateTime         @default(now())
+  updated_at      DateTime         @updatedAt
+  created_by      Int
+  is_deleted      Boolean          @default(false)
+  deleted_at      DateTime?
+  questions   Question[]
+  responses   SurveyResponse[]
+  cloned_from_id  String?
+  is_clone        Boolean          @default(false)
+  cloned_from     Survey?          @relation("SurveyClone", fields: [cloned_from_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  cloned_surveys  Survey[]         @relation("SurveyClone")
+  creator     User             @relation(fields: [created_by], references: [id])
+
+  @@index([created_by])
+  @@map("surveys")
+}
+
+model Question {
+  id                 Int          @id @default(autoincrement())
+  surveyId           String
+  type               QuestionType
+  label              String
+  order              Int
+  required           Boolean      @default(false)
+  parent_question_id Int?
+  trigger_option_id  Int?
+  is_deleted         Boolean      @default(false)
+  deleted_at         DateTime?
+  answers            Answer[]
+  options            Option[]
+  survey             Survey       @relation(fields: [surveyId], references: [id], onDelete: Cascade)
+  parentQuestion     Question?    @relation("QuestionCondition", fields: [parent_question_id], references: [id])
+  childQuestions     Question[]   @relation("QuestionCondition")
+  triggerOption      Option?      @relation("TriggerOption", fields: [trigger_option_id], references: [id])
+
+  @@index([surveyId])
+  @@index([parent_question_id])
+  @@map("questions")
+}
+
+model Option {
+  id                 Int        @id @default(autoincrement())
+  questionId         Int
+  label              String
+  value              String
+  order              Int
+  is_deleted         Boolean    @default(false)
+  deleted_at         DateTime?
+  answers            Answer[]
+  question           Question   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  triggeredQuestions Question[] @relation("TriggerOption")
+
+  @@index([questionId])
+  @@map("options")
+}
+
+model SurveyResponse {
+  id           Int       @id @default(autoincrement())
+  surveyId     String
+  userId       Int?
+  submitted_at DateTime  @default(now())
+  is_deleted   Boolean   @default(false)
+  deleted_at   DateTime?
+  answers      Answer[]
+  survey       Survey    @relation(fields: [surveyId], references: [id])
+  user         User?     @relation(fields: [userId], references: [id])
+
+  @@index([surveyId, userId])
+  @@index([userId], map: "survey_responses_userId_fkey")
+  @@map("survey_responses")
+}
+
+model Answer {
+  id               Int            @id @default(autoincrement())
+  responseId       Int
+  questionId       Int
+  valueText        String?        @db.Text
+  valueNumber      Float?
+  selectedOptionId Int?
+  is_deleted       Boolean        @default(false)
+  deleted_at       DateTime?
+  question         Question       @relation(fields: [questionId], references: [id])
+  response         SurveyResponse @relation(fields: [responseId], references: [id])
+  selectedOption   Option?        @relation(fields: [selectedOptionId], references: [id])
+
+  @@index([responseId])
+  @@index([questionId])
+  @@index([selectedOptionId], map: "answers_selectedOptionId_fkey")
+  @@map("answers")
+}
+
+model BgvCase {
+  id             String               @id @default(uuid())
+  application_id Int                  @unique
+  candidate_id   Int
+  status         String               @default("BGV_INITIATED")
+  risk_score     Int                  @default(0)
+  risk_category  String               @default("LOW")
+  hr_reviewer_id Int?
+  vendor_ref_id  String?
+  sla_due_date   DateTime?
+  summary        String?              @db.Text
+  is_deleted     Boolean              @default(false)
+  created_at     DateTime             @default(now())
+  updated_at     DateTime             @updatedAt
+  audit_events   BgvAuditEvent[]
+  application    CandidateApplication @relation(fields: [application_id], references: [id], onDelete: Cascade)
+  candidate      Candidate            @relation(fields: [candidate_id], references: [id], onDelete: Cascade)
+  hr_reviewer    User?                @relation("BgvReviewer", fields: [hr_reviewer_id], references: [id])
+  documents      BgvDocument[]
+  reviews        BgvReview[]
+  risk_flags     BgvRiskFlag[]
+  verifications  BgvVerification[]
+
+  @@index([application_id])
+  @@index([candidate_id])
+  @@index([status])
+  @@index([hr_reviewer_id], map: "bgv_cases_hr_reviewer_id_fkey")
+  @@map("bgv_cases")
+}
+
+model BgvVerification {
+  id          String        @id @default(uuid())
+  bgv_case_id String
+  type        String
+  status      String        @default("PENDING")
+  verified_by String?
+  remarks     String?       @db.Text
+  is_deleted  Boolean       @default(false)
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  documents   BgvDocument[]
+  bgv_case    BgvCase       @relation(fields: [bgv_case_id], references: [id], onDelete: Cascade)
+
+  @@index([bgv_case_id])
+  @@map("bgv_verifications")
+}
+
+model BgvDocument {
+  id                  String           @id @default(uuid())
+  bgv_case_id         String
+  bgv_verification_id String?
+  document_type       String
+  file_url            String           @db.Text
+  original_name       String
+  mime_type           String
+  status              String           @default("UPLOADED")
+  rejection_reason    String?          @db.Text
+  is_deleted          Boolean          @default(false)
+  created_at          DateTime         @default(now())
+  bgv_case            BgvCase          @relation(fields: [bgv_case_id], references: [id], onDelete: Cascade)
+  verification        BgvVerification? @relation(fields: [bgv_verification_id], references: [id])
+
+  @@index([bgv_case_id])
+  @@index([bgv_verification_id], map: "bgv_documents_bgv_verification_id_fkey")
+  @@map("bgv_documents")
+}
+
+model BgvReview {
+  id          String   @id @default(uuid())
+  bgv_case_id String
+  reviewer_id Int
+  decision    String
+  remarks     String   @db.Text
+  created_at  DateTime @default(now())
+  bgv_case    BgvCase  @relation(fields: [bgv_case_id], references: [id], onDelete: Cascade)
+  reviewer    User     @relation(fields: [reviewer_id], references: [id])
+
+  @@index([bgv_case_id])
+  @@index([reviewer_id], map: "bgv_reviews_reviewer_id_fkey")
+  @@map("bgv_reviews")
+}
+
+model BgvRiskFlag {
+  id           String   @id @default(uuid())
+  bgv_case_id  String
+  rule_name    String
+  score_impact Int
+  description  String   @db.Text
+  created_at   DateTime @default(now())
+  bgv_case     BgvCase  @relation(fields: [bgv_case_id], references: [id], onDelete: Cascade)
+
+  @@index([bgv_case_id])
+  @@map("bgv_risk_flags")
+}
+
+model BgvAuditEvent {
+  id             String   @id @default(uuid())
+  bgv_case_id    String
+  actor_id       Int?
+  actor_type     String
+  action_type    String
+  old_value      String?  @db.Text
+  new_value      String?  @db.Text
+  reason         String?  @db.Text
+  ip_address     String?
+  correlation_id String?
+  created_at     DateTime @default(now())
+  bgv_case       BgvCase  @relation(fields: [bgv_case_id], references: [id], onDelete: Cascade)
+
+  @@index([bgv_case_id])
+  @@map("bgv_audit_events")
+}
+
+model Loan {
+  id                     Int        @id @default(autoincrement())
+  userDetailId           Int
+  principalAmount        Decimal    @db.Decimal(15, 2)
+  monthlyRecovery        Decimal    @db.Decimal(15, 2)
+  outstandingBalance     Decimal    @db.Decimal(15, 2)
+  isActive               Boolean    @default(true)
+  status                 String     @default("PENDING_MANAGER")
+  reason                 String?    @db.Text
+  reporting_manager_id   Int?
+  manager_remarks        String?    @db.Text
+  manager_approved_at    DateTime?
+  hr_approved_by         Int?
+  hr_remarks             String?    @db.Text
+  hr_approved_at         DateTime?
+  finance_approved_by    Int?
+  finance_remarks        String?    @db.Text
+  finance_approved_at    DateTime?
+  disbursed_at           DateTime?
+  disbursement_reference String?    @db.Text
+  created_at             DateTime   @default(now())
+  updated_at             DateTime   @updatedAt
+  userDetail             UserDetail @relation(fields: [userDetailId], references: [id])
+  reporting_manager      User?      @relation("LoanReportingManager", fields: [reporting_manager_id], references: [id])
+  hr_approver            User?      @relation("LoanHRApprover", fields: [hr_approved_by], references: [id])
+  finance_approver       User?      @relation("LoanFinanceApprover", fields: [finance_approved_by], references: [id])
+
+  @@index([userDetailId])
+  @@index([reporting_manager_id])
+  @@index([status])
+  @@map("loans")
+}
+
+model Advance {
+  id                     Int        @id @default(autoincrement())
+  userDetailId           Int
+  principalAmount        Decimal    @db.Decimal(15, 2)
+  monthlyRecovery        Decimal    @db.Decimal(15, 2)
+  outstandingBalance     Decimal    @db.Decimal(15, 2)
+  isActive               Boolean    @default(true)
+  status                 String     @default("PENDING_MANAGER")
+  reason                 String?    @db.Text
+  reporting_manager_id   Int?
+  manager_remarks        String?    @db.Text
+  manager_approved_at    DateTime?
+  hr_approved_by         Int?
+  hr_remarks             String?    @db.Text
+  hr_approved_at         DateTime?
+  finance_approved_by    Int?
+  finance_remarks        String?    @db.Text
+  finance_approved_at    DateTime?
+  disbursed_at           DateTime?
+  disbursement_reference String?    @db.Text
+  created_at             DateTime   @default(now())
+  updated_at             DateTime   @updatedAt
+  userDetail             UserDetail @relation(fields: [userDetailId], references: [id])
+  reporting_manager      User?      @relation("AdvanceReportingManager", fields: [reporting_manager_id], references: [id])
+  hr_approver            User?      @relation("AdvanceHRApprover", fields: [hr_approved_by], references: [id])
+  finance_approver       User?      @relation("AdvanceFinanceApprover", fields: [finance_approved_by], references: [id])
+
+  @@index([userDetailId])
+  @@index([reporting_manager_id])
+  @@index([status])
+  @@map("advances")
+}
+
+// ─── Configurable Loans & Advances Module ─────────────────────────────
+
+model LoanType {
+  id                   Int                  @id @default(autoincrement())
+  name                 String               @db.VarChar(100)
+  code                 String               @unique @db.VarChar(20)
+  category             String               @default("LOAN") // LOAN | ADVANCE
+  description          String?              @db.Text
+  minAmount            Decimal              @db.Decimal(15, 2) @default(0)
+  maxAmount            Decimal              @db.Decimal(15, 2) @default(0)
+  interestRate         Decimal              @db.Decimal(5, 2) @default(0)
+  repaymentMethod      String               @default("EMI") // EMI | SALARY_DEDUCTION | ONE_TIME
+  maxTenure            Int                  @default(12)
+  installments         Int                  @default(1)
+  requiresDocuments    Boolean              @default(false)
+  isActive             Boolean              @default(true)
+  sortOrder            Int                  @default(0)
+  effectiveDate        DateTime?
+  expiryDate           DateTime?
+  maxApplicationsPerPeriod Int?
+  period               String               @default("Lifetime") // Monthly | Quarterly | Annually | Lifetime
+  department_id        Int?
+  designation_id       Int?
+  branch_id            Int?
+  role_id              Int?
+  organization_id      Int?
+  createdAt            DateTime             @default(now())
+  updatedAt            DateTime             @updatedAt
+
+  department           department?          @relation(fields: [department_id], references: [id])
+  designation          Designation?         @relation(fields: [designation_id], references: [id])
+  branch               Branch?              @relation(fields: [branch_id], references: [id])
+  role                 Role?                @relation(fields: [role_id], references: [id])
+  organization         Organization?        @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  eligibilityRules     LoanEligibilityRule[]
+  approvalWorkflow     LoanApprovalWorkflow[]
+  applications         LoanApplication[]
+
+  @@index([department_id])
+  @@index([designation_id])
+  @@index([branch_id])
+  @@index([role_id])
+  @@index([organization_id])
+  @@map("loan_types")
+}
+
+model LoanEligibilityRule {
+  id                 Int      @id @default(autoincrement())
+  loanTypeId         Int
+  ruleType           String   @db.VarChar(50) // employment_type | min_service_months | min_salary | max_salary | departments | designations | grades | locations | max_active_loans | confirmation_required
+  ruleValue          String   @db.Text // JSON string for array values, or plain value for numeric
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  loanType           LoanType @relation(fields: [loanTypeId], references: [id], onDelete: Cascade)
+
+  @@index([loanTypeId])
+  @@map("loan_eligibility_rules")
+}
+
+model LoanApprovalWorkflow {
+  id                 Int      @id @default(autoincrement())
+  loanTypeId         Int
+  stepOrder          Int
+  roleName           String   @db.VarChar(100) // Role name required for this step
+  isRequired         Boolean  @default(true)
+  createdAt          DateTime @default(now())
+
+  loanType           LoanType @relation(fields: [loanTypeId], references: [id], onDelete: Cascade)
+
+  @@unique([loanTypeId, stepOrder])
+  @@index([loanTypeId])
+  @@map("loan_approval_workflows")
+}
+
+model LoanApplication {
+  id                 Int      @id @default(autoincrement())
+  applicationNumber  String   @unique @db.VarChar(30)
+  userDetailId       Int
+  loanTypeId         Int
+  requestedAmount    Decimal  @db.Decimal(15, 2)
+  approvedAmount     Decimal? @db.Decimal(15, 2)
+  tenure             Int
+  monthlyEmi         Decimal? @db.Decimal(15, 2)
+  interestRate       Decimal  @db.Decimal(5, 2) @default(0)
+  totalPayable       Decimal? @db.Decimal(15, 2)
+  outstandingBalance Decimal  @db.Decimal(15, 2) @default(0)
+  paidAmount         Decimal  @db.Decimal(15, 2) @default(0)
+  reason             String?  @db.Text
+  status             String   @default("DRAFT") // DRAFT | SUBMITTED | PENDING_STEP_1..N | APPROVED | REJECTED | SETTLED | DISBURSED | WITHDRAWN
+  currentStep        Int      @default(0)
+  startDate          DateTime?
+  endDate            DateTime?
+  isActive           Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  userDetail         UserDetail @relation(fields: [userDetailId], references: [id])
+  loanType           LoanType @relation(fields: [loanTypeId], references: [id])
+  approvals          LoanApproval[]
+  repaymentSchedule  LoanRepaymentSchedule[]
+  documents          LoanDocument[]
+
+  @@index([userDetailId])
+  @@index([loanTypeId])
+  @@index([status])
+  @@map("loan_applications")
+}
+
+model LoanApproval {
+  id                 Int      @id @default(autoincrement())
+  applicationId      Int
+  stepOrder          Int
+  approverId         Int
+  status             String   @default("PENDING") // PENDING | APPROVED | REJECTED
+  remarks            String?  @db.Text
+  actionAt           DateTime?
+  createdAt          DateTime @default(now())
+
+  application        LoanApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  approver           User       @relation(fields: [approverId], references: [id])
+
+  @@index([applicationId])
+  @@index([approverId])
+  @@map("loan_approvals")
+}
+
+model LoanRepaymentSchedule {
+  id                 Int      @id @default(autoincrement())
+  applicationId      Int
+  installmentNo      Int
+  dueDate            DateTime
+  amount             Decimal  @db.Decimal(15, 2)
+  principalPortion   Decimal  @db.Decimal(15, 2) @default(0)
+  interestPortion    Decimal  @db.Decimal(15, 2) @default(0)
+  status             String   @default("PENDING") // PENDING | PAID | OVERDUE | PARTIAL
+  paidAmount         Decimal  @db.Decimal(15, 2) @default(0)
+  paidDate           DateTime?
+  createdAt          DateTime @default(now())
+
+  application        LoanApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@map("loan_repayment_schedules")
+}
+
+model LoanDocument {
+  id                 Int      @id @default(autoincrement())
+  applicationId      Int
+  fileName           String   @db.VarChar(255)
+  fileUrl            String   @db.VarChar(500)
+  fileType           String?  @db.VarChar(50)
+  fileSize           Int?
+  uploadedAt         DateTime @default(now())
+
+  application        LoanApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@map("loan_documents")
+}
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  module    String   @db.VarChar(50)
+  action    String   @db.VarChar(50)
+  entityId  String
+  actorId   Int
+  oldValue  Json?
+  newValue  Json?
+  ipAddress String?
+  createdAt DateTime @default(now())
+
+  @@index([module, action])
+  @@index([actorId])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model Document {
+  id              Int      @id @default(autoincrement())
+  title           String
+  description     String?  @db.Text
+  category        String
+  tab             String   @default("all")
+  file_url        String
+  file_type       String?
+  file_size       Int?
+  downloads_count Int      @default(0)
+  views_count     Int      @default(0)
+  is_restricted   Boolean  @default(false)
+  tags            Json?
+  version         String   @default("1.0")
+  user_id         Int?
+  uploaded_by     Int
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  uploader        User     @relation("DocumentUploader", fields: [uploaded_by], references: [id])
+  owner           User?    @relation("DocumentOwner", fields: [user_id], references: [id])
+
+  @@index([uploaded_by], map: "documents_uploaded_by_fkey")
+  @@index([user_id], map: "documents_user_id_fkey")
+  @@map("documents")
+}
+
+model tenants {
+  id        Int    @id @default(autoincrement())
+  name      String
+  editionId Int
+}
+
+model editions {
+  id          Int     @id @default(autoincrement())
+  code        String  @unique
+  name        String
+  description String?
+}
+
+model edition_modules {
+  editionId       Int
+  featureModuleId Int
+
+  @@id([editionId, featureModuleId])
+}
+
+model feature_modules {
+  id          Int     @id @default(autoincrement())
+  code        String  @unique
+  name        String
+  description String?
+}
+
+model tenant_feature_overrides {
+  tenantId        Int
+  featureModuleId Int
+  enabled         Boolean @default(true)
+
+  @@id([tenantId, featureModuleId])
+}
+
+model announcements {
+  id         Int       @id @default(autoincrement())
+  title      String
+  content    String    @db.Text
+  priority   String    @default("normal")
+  is_active  Boolean   @default(true)
+  expires_at DateTime?
+  created_by Int
+  created_at DateTime  @default(now())
+  updated_at DateTime
+  users      User      @relation(fields: [created_by], references: [id])
+
+  @@index([created_by], map: "announcements_created_by_fkey")
+}
+
+model company_news {
+  id         Int      @id @default(autoincrement())
+  title      String
+  content    String   @db.Text
+  image_url  String?
+  access_type String  @default("public") // "public" | "department"
+  status     String   @default("draft")   // "draft" | "published" | "archived"
+  created_by Int
+  created_at DateTime @default(now())
+  updated_at DateTime
+  users      User     @relation(fields: [created_by], references: [id])
+  departments company_news_departments[]
+
+  @@index([created_by], map: "company_news_created_by_fkey")
+}
+
+model company_news_departments {
+  id            Int        @id @default(autoincrement())
+  company_news_id Int
+  department_id Int
+  company_news  company_news @relation(fields: [company_news_id], references: [id], onDelete: Cascade)
+  department    department   @relation(fields: [department_id], references: [id])
+
+  @@index([company_news_id], map: "cnd_news_id_idx")
+  @@index([department_id], map: "cnd_dept_id_idx")
+  @@unique([company_news_id, department_id], map: "cnd_unique_pair")
+}
+
+model holidays {
+  id         Int      @id @default(autoincrement())
+  name       String
+  date       DateTime
+  year       Int
+  type       String   @default("public")
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime
+
+  @@unique([name, year])
+}
+
+model user_type_permissions {
+  id            Int        @id @default(autoincrement())
+  user_type_id  Int
+  permission_id Int
+  created_at    DateTime   @default(now())
+  permissions   Permission @relation(fields: [permission_id], references: [id])
+  user_types    user_types @relation(fields: [user_type_id], references: [id])
+
+  @@unique([user_type_id, permission_id])
+  @@index([permission_id], map: "user_type_permissions_permission_id_fkey")
+}
+
+model user_types {
+  id                    Int                     @id @default(autoincrement())
+  organization_id       Int
+  name                  String
+  description           String?                 @db.Text
+  system_key            String
+  created_at            DateTime                @default(now())
+  user_details          UserDetail[]
+  user_type_permissions user_type_permissions[]
+  organizations         Organization            @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, name])
+  @@index([organization_id])
+}
+
+enum PermissionScope {
+  GLOBAL
+  TEAM
+  OWN
+}
+
+enum InterviewType {
+  HR
+  TECHNICAL
+  MANAGERIAL
+  FINAL
+}
+
+enum InterviewStatus {
+  SCHEDULED
+  RESCHEDULE_REQUESTED
+  RESCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  FEEDBACK_PENDING
+  PASSED
+  FAILED
+  CANCELLED
+  NO_SHOW
+}
+
+enum Recommendation {
+  STRONG_HIRE
+  HIRE
+  NEUTRAL
+  REJECT
+}
+
+enum InterviewEventType {
+  CREATED
+  UPDATED
+  RESCHEDULED
+  CANCELLED
+  COMPLETED
+  FEEDBACK_SUBMITTED
+}
+
+enum OfferStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  OFFER_SENT
+  OFFER_VIEWED
+  OFFER_NEGOTIATION
+  REVISED
+  OFFER_ACCEPTED
+  OFFER_REJECTED
+  OFFER_EXPIRED
+  WITHDRAWN
+}
+
+enum CompensationFrequency {
+  MONTHLY
+  ANNUAL
+}
+
+enum QuestionType {
+  MULTIPLE_CHOICE
+  SINGLE_CHOICE
+  RATING
+  TEXT
+  YES_NO
+}
+
+model Feedback {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  message    String   @db.Text
+  category   String?  @default("general")
+  status     String   @default("PENDING")
+  is_read    Boolean  @default(false)
+  read_at    DateTime?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+
+  @@index([user_id])
+  @@index([status])
+  @@map("feedback")
+}
