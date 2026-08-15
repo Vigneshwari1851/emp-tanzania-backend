@@ -1078,7 +1078,7 @@ model SalaryStructureHistory {
 model SystemSetting {
   id         Int      @id @default(autoincrement())
   key        String   @unique
-  value      String
+  value      String   @db.Text
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
