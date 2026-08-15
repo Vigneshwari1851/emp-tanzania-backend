@@ -60,6 +60,18 @@ export class RolesService {
             include: {
                 _count: {
                     select: { users: true }
+                },
+                userDetails: {
+                    where: { user: { is_deleted: false } },
+                    select: {
+                        user_id: true,
+                        first_name: true,
+                        last_name: true,
+                        profile_picture: true,
+                        employee_id: true,
+                        user: { select: { email: true, username: true } }
+                    },
+                    orderBy: { first_name: 'asc' }
                 }
             },
             orderBy: {
@@ -73,6 +85,7 @@ export class RolesService {
             description: role.description,
             status: role.status,
             user_count: role._count.users,
+            employees: role.userDetails,
             created_at: role.created_at
         }));
     }

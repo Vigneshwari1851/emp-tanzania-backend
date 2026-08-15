@@ -10,7 +10,8 @@
     "prisma:migrate": "prisma migrate dev",
     "format": "prettier --write .",
     "seed:employees": "ts-node prisma/seed_75_employees.ts",
-    "seed:documents": "ts-node src/scripts/seed-documents.ts"
+    "seed:documents": "ts-node src/scripts/seed-documents.ts",
+    "seed:rafiki": "ts-node prisma/seed-rafiki.ts"
   },
 
   "keywords": [],

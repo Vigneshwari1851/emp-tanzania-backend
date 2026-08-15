@@ -220,7 +220,10 @@ export class AuthService {
             where: { id: orgId }
         }) : null;
         const resolvedOrgSlug = orgInfo?.slug || orgInfo?.entity_name?.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || null;
-        const roles = (u.roles || []).map((ur: any) => ur.role.role_name);
+        let roles = (u.roles || []).map((ur: any) => ur.role.role_name);
+        if (roles.some((r: string) => r.toLowerCase() === 'tenant admin' || r.toLowerCase() === 'tenant_admin')) {
+            roles = [...roles, 'super admin', 'SUPER_ADMIN', 'admin', 'ADMIN'];
+        }
 
         const sessionId = crypto.randomUUID();
 
