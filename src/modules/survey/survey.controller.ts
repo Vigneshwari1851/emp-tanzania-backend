@@ -45,7 +45,7 @@ export const createSurvey = async (req: AuthRequest, res: Response, next: NextFu
     const userId = Number(req.user?.id);
     const survey = await surveyService.create(userId, req.body);
     _audit(req, 'SURVEY_CREATED', survey.id, _surveySnapshot(survey));
-    sendResponse(res, 201, true, 'Survey created and published successfully', survey);
+    sendResponse(res, 201, true, 'Survey created successfully', survey);
   } catch (err) {
     next(err);
   }
