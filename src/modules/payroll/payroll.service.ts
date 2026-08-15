@@ -579,7 +579,9 @@ export class PayrollService {
         const advanceRecovery = Number(data.breakdown?.deductions?.['Advance Recovery']) || 0;
 
         if (loanRecovery > 0 || advanceRecovery > 0) {
-            await this.recoverLoanAndAdvance(parseInt(data.userId), loanRecovery, advanceRecovery);
+            // Reduce loan application balances first, then pass the remainder to legacy loans/advances
+            const remaining = await this.recoverLoanApplications(parseInt(data.userId), loanRecovery, advanceRecovery);
+            await this.recoverLoanAndAdvance(parseInt(data.userId), remaining.remainingLoan, remaining.remainingAdvance);
         }
     } catch (err) {
         console.error("Failed to reduce loan/advance balances:", err);
@@ -1514,9 +1516,19 @@ export class PayrollService {
         const finalDeductions = { ...engineResult.deductions };
         let totalDeductions = Object.values(finalDeductions).reduce((a, b) => a + b, 0);
 
-        // 5. Loan and Advance Recoveries (only DISBURSED or legacy APPROVED)
+        // 5. Loan and Advance Recoveries — start from the month AFTER the loan's approval/disbursement
+        const payrollMonthStart = monthStart;
+        const isEligibleForRecovery = (refDate?: Date | string | null) => {
+            if (!refDate) return false;
+            const ref = new Date(refDate);
+            if (isNaN(ref.getTime())) return false;
+            const refMonth = new Date(ref.getFullYear(), ref.getMonth(), 1);
+            return payrollMonthStart.getTime() > refMonth.getTime();
+        };
+
         employee.details?.loans?.forEach((loan: any) => {
-            if (loan.outstandingBalance > 0 && (loan.status === 'DISBURSED' || loan.status === 'APPROVED')) {
+            const refDate = loan.disbursed_at || loan.finance_approved_at || loan.manager_approved_at || loan.created_at;
+            if (loan.outstandingBalance > 0 && (loan.status === 'DISBURSED' || loan.status === 'APPROVED') && isEligibleForRecovery(refDate)) {
                 const recovery = Math.min(Number(loan.monthlyRecovery), Number(loan.outstandingBalance));
                 if (recovery > 0) {
                     finalDeductions['Loan Recovery'] = (finalDeductions['Loan Recovery'] || 0) + recovery;
@@ -1526,7 +1538,8 @@ export class PayrollService {
         });
 
         employee.details?.advances?.forEach((advance: any) => {
-            if (advance.outstandingBalance > 0 && (advance.status === 'DISBURSED' || advance.status === 'APPROVED')) {
+            const refDate = advance.disbursed_at || advance.finance_approved_at || advance.manager_approved_at || advance.created_at;
+            if (advance.outstandingBalance > 0 && (advance.status === 'DISBURSED' || advance.status === 'APPROVED') && isEligibleForRecovery(refDate)) {
                 const recovery = Math.min(Number(advance.monthlyRecovery), Number(advance.outstandingBalance));
                 if (recovery > 0) {
                     finalDeductions['Advance Recovery'] = (finalDeductions['Advance Recovery'] || 0) + recovery;
@@ -1534,6 +1547,29 @@ export class PayrollService {
                 }
             }
         });
+
+        // Loan applications (loan-applications module) — recovery starts the month after startDate
+        if (employee.details?.id) {
+            const applications = await prisma.loanApplication.findMany({
+                where: {
+                    userDetailId: employee.details.id,
+                    isActive: true,
+                    status: { in: ['APPROVED', 'DISBURSED'] },
+                    outstandingBalance: { gt: 0 }
+                },
+                include: { loanType: true },
+                orderBy: { startDate: 'asc' }
+            });
+            for (const app of applications) {
+                if (!isEligibleForRecovery(app.startDate)) continue;
+                const recovery = Math.min(Number(app.monthlyEmi) || 0, Number(app.outstandingBalance));
+                if (recovery <= 0) continue;
+                const isAdvance = app.loanType?.category?.toUpperCase() === 'ADVANCE';
+                const label = isAdvance ? 'Advance Recovery' : 'Loan Recovery';
+                finalDeductions[label] = (finalDeductions[label] || 0) + recovery;
+                totalDeductions += recovery;
+            }
+        }
 
         // 6. Loss of Pay (LOP) display in deductions (without double-deduction)
         if (lopDeductionAmount > 0) {
@@ -1672,6 +1708,62 @@ export class PayrollService {
         const { LoansAdvancesService } = await import('../loans-advances/loans-advances.service');
         const loansAdvancesService = new LoansAdvancesService();
         return loansAdvancesService.recoverLoanAndAdvance(userId, loanRecovery, advanceRecovery);
+    }
+
+    // Reduce loan application balances (loan-applications module) for a recovered payroll month.
+    // Returns the recovery amounts not consumed by applications, so the caller can apply the remainder to legacy loans/advances.
+    private async recoverLoanApplications(userId: number, loanRecovery: number, advanceRecovery: number) {
+        let remainingLoan = loanRecovery;
+        let remainingAdvance = advanceRecovery;
+
+        const applications = await prisma.loanApplication.findMany({
+            where: {
+                userDetail: { user_id: userId },
+                isActive: true,
+                status: { in: ['APPROVED', 'DISBURSED'] },
+                outstandingBalance: { gt: 0 }
+            },
+            include: { loanType: true },
+            orderBy: { startDate: 'asc' }
+        });
+
+        for (const app of applications) {
+            const isAdvance = app.loanType?.category?.toUpperCase() === 'ADVANCE';
+            const available = isAdvance ? remainingAdvance : remainingLoan;
+            if (available <= 0) continue;
+
+            const emi = Number(app.monthlyEmi) || 0;
+            const balance = Number(app.outstandingBalance);
+            const deduction = Math.min(emi, balance, available);
+            if (deduction <= 0) continue;
+
+            const newBalance = Math.max(0, balance - deduction);
+            await prisma.loanApplication.update({
+                where: { id: app.id },
+                data: {
+                    outstandingBalance: newBalance,
+                    paidAmount: Number(app.paidAmount) + deduction,
+                    isActive: newBalance > 0,
+                    ...(newBalance === 0 && { status: 'SETTLED' })
+                }
+            });
+
+            const pendingInstallment = await prisma.loanRepaymentSchedule.findFirst({
+                where: { applicationId: app.id, status: { in: ['PENDING', 'OVERDUE'] } },
+                orderBy: { installmentNo: 'asc' }
+            });
+            if (pendingInstallment) {
+                await prisma.loanRepaymentSchedule.update({
+                    where: { id: pendingInstallment.id },
+                    data: { status: 'PAID', paidAmount: deduction, paidDate: new Date() }
+                });
+            }
+
+            if (isAdvance) remainingAdvance -= deduction;
+            else remainingLoan -= deduction;
+        }
+
+        return { remainingLoan, remainingAdvance };
     }
 
     // ─── Reimbursement Payments Integration ───────────────────────────────

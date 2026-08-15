@@ -2012,7 +2012,7 @@ model Survey {
   id          String           @id @default(uuid())
   title       String
   description String?
-  is_active       Boolean          @default(true)
+  is_active       Boolean          @default(false)
   access          String           @default("private")
   survey_password String?
   theme_preset    String?

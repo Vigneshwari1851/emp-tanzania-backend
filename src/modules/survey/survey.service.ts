@@ -37,6 +37,7 @@ export class SurveyService {
         end_date: data.end_date ? new Date(data.end_date) : null,
         cloned_from_id: data.cloned_from_id,
         is_clone: data.is_clone ?? false,
+        is_active: false,
         // @ts-ignore
         target_department: data.target_department || "All Departments",
         created_by: userId,
@@ -82,16 +83,38 @@ export class SurveyService {
       }
     }
 
-    // Notify targeted department users (or all active users if All Departments)
-    try {
-      // Find the orgId of the user creating the survey
-      const user = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { details: { select: { department: { select: { branches: { select: { organization_id: true } } } } } } }
-      });
-      const orgId = user?.details?.department?.branches?.organization_id;
+    // New surveys are created as drafts (is_active = false) and are only
+    // notified to employees once they are explicitly published.
+    return await this.getById(survey.id);
+  }
 
-      const rawDept = survey.target_department || data.target_department || "All Departments";
+  // Dispatch "New Survey Available" notifications to target employees.
+  private async notifyPublished(surveyId: string, title: string) {
+    try {
+      const survey = await prisma.survey.findUnique({
+        where: { id: surveyId },
+        select: {
+          title: true,
+          target_department: true,
+          creator: {
+            select: {
+              details: {
+                select: {
+                  department: {
+                    select: {
+                      branches: { select: { organization_id: true } }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      });
+      if (!survey) return;
+
+      const orgId = survey.creator?.details?.department?.branches?.organization_id;
+      const rawDept = survey.target_department || "All Departments";
       const depts = rawDept
         .split(",")
         .map((d: string) => d.trim())
@@ -107,29 +130,27 @@ export class SurveyService {
         departmentWhere.department_name = depts.length === 1 ? depts[0] : { in: depts };
       }
 
-      const activeUsers = await prisma.user.findMany({ 
-        where: { 
-          status: true, 
+      const activeUsers = await prisma.user.findMany({
+        where: {
+          status: true,
           is_deleted: false,
           ...(Object.keys(departmentWhere).length > 0 ? { details: { department: departmentWhere } } : {})
-        } 
+        }
       });
       for (const u of activeUsers) {
         await notificationService.create({
           user_id: u.id,
           title: 'New Survey Available',
-          message: `A new survey "${data.title}" has been published.`,
+          message: `A new survey "${survey.title}" has been published.`,
           type: 'INFO',
           related_module: 'survey',
-          related_id: 0, // Fallback for uuid primary keys
-          metadata: { surveyId: survey.id }
+          related_id: 0,
+          metadata: { surveyId }
         });
       }
     } catch (notifErr) {
       console.error('Failed to dispatch survey notifications:', notifErr);
     }
-
-    return await this.getById(survey.id);
   }
 
   async update(id: string, data: {
@@ -247,6 +268,11 @@ export class SurveyService {
         logFilePath,
         `[transaction] ${new Date().toISOString()} transaction completed successfully with ${questions.filter(q => q.parent_question_id).length} rules\n`
       );
+    }
+
+    // Notify employees when a survey is first published (inactive → active)
+    if (!existing.is_active && data.is_active) {
+      await this.notifyPublished(id, data.title);
     }
 
     return await this.getById(id);

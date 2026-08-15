@@ -55,6 +55,9 @@ async function main() {
         { id: 'branches', label: 'Branches' },
         { id: 'policies', label: 'Policies' },
         { id: 'holidays', label: 'Holidays' },
+        { id: 'payroll', label: 'Payroll' },
+        { id: 'loans-advances', label: 'Loans & Advances' },
+        { id: 'news', label: 'Company News' },
     ];
 
     for (const mod of modulesData) {
@@ -114,6 +117,19 @@ async function main() {
         { permission_name: 'create', key_name: 'holidays.create', description: 'Can create holidays', moduleId: 'holidays' },
         { permission_name: 'update', key_name: 'holidays.update', description: 'Can update holidays', moduleId: 'holidays' },
         { permission_name: 'delete', key_name: 'holidays.delete', description: 'Can delete holidays', moduleId: 'holidays' },
+
+        // Payroll
+        { permission_name: 'view', key_name: 'payroll.view', description: 'Can view payroll', moduleId: 'payroll' },
+        { permission_name: 'manage', key_name: 'payroll.manage', description: 'Can manage payroll', moduleId: 'payroll' },
+        { permission_name: 'process', key_name: 'payroll.process', description: 'Can process payroll', moduleId: 'payroll' },
+
+        // Loans & Advances
+        { permission_name: 'view', key_name: 'loans-advances.view', description: 'Can view loans & advances', moduleId: 'loans-advances' },
+        { permission_name: 'manage', key_name: 'loans-advances.manage', description: 'Can manage loans & advances', moduleId: 'loans-advances' },
+
+        // Company News
+        { permission_name: 'view', key_name: 'news.view', description: 'Can view company news', moduleId: 'news' },
+        { permission_name: 'manage', key_name: 'news.manage', description: 'Can manage company news', moduleId: 'news' },
     ];
 
     const createdPermissions = [];

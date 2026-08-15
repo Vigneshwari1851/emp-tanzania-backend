@@ -5,8 +5,8 @@ import { authenticate, authorize } from '../../middlewares/auth.middleware';
 const router = Router();
 const controller = new LoansAdvancesController();
 
-const canManage = authorize(['payroll:manage']);
-const canView = authorize(['payroll:viewAll', 'payroll:viewGroup']);
+const canManage = authorize(['payroll:manage', 'loans-advances:manage']);
+const canView = authorize(['payroll:viewAll', 'payroll:viewGroup', 'loans-advances:view']);
 
 // ─── Loans ─────────────────────────────────────────────────────────────
 router.get('/loans', authenticate as any, canView, (req, res) => controller.getLoans(req as any, res));

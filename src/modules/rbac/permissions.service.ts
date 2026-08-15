@@ -99,6 +99,9 @@ export class PermissionsService {
             { id: 'attendance_tracking', label: 'Attendance Tracking', actions: ['view'] },
             { id: 'leave_request', label: 'Leave Request', actions: ['view', 'create', 'edit', 'delete'] },
             { id: 'holidays', label: 'Holidays', actions: ['view', 'create', 'edit', 'delete'] },
+            { id: 'payroll', label: 'Payroll', actions: ['view', 'manage', 'process'] },
+            { id: 'loans-advances', label: 'Loans & Advances', actions: ['view', 'manage'] },
+            { id: 'news', label: 'Company News', actions: ['view', 'manage'] },
         ];
 
         for (const item of hierarchy) {
