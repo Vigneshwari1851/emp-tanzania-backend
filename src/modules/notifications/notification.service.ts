@@ -25,7 +25,7 @@ export class NotificationService {
     }
 
     async getMyNotifications(userId: number, options: { page?: number; limit?: number; unreadOnly?: boolean } = {}) {
-        // Auto-sync missing Tax Declaration notifications for HR / Finance / Admin users
+        // Auto-sync missing Tax Declaration / Reimbursements / Leaves notifications for HR / Finance / Admin / Managers
         try {
             const user = await prisma.user.findUnique({
                 where: { id: userId },
@@ -42,8 +42,9 @@ export class NotificationService {
                     ...(user.roles || []).map(r => r.role?.role_name || (r as any).role_name || '')
                 ].join(' ').toUpperCase();
 
-                const isHR = roleNames.includes('HR') || roleNames.includes('HUMAN') || roleNames.includes('ADMIN') || roleNames.includes('SUPER');
-                const isFinance = roleNames.includes('FINANCE') || roleNames.includes('PAYROLL') || roleNames.includes('ACCOUNT') || roleNames.includes('ADMIN') || roleNames.includes('SUPER');
+                const isHR = roleNames.includes('HR') || roleNames.includes('HUMAN') || roleNames.includes('ADMIN') || roleNames.includes('SUPER') || roleNames.includes('TENANT');
+                const isAdmin = roleNames.includes('ADMIN') || roleNames.includes('SUPER') || roleNames.includes('TENANT') || roleNames.includes('CEO');
+                const isFinance = roleNames.includes('FINANCE') || roleNames.includes('PAYROLL') || roleNames.includes('ACCOUNT') || roleNames.includes('ADMIN') || roleNames.includes('SUPER') || roleNames.includes('TENANT');
                 
                 // Find direct reportees for manager matching
                 const directReports = await prisma.userDetail.findMany({
@@ -53,8 +54,8 @@ export class NotificationService {
                 const directReportIds = new Set(directReports.map(d => d.user_id));
                 const isManager = roleNames.includes('MANAGER') || roleNames.includes('LEAD') || roleNames.includes('HEAD') || directReportIds.size > 0;
 
-                // ── 1. Auto-sync Tax Declarations ──
-                const pendingTaxStatuses: string[] = [];
+                // 1. Auto-sync Tax Declarations
+                const pendingTaxStatuses = [];
                 if (isManager || isHR) pendingTaxStatuses.push('Pending Manager Approval', 'Pending HR Approval', 'Pending');
                 if (isFinance) pendingTaxStatuses.push('Pending Finance Approval');
 
@@ -87,8 +88,8 @@ export class NotificationService {
                                 await prisma.notification.create({
                                     data: {
                                         user_id: userId,
-                                        title: `📜 Tax Declaration - ${decl.status}`,
-                                        message: `${empName} submitted a Tax Declaration for Section ${decl.section} (₹${decl.amount}) for FY ${decl.financial_year}. Status: ${decl.status}.`,
+                                        title: `Tax Declaration - ${decl.status}`,
+                                        message: `${empName} submitted a Tax Declaration for Section ${decl.section} (TShs ${Number(decl.amount).toLocaleString()}) for FY ${decl.financial_year}.`,
                                         type: 'TAX_DECLARATION',
                                         related_module: 'tax_declaration',
                                         related_id: decl.id,
@@ -100,56 +101,67 @@ export class NotificationService {
                     }
                 }
 
-                // ── 2. Auto-sync Reimbursements ──
-                const claimStatuses: string[] = [];
-                if (isManager) claimStatuses.push('Submitted', 'Pending Manager Approval', 'Pending', 'submitted');
-                if (isHR) claimStatuses.push('pending_hr', 'Pending HR Approval', 'waiting_hr', 'Waiting HR Approval');
-                if (isFinance) claimStatuses.push('pending_finance', 'Pending Finance Approval', 'waiting_payout', 'Ready To Pay', 'approved');
-
-                if (claimStatuses.length > 0) {
-                    const pendingClaims = await prisma.expenseClaim.findMany({
-                        where: { status: { in: claimStatuses } },
-                        include: {
-                            user: {
-                                include: {
-                                    details: { select: { first_name: true, last_name: true, reporting_manager_id: true } }
-                                }
+                // 2. Auto-sync Reimbursements (Enforcing Next Step Role-Based Visibility)
+                const pendingClaims = await prisma.expenseClaim.findMany({
+                    where: { 
+                        status: { in: ['PENDING_APPROVAL', 'Submitted', 'submitted', 'pending_hr', 'Pending HR Approval', 'pending_finance', 'Pending Finance Approval', 'waiting_payout', 'Ready To Pay', 'approved'] }
+                    },
+                    include: {
+                        user: {
+                            include: {
+                                details: { select: { first_name: true, last_name: true, reporting_manager_id: true } }
                             }
                         }
-                    });
+                    }
+                });
 
-                    for (const claim of pendingClaims) {
-                        if (claim.user_id === userId) continue;
-                        const isDirectManager = claim.user?.details?.reporting_manager_id === userId || directReportIds.has(claim.user_id);
-                        if (isDirectManager || isHR || isFinance) {
-                            const existing = await prisma.notification.findFirst({
-                                where: {
-                                    user_id: userId,
-                                    related_module: 'reimbursement',
-                                    related_id: claim.id
-                                }
-                            });
+                for (const claim of pendingClaims) {
+                    if (claim.user_id === userId) continue;
+                    const isDirectManager = claim.user?.details?.reporting_manager_id === userId || directReportIds.has(claim.user_id);
+                    
+                    let shouldNotify = false;
+                    const claimAssignedRole = (claim.current_assigned_role || '').toUpperCase();
 
-                            if (!existing) {
-                                const empName = claim.user?.details ? `${claim.user.details.first_name || ''} ${claim.user.details.last_name || ''}`.trim() : claim.user?.username || 'Employee';
-                                await prisma.notification.create({
-                                    data: {
-                                        user_id: userId,
-                                        title: `🧾 Reimbursement Claim - ${claim.status}`,
-                                        message: `${empName} submitted a reimbursement claim for ${claim.type} (₹${Number(claim.amount).toLocaleString()}). Status: ${claim.status}.`,
-                                        type: 'REIMBURSEMENT',
-                                        related_module: 'reimbursement',
-                                        related_id: claim.id,
-                                        metadata: { claimId: claim.id, amount: claim.amount, type: claim.type },
-                                        is_read: false
-                                    } as any
-                                });
+                    if (isAdmin) {
+                        shouldNotify = true;
+                    } else if (claimAssignedRole === 'MANAGER') {
+                        shouldNotify = isDirectManager;
+                    } else if (claimAssignedRole === 'HR') {
+                        shouldNotify = isHR;
+                    } else if (claimAssignedRole === 'FINANCE') {
+                        shouldNotify = isFinance;
+                    } else {
+                        shouldNotify = isDirectManager || isHR || isFinance;
+                    }
+
+                    if (shouldNotify) {
+                        const existing = await prisma.notification.findFirst({
+                            where: {
+                                user_id: userId,
+                                related_module: 'reimbursement',
+                                related_id: claim.id
                             }
+                        });
+
+                        if (!existing) {
+                            const empName = claim.user?.details ? `${claim.user.details.first_name || ''} ${claim.user.details.last_name || ''}`.trim() : claim.user?.username || 'Employee';
+                            await prisma.notification.create({
+                                data: {
+                                    user_id: userId,
+                                    title: `Reimbursement Claim - ${claim.status}`,
+                                    message: `${empName} submitted a reimbursement claim for ${claim.type} (TShs ${Number(claim.amount).toLocaleString()}). Status: ${claim.status}.`,
+                                    type: 'REIMBURSEMENT',
+                                    related_module: 'reimbursement',
+                                    related_id: claim.id,
+                                    metadata: { claimId: claim.id, amount: claim.amount, type: claim.type },
+                                    is_read: false
+                                } as any
+                            });
                         }
                     }
                 }
 
-                // ── 3. Auto-sync Loans & Advances ──
+                // 3. Auto-sync Loans & Advances
                 try {
                     // 3a. Loan Applications (loanApplication)
                     const loanStatuses = ['SUBMITTED', 'PENDING_STEP_1', 'PENDING_STEP_2', 'PENDING_STEP_3', 'PENDING'];
@@ -181,7 +193,7 @@ export class NotificationService {
                             workflowSteps = (loan.loanType as any)?.approvalWorkflow || [];
                         }
 
-                        const currentStepWorkflow = workflowSteps.find((s: any) => s.stepOrder === loan.currentStep);
+                        const currentStepWorkflow = workflowSteps.find((s) => s.stepOrder === loan.currentStep);
                         if (!currentStepWorkflow) continue;
 
                         const stepRole = currentStepWorkflow.roleName.toUpperCase();
@@ -211,8 +223,8 @@ export class NotificationService {
                                 await prisma.notification.create({
                                     data: {
                                         user_id: userId,
-                                        title: `💰 Loan Application - ${loan.loanType?.name || 'Loan'}`,
-                                        message: `${empName} submitted a ${loan.loanType?.name || 'Loan'} application (${loan.applicationNumber} - ₹${Number(loan.requestedAmount).toLocaleString()}). Status: ${loan.status}.`,
+                                        title: `Loan Application`,
+                                        message: `${empName} submitted a loan application. Status: ${loan.status}.`,
                                         type: 'LOANS_ADVANCES',
                                         related_module: 'loans-advances',
                                         related_id: loan.id,
@@ -258,8 +270,8 @@ export class NotificationService {
                                 await prisma.notification.create({
                                     data: {
                                         user_id: userId,
-                                        title: `💰 New Loan Request`,
-                                        message: `${empName} requested a loan of ₹${Number(loan.principalAmount).toLocaleString()}. Status: ${loan.status}.`,
+                                        title: `New Loan Request`,
+                                        message: `${empName} requested a loan. Status: ${loan.status}.`,
                                         type: 'LOANS_ADVANCES',
                                         related_module: 'loans-advances',
                                         related_id: loan.id,
@@ -304,8 +316,8 @@ export class NotificationService {
                                 await prisma.notification.create({
                                     data: {
                                         user_id: userId,
-                                        title: `💵 New Salary Advance Request`,
-                                        message: `${empName} requested a salary advance of ₹${Number(adv.principalAmount).toLocaleString()}. Status: ${adv.status}.`,
+                                        title: `New Salary Advance Request`,
+                                        message: `${empName} requested a salary advance.`,
                                         type: 'LOANS_ADVANCES',
                                         related_module: 'loans-advances',
                                         related_id: adv.id,
@@ -320,7 +332,7 @@ export class NotificationService {
                     console.error('Loans & Advances notification sync error:', loanSyncErr);
                 }
 
-                // ── 4. Auto-sync Exit / Resignation Requests ──
+                // 4. Auto-sync Exit / Resignation Requests
                 try {
                     const pendingExitRequests = await prisma.exitRequest.findMany({
                         where: {
@@ -361,7 +373,7 @@ export class NotificationService {
                                         user_id: userId,
                                         title: isDirectManager ? 'New Exit Request' : 'New Resignation Submitted',
                                         message: isDirectManager 
-                                            ? `An exit request has been initiated by ${empName}. Approval is required within 3 days.`
+                                            ? `An exit request has been initiated by ${empName}.`
                                             : `${empName} has submitted their resignation.`,
                                         type: 'exit',
                                         related_module: 'exit',
@@ -369,8 +381,6 @@ export class NotificationService {
                                         metadata: {
                                             exit_id: exitReq.id,
                                             employee_name: empName,
-                                            exit_type: exitReq.exit_type,
-                                            last_working_day: exitReq.last_working_day,
                                             status: exitReq.status
                                         },
                                         is_read: false
@@ -381,6 +391,69 @@ export class NotificationService {
                     }
                 } catch (exitSyncErr) {
                     console.error('Exit notification sync error:', exitSyncErr);
+                }
+
+                // 5. Auto-sync Leave Requests
+                try {
+                    const pendingLeaves = await prisma.leaveRequest.findMany({
+                        where: {
+                            status: { in: ['PENDING', 'pending', 'Submitted', 'submitted'] }
+                        },
+                        include: {
+                            user: {
+                                include: {
+                                    details: { select: { first_name: true, last_name: true, reporting_manager_id: true } }
+                                }
+                            },
+                            leave_policy: true
+                        }
+                    });
+
+                    for (const leave of pendingLeaves) {
+                        if (leave.user_id === userId) continue;
+
+                        const isDirectManager = leave.reporting_manager_id === userId 
+                            || leave.user?.details?.reporting_manager_id === userId 
+                            || directReportIds.has(leave.user_id);
+
+                        if (isDirectManager || isHR || isAdmin) {
+                            const existing = await prisma.notification.findFirst({
+                                where: {
+                                    user_id: userId,
+                                    related_module: 'leave',
+                                    related_id: leave.id
+                                }
+                            });
+
+                            if (!existing) {
+                                const empName = leave.user?.details 
+                                    ? `${leave.user.details.first_name || ''} ${leave.user.details.last_name || ''}`.trim() 
+                                    : leave.user?.username || 'An employee';
+
+                                await prisma.notification.create({
+                                    data: {
+                                        user_id: userId,
+                                        title: 'New Leave Request',
+                                        message: `A new leave request has been submitted by ${empName}.`,
+                                        type: 'leave',
+                                        related_module: 'leave',
+                                        related_id: leave.id,
+                                        metadata: {
+                                            leave_id: leave.id,
+                                            employee_name: empName,
+                                            start_date: leave.start_date,
+                                            end_date: leave.end_date,
+                                            status: leave.status,
+                                            policy_name: leave.leave_policy?.policy_name
+                                        },
+                                        is_read: false
+                                    } as any
+                                });
+                            }
+                        }
+                    }
+                } catch (leaveSyncErr) {
+                    console.error('Leave notification sync error:', leaveSyncErr);
                 }
             }
         } catch (syncErr) {

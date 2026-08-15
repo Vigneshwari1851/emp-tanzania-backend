@@ -738,12 +738,8 @@ export class PayrollService {
                 const hrUsers = await prisma.user.findMany({
                     where: {
                         OR: [
-                            { roles: { some: { role: { role_name: { contains: 'hr' } } } } },
-                            { roles: { some: { role: { role_name: { contains: 'HR' } } } } },
-                            { details: { role: { role_name: { contains: 'hr' } } } },
-                            { details: { role: { role_name: { contains: 'HR' } } } },
-                            { roles: { some: { role: { role_name: { contains: 'admin' } } } } },
-                            { details: { role: { role_name: { contains: 'admin' } } } }
+                            { roles: { some: { role: { role_name: { in: ['hr', 'HR', 'human resources', 'Human Resources', 'tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } } },
+                            { details: { role: { role_name: { in: ['hr', 'HR', 'human resources', 'Human Resources', 'tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } }
                         ]
                     },
                     select: { id: true }
@@ -969,62 +965,104 @@ export class PayrollService {
     }
 
     async submitClaim(userId: number, orgId: number, data: any) {
-        // ─── VALIDATION: Check reimbursement type period limit ───
-        const reimbType = await prisma.reimbursementType.findFirst({
+        const employeeDetail = await prisma.userDetail.findUnique({
+            where: { user_id: userId },
+            select: { department_id: true, department: { select: { department_name: true } } }
+        });
+        const userDeptId = employeeDetail?.department_id || null;
+        const userDeptName = employeeDetail?.department?.department_name || 'General';
+
+        const reimbTypes = await prisma.reimbursementType.findMany({
             where: {
                 type: data.type,
                 status: true,
                 ...(orgId ? { organization_id: orgId } : {})
             }
         });
-        if (reimbType) {
-            const typeLimit = Number(reimbType.limit);
-            const period = (reimbType.period || 'Monthly').toLowerCase();
-            const now = new Date();
-            let startDate: Date;
 
-            if (period === 'monthly') {
-                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-            } else if (period === 'yearly' || period === 'annual') {
-                const fyStartYear = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
-                startDate = new Date(fyStartYear, 3, 1);
-            } else {
-                startDate = new Date(0);
-            }
+        if (reimbTypes.length === 0) {
+            throw new AppError(`No active reimbursement policy found for category "${data.type}".`, 400);
+        }
 
-            if (period !== 'per claim') {
-                const existingClaims = await prisma.expenseClaim.findMany({
-                    where: {
-                        user_id: userId,
-                        type: data.type,
-                        expense_date: { gte: startDate },
-                        status: { notIn: ['rejected', 'Cancelled'] }
-                    }
-                });
-                const totalClaimed = existingClaims.reduce((sum, c) => sum + Number(c.amount), 0);
-                const newAmount = Number(data.amount);
-                if (totalClaimed + newAmount > typeLimit) {
-                    throw new AppError(
-                        `Claim amount of ₹${newAmount.toLocaleString()} exceeds the ${period} limit of ₹${typeLimit.toLocaleString()} for "${reimbType.label}". ` +
-                        `You have already claimed ₹${totalClaimed.toLocaleString()} this ${period}. ` +
-                        `Remaining: ₹${Math.max(0, typeLimit - totalClaimed).toLocaleString()}.`,
-                        400
-                    );
+        let reimbType = reimbTypes.find(t => t.department_id === userDeptId);
+        if (!reimbType) {
+            reimbType = reimbTypes.find(t => t.department_id === null);
+        }
+
+        if (!reimbType) {
+            throw new AppError(
+                `Your department (${userDeptName}) is not eligible to claim reimbursement for "${data.type}".`,
+                400
+            );
+        }
+
+        const typeLimit = Number(reimbType.limit);
+        const period = (reimbType.period || 'Monthly').toLowerCase();
+        const now = new Date();
+        let startDate: Date;
+
+        if (period === 'monthly') {
+            startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        } else if (period === 'yearly' || period === 'annual') {
+            const fyStartYear = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
+            startDate = new Date(fyStartYear, 3, 1);
+        } else {
+            startDate = new Date(0);
+        }
+
+        if (period !== 'per claim') {
+            const existingClaims = await prisma.expenseClaim.findMany({
+                where: {
+                    user_id: userId,
+                    type: data.type,
+                    expense_date: { gte: startDate },
+                    status: { notIn: ['rejected', 'Cancelled'] }
                 }
+            });
+            const totalClaimed = existingClaims.reduce((sum, c) => sum + Number(c.amount), 0);
+            const newAmount = Number(data.amount);
+            if (totalClaimed + newAmount > typeLimit) {
+                throw new AppError(
+                    `Claim amount of TShs ${newAmount.toLocaleString()} exceeds the ${period} limit of TShs ${typeLimit.toLocaleString()} for "${reimbType.label}". ` +
+                    `You have already claimed TShs ${totalClaimed.toLocaleString()} this ${period}. ` +
+                    `Remaining: TShs ${Math.max(0, typeLimit - totalClaimed).toLocaleString()}.`,
+                    400
+                );
             }
         }
 
+        // Check if the submitting user is anything other than just "employee"
+        const userRoles = await prisma.userRole.findMany({
+            where: { user_id: userId },
+            include: { role: true }
+        });
+        const roleNames = userRoles.map(r => r.role?.role_name?.toLowerCase() || "");
+        
+        const userDetailObj = await prisma.userDetail.findUnique({
+            where: { user_id: userId },
+            include: { role: true }
+        });
+        if (userDetailObj?.role?.role_name) {
+            roleNames.push(userDetailObj.role.role_name.toLowerCase());
+        }
+
+        const isOnlyEmployee = roleNames.length > 0 && roleNames.every(r => r === 'employee');
+
         let mappedSequence = ['MANAGER', 'HR', 'FINANCE'];
-        try {
-            if (data.approval_sequence) {
-                const parsed = JSON.parse(data.approval_sequence);
-                if (Array.isArray(parsed)) {
-                    const roleMap = { 'Manager': 'MANAGER', 'HR': 'HR', 'Finance': 'FINANCE' };
-                    mappedSequence = parsed.map(step => roleMap[step] || String(step).toUpperCase());
+        if (!isOnlyEmployee) {
+            mappedSequence = ['ADMIN'];
+        } else {
+            try {
+                if (data.approval_sequence) {
+                    const parsed = JSON.parse(data.approval_sequence);
+                    if (Array.isArray(parsed)) {
+                        const roleMap = { 'Manager': 'MANAGER', 'HR': 'HR', 'Finance': 'FINANCE' };
+                        mappedSequence = parsed.map(step => roleMap[step] || String(step).toUpperCase());
+                    }
                 }
+            } catch (e) {
+                console.error('Failed to parse approval_sequence:', e);
             }
-        } catch (e) {
-            console.error('Failed to parse approval_sequence:', e);
         }
 
         const claim = await prisma.expenseClaim.create({
@@ -1045,45 +1083,44 @@ export class PayrollService {
             }
         });
 
-        // Stage 1 Workflow Notification: Notify Reporting Manager at submission stage (or Admins if no manager assigned)
+        // Stage 1 Workflow Notification: Notify Reporting Manager at submission stage AND all Admins
         try {
             const userDetail2 = await prisma.userDetail.findUnique({
                 where: { user_id: userId },
                 select: { first_name: true, last_name: true, reporting_manager_id: true }
             });
-            const empName = userDetail2 ? `${userDetail2.first_name || ''} ${userDetail2.last_name || ''}`.trim() : 'An employee';
+            const empName = userDetail2 ? (`${userDetail2.first_name || ''} ` + (userDetail2.last_name || '')).trim() : 'An employee';
 
-            const recipientIds = new Set<number>();
+            const recipientIds = new Set();
 
             // 1. Add reporting manager
             if (userDetail2?.reporting_manager_id) {
                 recipientIds.add(userDetail2.reporting_manager_id);
             }
 
-            // 2. If no reporting manager assigned, fallback to admins so the claim isn't stuck
-            if (recipientIds.size === 0) {
-                const adminUsers = await prisma.user.findMany({
-                    where: {
-                        OR: [
-                            { roles: { some: { role: { role_name: { in: ['super admin', 'SUPER ADMIN', 'CEO', 'ceo', 'admin', 'ADMIN', 'MANAGER', 'manager'] } } } } },
-                            { details: { role: { role_name: { in: ['super admin', 'SUPER ADMIN', 'CEO', 'ceo', 'admin', 'ADMIN', 'MANAGER', 'manager'] } } } }
-                        ]
-                    },
-                    select: { id: true }
-                });
-                for (const u of adminUsers) recipientIds.add(u.id);
-            }
+            // 2. ALWAYS notify admins as well
+            const adminUsers = await prisma.user.findMany({
+                where: {
+                    OR: [
+                        { roles: { some: { role: { role_name: { in: ['tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } } },
+                        { details: { role: { role_name: { in: ['tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } }
+                    ]
+                },
+                select: { id: true }
+            });
+            for (const u of adminUsers) recipientIds.add(u.id);
 
             // Remove submitting employee
             recipientIds.delete(userId);
 
-            console.log(`[submitClaim] Sending notifications to ${recipientIds.size} recipients for claim ${claim.id}`);
+            console.log(`[submitClaim] Sending notifications to recipients: `, Array.from(recipientIds));
 
             for (const targetUserId of recipientIds) {
+                if (!targetUserId || typeof targetUserId !== 'number') continue;
                 await notificationService.create({
-                    user_id: targetUserId,
-                    title: '🧾 New Expense Claim Submitted',
-                    message: `${empName} submitted a reimbursement claim for ${data.type} (₹${Number(data.amount).toLocaleString()}). Please review and approve.`,
+                    user_id: targetUserId as number,
+                    title: 'New Expense Claim Submitted',
+                    message: `${empName} submitted a reimbursement claim for ${data.type} (TShs ${Number(data.amount).toLocaleString()}). Please review and approve.`,
                     type: 'REIMBURSEMENT',
                     related_module: 'reimbursement',
                     related_id: claim.id,
@@ -1729,13 +1766,36 @@ export class PayrollService {
             if (updatedClaim.user_id) {
                 await notificationService.create({
                     user_id: updatedClaim.user_id,
-                    title: '💸 Reimbursement Paid! 🎉',
-                    message: `Your reimbursement claim for ${updatedClaim.type} (₹${Number(updatedClaim.amount).toLocaleString()}) has been paid via ${updatedClaim.payment_mode}. Ref: ${updatedClaim.payment_reference || 'N/A'}`,
+                    title: 'Reimbursement Paid!',
+                    message: `Your reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}) has been paid via ${updatedClaim.payment_mode}. Ref: ${updatedClaim.payment_reference || 'N/A'}`,
                     type: 'REIMBURSEMENT',
                     related_module: 'reimbursement',
                     related_id: updatedClaim.id,
                     metadata: { claimId: updatedClaim.id, status: 'Paid', ref: updatedClaim.payment_reference }
                 });
+            }
+
+            const adminUsers = await prisma.user.findMany({
+                where: {
+                    OR: [
+                        { roles: { some: { role: { role_name: { in: ['tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } } },
+                        { details: { role: { role_name: { in: ['tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } }
+                    ]
+                },
+                select: { id: true }
+            });
+            for (const admin of adminUsers) {
+                if (admin.id !== actorId && admin.id !== updatedClaim.user_id) {
+                    await notificationService.create({
+                        user_id: admin.id,
+                        title: 'Reimbursement Paid! (Admin Info)',
+                        message: `Reimbursement claim for employee ID ${updatedClaim.user_id} (${updatedClaim.type}, TShs ${Number(updatedClaim.amount).toLocaleString()}) has been marked as paid via ${updatedClaim.payment_mode}. Ref: ${updatedClaim.payment_reference}`,
+                        type: 'REIMBURSEMENT',
+                        related_module: 'reimbursement',
+                        related_id: updatedClaim.id,
+                        metadata: { claimId: updatedClaim.id, status: 'Paid', ref: updatedClaim.payment_reference }
+                    });
+                }
             }
         } catch (e) {
             console.error('Notification error in processReimbursementPayment:', e);
@@ -1744,7 +1804,6 @@ export class PayrollService {
         return updatedClaim;
     }
 
-    // ─── Admin Claim Management ──────────────────────────────────────────
     async getAllClaims(orgId?: number) {
         return await prisma.expenseClaim.findMany({
             where: {
@@ -1889,7 +1948,60 @@ export class PayrollService {
                 });
             }
 
+            // ALSO notify admins of status update
+            try {
+                const adminUsers = await prisma.user.findMany({
+                    where: {
+                        OR: [
+                            { roles: { some: { role: { role_name: { in: ['tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } } },
+                            { details: { role: { role_name: { in: ['tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } }
+                        ]
+                    },
+                    select: { id: true }
+                });
+                for (const admin of adminUsers) {
+                    if (admin.id !== actorId && admin.id !== updatedClaim.user_id) {
+                        await notificationService.create({
+                            user_id: admin.id,
+                            title: `Reimbursement Claim Update (Admin Info)`,
+                            message: `Employee ${empName}'s reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}) status updated to: ${updatedClaim.status}.`,
+                            type: 'REIMBURSEMENT',
+                            related_module: 'reimbursement',
+                            related_id: updatedClaim.id,
+                            metadata: { claimId: updatedClaim.id, status: updatedClaim.status, remarks }
+                        });
+                    }
+                }
+            } catch (e) {
+                console.error('[updateClaimStatus] Admin Notification error:', e);
+            }
+
             // 2. Next Stage Workflow Notifications
+            if (sLower === 'pending_approval' && (role === 'ADMIN' || role === 'ADMINISTRATOR')) {
+                const adminUsers = await prisma.user.findMany({
+                    where: {
+                        OR: [
+                            { roles: { some: { role: { role_name: { in: ['tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } } },
+                            { details: { role: { role_name: { in: ['tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } }
+                        ]
+                    },
+                    select: { id: true }
+                });
+                for (const admin of adminUsers) {
+                    if (admin.id !== actorId && admin.id !== updatedClaim.user_id) {
+                        await notificationService.create({
+                            user_id: admin.id,
+                            title: 'Claim Pending Admin Approval',
+                            message: `${empName}'s reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}) is pending Admin approval.`,
+                            type: 'REIMBURSEMENT',
+                            related_module: 'reimbursement',
+                            related_id: updatedClaim.id,
+                            metadata: { claimId: updatedClaim.id, amount: updatedClaim.amount, type: updatedClaim.type }
+                        });
+                    }
+                }
+            }
+
             if (sLower === 'pending_approval' && role === 'HR') {
                 // Manager approved -> Notify HR users to review
                 const hrUsers = await prisma.user.findMany({
@@ -1923,16 +2035,8 @@ export class PayrollService {
                 const financeUsers = await prisma.user.findMany({
                     where: {
                         OR: [
-                            { roles: { some: { role: { role_name: { contains: 'finance' } } } } },
-                            { roles: { some: { role: { role_name: { contains: 'Finance' } } } } },
-                            { roles: { some: { role: { role_name: { contains: 'account' } } } } },
-                            { roles: { some: { role: { role_name: { contains: 'payroll' } } } } },
-                            { details: { role: { role_name: { contains: 'finance' } } } },
-                            { details: { role: { role_name: { contains: 'Finance' } } } },
-                            { details: { role: { role_name: { contains: 'account' } } } },
-                            { details: { role: { role_name: { contains: 'payroll' } } } },
-                            { roles: { some: { role: { role_name: { contains: 'admin' } } } } },
-                            { details: { role: { role_name: { contains: 'admin' } } } }
+                            { roles: { some: { role: { role_name: { in: ['finance', 'Finance', 'account', 'payroll', 'tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } } },
+                            { details: { role: { role_name: { in: ['finance', 'Finance', 'account', 'payroll', 'tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } }
                         ]
                     },
                     select: { id: true }
@@ -1991,13 +2095,40 @@ export class PayrollService {
                 if (c.user_id) {
                     await notificationService.create({
                         user_id: c.user_id,
-                        title: '💸 Reimbursement Paid! 🎉',
-                        message: `Your reimbursement claim for ${c.type} (₹${Number(c.amount).toLocaleString()}) has been processed and paid via ${paymentMode}. Ref: ${paymentReference || 'N/A'}`,
+                        title: 'Reimbursement Paid!',
+                        message: `Your reimbursement claim for ${c.type} (TShs ${Number(c.amount).toLocaleString()}) has been paid.`,
                         type: 'REIMBURSEMENT',
                         related_module: 'reimbursement',
                         related_id: c.id,
                         metadata: { claimId: c.id, status: 'Paid', ref: paymentReference }
                     });
+                }
+                
+                try {
+                    const adminUsers = await prisma.user.findMany({
+                        where: {
+                            OR: [
+                                { roles: { some: { role: { role_name: { in: ['tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } } },
+                                { details: { role: { role_name: { in: ['tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } }
+                            ]
+                        },
+                        select: { id: true }
+                    });
+                    for (const admin of adminUsers) {
+                        if (admin.id !== actorId && admin.id !== c.user_id) {
+                            await notificationService.create({
+                                user_id: admin.id,
+                                title: 'Reimbursement Paid! (Admin Info)',
+                                message: `Batch reimbursement claim for employee ID ${c.user_id} (${c.type}, TShs ${Number(c.amount).toLocaleString()}) has been paid.`,
+                                type: 'REIMBURSEMENT',
+                                related_module: 'reimbursement',
+                                related_id: c.id,
+                                metadata: { claimId: c.id, status: 'Paid', ref: paymentReference }
+                            });
+                        }
+                    }
+                } catch (e) {
+                    console.error('Batch Admin notification error:', e);
                 }
             }
         } catch (e) {

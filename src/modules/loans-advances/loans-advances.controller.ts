@@ -202,7 +202,8 @@ export class LoansAdvancesController {
         try {
             const result = await service.saveSettings(req.body);
             _audit(req, 'LOAN_SETTINGS_UPDATED', 0, req.body);
-            res.json({ success: true, data: result, message: 'Settings saved successfully' });
+            const parsedData = JSON.parse(result.value);
+            res.json({ success: true, data: parsedData, message: 'Settings saved successfully' });
         } catch (error: any) {
             res.status(500).json({ success: false, message: error.message });
         }

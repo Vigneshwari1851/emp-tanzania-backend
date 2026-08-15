@@ -149,37 +149,61 @@ export class LeaveService {
       });
     }
 
-    // Create notification in DB and trigger WebSocket event to manager
-    if (userDetail?.reporting_manager_id) {
-       const user = await prisma.user.findUnique({
-         where: { id: userId },
-         include: { details: { select: { first_name: true, last_name: true } } }
-       });
-       const employeeName = `${user?.details?.first_name || ''} ${user?.details?.last_name || ''}`.trim() || user?.username || 'An employee';
+    // Create notification in DB and trigger WebSocket event to manager & admins
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            include: { details: { select: { first_name: true, last_name: true } } }
+        });
+        const employeeName = `${user?.details?.first_name || ''} ${user?.details?.last_name || ''}`.trim() || user?.username || 'An employee';
 
-       const notification = await notificationService.create({
-           user_id: userDetail.reporting_manager_id,
-           title: 'New Leave Request',
-           message: `A new leave request has been submitted by ${employeeName}.`,
-           type: 'leave',
-           metadata: {
-               leave_id: leaveRequest.id,
-               employee_name: employeeName,
-               employee_id: userId,
-               start_date: leaveRequest.start_date,
-               end_date: leaveRequest.end_date,
-               reason: leaveRequest.reason,
-               duration: leaveRequest.duration,
-               status: 'PENDING',
-               policy_name: leavePolicy.policy_name
-           },
-           related_module: 'leave',
-           related_id: leaveRequest.id
-       });
+        const adminUsers = await prisma.user.findMany({
+            where: {
+                OR: [
+                    { roles: { some: { role: { role_name: { in: ['tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } } },
+                    { details: { role: { role_name: { in: ['tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } }
+                ]
+            },
+            select: { id: true }
+        });
 
-       webSocketService.sendNotification(userDetail.reporting_manager_id, 'leave_request', notification);
+        const recipientIds = new Set();
+        if (userDetail?.reporting_manager_id) {
+            recipientIds.add(userDetail.reporting_manager_id);
+        }
+        for (const u of adminUsers) {
+            recipientIds.add(u.id);
+        }
+        recipientIds.delete(userId);
+
+        for (const targetUserId of recipientIds) {
+            if (!targetUserId || typeof targetUserId !== 'number') continue;
+            const notification = await notificationService.create({
+                user_id: targetUserId as number,
+                title: 'New Leave Request',
+                message: `A new leave request has been submitted by ${employeeName}.`,
+                type: 'leave',
+                metadata: {
+                    leave_id: leaveRequest.id,
+                    employee_name: employeeName,
+                    employee_id: userId,
+                    start_date: leaveRequest.start_date,
+                    end_date: leaveRequest.end_date,
+                    reason: leaveRequest.reason,
+                    duration: leaveRequest.duration,
+                    status: 'PENDING',
+                    policy_name: leavePolicy.policy_name
+                },
+                related_module: 'leave',
+                related_id: leaveRequest.id
+            });
+
+            webSocketService.sendNotification(targetUserId as number, 'leave_request', notification);
+        }
+    } catch (e) {
+        console.error('Leave submit notification error:', e);
     }
-
+    
     return leaveRequest;
   }
 
@@ -382,25 +406,51 @@ export class LeaveService {
       });
     });
 
-    // Create notification in DB and trigger WebSocket event to employee
-    const notification = await notificationService.create({
-        user_id: request.user_id,
-        title: `Leave Request ${newStatus}`,
-        message: `Your leave request has been ${newStatus.toLowerCase()}.`,
-        type: 'leave',
-        metadata: {
-            leave_id: request.id,
-            status: newStatus,
-            start_date: request.start_date,
-            end_date: request.end_date,
-            policy_name: request.leave_policy.policy_name
-        },
-        related_module: 'leave',
-        related_id: request.id
-    });
+    // Create notification in DB and trigger WebSocket event to employee & admins
+    try {
+        const adminUsers = await prisma.user.findMany({
+            where: {
+                OR: [
+                    { roles: { some: { role: { role_name: { in: ['tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } } },
+                    { details: { role: { role_name: { in: ['tenant admin', 'tenant_admin', 'CEO', 'ceo', 'admin', 'ADMIN', 'super admin', 'SUPER ADMIN'] } } } }
+                ]
+            },
+            select: { id: true }
+        });
 
-    webSocketService.sendNotification(request.user_id, 'leave_status', notification);
+        const recipientIds = new Set();
+        recipientIds.add(request.user_id);
+        for (const u of adminUsers) {
+            recipientIds.add(u.id);
+        }
+        recipientIds.delete(approverId);
 
+        for (const targetUserId of recipientIds) {
+            if (!targetUserId || typeof targetUserId !== 'number') continue;
+            const notification = await notificationService.create({
+                user_id: targetUserId as number,
+                title: targetUserId === request.user_id ? `Leave Request ${newStatus}` : `Leave Request ${newStatus} (Admin Info)`,
+                message: targetUserId === request.user_id 
+                    ? `Your leave request has been ${newStatus.toLowerCase()}.`
+                    : `Leave request for employee ID ${request.user_id} has been ${newStatus.toLowerCase()} by approver ID ${approverId}.`,
+                type: 'leave',
+                metadata: {
+                    leave_id: request.id,
+                    status: newStatus,
+                    start_date: request.start_date,
+                    end_date: request.end_date,
+                    policy_name: request.leave_policy.policy_name
+                },
+                related_module: 'leave',
+                related_id: request.id
+            });
+
+            webSocketService.sendNotification(targetUserId as number, targetUserId === request.user_id ? 'leave_status' : 'leave_request', notification);
+        }
+    } catch (e) {
+        console.error('Leave status update notification error:', e);
+    }
+    
     // Update existing notifications (e.g., for the manager) to reflect the new status
     // This ensures that if the manager opens the notification again, the buttons are gone
     const relatedNotifications = await prisma.notification.findMany({
