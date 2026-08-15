@@ -110,6 +110,7 @@ export const submitClaimSchema = z.object({
         date: z.coerce.string().or(z.coerce.date()),
         description: z.string().max(1000).optional(),
         proofUrl: z.string().optional(),
+        approval_sequence: z.string().optional(),
     })
 });
 

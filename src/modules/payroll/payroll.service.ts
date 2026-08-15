@@ -555,12 +555,12 @@ export class PayrollService {
         await prisma.expenseClaim.updateMany({
             where: {
                 user_id: parseInt(data.userId),
-                status: { in: ['approved', 'waiting_payout'] },
+                status: { in: ['approved', 'waiting_payout', 'READY_FOR_PAYROLL_REVIEW', 'INCLUDED_IN_PAYROLL'] },
                 payment_status: 'Ready To Pay',
                 payment_mode: 'Salary Payroll'
             },
             data: {
-                status: 'Paid',
+                status: 'PAID',
                 payment_status: 'Paid',
                 payroll_id: payslip.id,
                 payment_date: new Date(),
@@ -951,6 +951,18 @@ export class PayrollService {
     async getMyClaims(userId: number, orgId: number | null) {
         return await prisma.expenseClaim.findMany({
             where: { user_id: userId, ...(orgId ? { organization_id: orgId } : {}) },
+            include: {
+                user: {
+                    include: {
+                        details: {
+                            include: {
+                                department: true,
+                                role: true
+                            }
+                        }
+                    }
+                }
+            },
             orderBy: { submitted_on: 'desc' }
         });
     }
@@ -1001,6 +1013,19 @@ export class PayrollService {
             }
         }
 
+        let mappedSequence = ['MANAGER', 'HR', 'FINANCE'];
+        try {
+            if (data.approval_sequence) {
+                const parsed = JSON.parse(data.approval_sequence);
+                if (Array.isArray(parsed)) {
+                    const roleMap = { 'Manager': 'MANAGER', 'HR': 'HR', 'Finance': 'FINANCE' };
+                    mappedSequence = parsed.map(step => roleMap[step] || String(step).toUpperCase());
+                }
+            }
+        } catch (e) {
+            console.error('Failed to parse approval_sequence:', e);
+        }
+
         const claim = await prisma.expenseClaim.create({
             data: {
                 user_id: userId,
@@ -1010,7 +1035,12 @@ export class PayrollService {
                 description: data.description,
                 expense_date: new Date(data.date),
                 proof_url: data.proofUrl,
-                status: 'Submitted'
+                status: 'PENDING_APPROVAL',
+                approval_sequence: JSON.stringify(mappedSequence),
+                workflow_sequence: JSON.stringify(mappedSequence),
+                current_step_index: 0,
+                current_assigned_role: mappedSequence[0] || 'MANAGER',
+                approval_logs: JSON.stringify([])
             }
         });
 
@@ -1278,7 +1308,7 @@ export class PayrollService {
         const approvedReimbursements = await prisma.expenseClaim.findMany({
             where: {
                 user_id: userId,
-                status: 'approved',
+                status: { in: ['approved', 'READY_FOR_PAYROLL_REVIEW', 'INCLUDED_IN_PAYROLL'] },
                 payment_status: 'Ready To Pay',
                 payment_mode: 'Salary Payroll'
             }
@@ -1515,7 +1545,7 @@ export class PayrollService {
         const approvedReimbursements = await prisma.expenseClaim.findMany({
             where: {
                 user_id: employeeId,
-                status: 'approved',
+                status: { in: ['approved', 'READY_FOR_PAYROLL_REVIEW', 'INCLUDED_IN_PAYROLL'] },
                 payment_status: 'Ready To Pay',
                 payment_mode: 'Salary Payroll'
             }
@@ -1647,7 +1677,7 @@ export class PayrollService {
     async getReadyToPayReimbursements(orgId?: number) {
         return await prisma.expenseClaim.findMany({
             where: {
-                status: { in: ['approved', 'waiting_payout'] },
+                status: { in: ['approved', 'waiting_payout', 'READY_FOR_PAYROLL_REVIEW', 'INCLUDED_IN_PAYROLL'] },
                 ...(orgId ? { organization_id: orgId } : {})
             },
             include: {
@@ -1740,10 +1770,80 @@ export class PayrollService {
     }
 
     async updateClaimStatus(id: number, status: string, remarks?: string, actorId?: number) {
+        const currentClaim = await prisma.expenseClaim.findUnique({
+            where: { id }
+        });
+        if (!currentClaim) {
+            throw new Error('Claim not found');
+        }
+
+        let newStatus = status;
+        let newStepIndex = currentClaim.current_step_index;
+        let newAssignedRole = currentClaim.current_assigned_role;
+        let approvalLogs = [];
+        try {
+            if (currentClaim.approval_logs) {
+                approvalLogs = JSON.parse(currentClaim.approval_logs);
+            }
+        } catch (e) {
+            console.error('Failed to parse approval_logs:', e);
+        }
+
+        const isReject = status === 'REJECTED' || status.toLowerCase().includes('reject');
+        const isCancel = status === 'CANCELLED' || status.toLowerCase().includes('cancel');
+
+        if (isReject) {
+            newStatus = 'REJECTED';
+            newAssignedRole = null;
+            approvalLogs.push({
+                step_order: currentClaim.current_step_index,
+                role: currentClaim.current_assigned_role || 'APPROVER',
+                approver_id: actorId || null,
+                action: 'REJECTED',
+                comments: remarks || null,
+                actioned_at: new Date()
+            });
+        } else if (isCancel) {
+            newStatus = 'CANCELLED';
+            newAssignedRole = null;
+        } else {
+            // Approval progression
+            approvalLogs.push({
+                step_order: currentClaim.current_step_index,
+                role: currentClaim.current_assigned_role || 'APPROVER',
+                approver_id: actorId || null,
+                action: 'APPROVED',
+                comments: remarks || null,
+                actioned_at: new Date()
+            });
+
+            try {
+                const sequenceStr = currentClaim.workflow_sequence || currentClaim.approval_sequence;
+                if (sequenceStr) {
+                    const sequence = JSON.parse(sequenceStr);
+                    if (Array.isArray(sequence) && sequence.length > 0) {
+                        newStepIndex = currentClaim.current_step_index + 1;
+                        if (newStepIndex < sequence.length) {
+                            newAssignedRole = sequence[newStepIndex];
+                            newStatus = 'PENDING_APPROVAL';
+                        } else {
+                            newAssignedRole = null;
+                            newStatus = 'READY_FOR_PAYROLL_REVIEW';
+                        }
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to progress approval sequence:', e);
+            }
+        }
+
         const updatedClaim = await prisma.expenseClaim.update({
             where: { id },
             data: {
-                status,
+                status: newStatus,
+                current_step_index: newStepIndex,
+                current_assigned_role: newAssignedRole,
+                approval_logs: JSON.stringify(approvalLogs),
                 remarks: remarks || null,
                 updated_at: new Date()
             }
@@ -1755,24 +1855,25 @@ export class PayrollService {
                 select: { first_name: true, last_name: true }
             });
             const empName = empDetail ? `${empDetail.first_name || ''} ${empDetail.last_name || ''}`.trim() : 'Employee';
-            const sLower = status.toLowerCase();
+            const sLower = updatedClaim.status.toLowerCase();
+            const role = updatedClaim.current_assigned_role;
 
             // 1. Employee Notification (Updates employee on status progress)
-            let empTitle = `Reimbursement Status: ${status}`;
-            let empMessage = `Your reimbursement claim for ${updatedClaim.type} (₹${Number(updatedClaim.amount).toLocaleString()}) is now ${status}.`;
+            let empTitle = `Reimbursement Status: ${updatedClaim.status}`;
+            let empMessage = `Your reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}) is now Status: ${updatedClaim.status}.`;
 
-            if (sLower.includes('hr approval') || sLower.includes('pending_hr')) {
-                empTitle = '✅ Claim Approved by Manager';
-                empMessage = `Your manager approved your reimbursement claim for ${updatedClaim.type} (₹${Number(updatedClaim.amount).toLocaleString()}). Pending HR review.`;
-            } else if (sLower.includes('finance approval') || sLower.includes('pending_finance') || sLower.includes('waiting_payout')) {
-                empTitle = '✅ Claim Verified by HR';
-                empMessage = `HR verified your reimbursement claim for ${updatedClaim.type} (₹${Number(updatedClaim.amount).toLocaleString()}). Pending Finance payout.`;
-            } else if (sLower === 'approved') {
-                empTitle = '🎉 Claim Fully Approved!';
-                empMessage = `Your reimbursement claim for ${updatedClaim.type} (₹${Number(updatedClaim.amount).toLocaleString()}) has been fully approved.`;
-            } else if (sLower.includes('reject')) {
-                empTitle = '❌ Claim Rejected';
-                empMessage = `Your reimbursement claim for ${updatedClaim.type} (₹${Number(updatedClaim.amount).toLocaleString()}) was rejected. ${remarks ? `Remarks: ${remarks}` : ''}`;
+            if (sLower === 'pending_approval' && role === 'HR') {
+                empTitle = 'Claim Approved by Manager';
+                empMessage = `Your manager approved your reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}). Pending HR review.`;
+            } else if (sLower === 'pending_approval' && role === 'FINANCE') {
+                empTitle = 'Claim Verified by HR';
+                empMessage = `HR verified your reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}). Pending Finance payout.`;
+            } else if (sLower === 'ready_for_payroll_review') {
+                empTitle = 'Claim Fully Approved!';
+                empMessage = `Your reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}) has been fully approved.`;
+            } else if (sLower === 'rejected') {
+                empTitle = 'Claim Rejected';
+                empMessage = `Your reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}) was rejected. ${remarks ? `Remarks: ${remarks}` : ''}`;
             }
 
             if (updatedClaim.user_id) {
@@ -1783,12 +1884,12 @@ export class PayrollService {
                     type: 'REIMBURSEMENT',
                     related_module: 'reimbursement',
                     related_id: updatedClaim.id,
-                    metadata: { claimId: updatedClaim.id, status, remarks }
+                    metadata: { claimId: updatedClaim.id, status: updatedClaim.status, remarks }
                 });
             }
 
             // 2. Next Stage Workflow Notifications
-            if (sLower.includes('hr approval') || sLower.includes('pending_hr')) {
+            if (sLower === 'pending_approval' && role === 'HR') {
                 // Manager approved -> Notify HR users to review
                 const hrUsers = await prisma.user.findMany({
                     where: {
@@ -1807,16 +1908,16 @@ export class PayrollService {
                     if (hr.id !== actorId && hr.id !== updatedClaim.user_id) {
                         await notificationService.create({
                             user_id: hr.id,
-                            title: '📋 Claim Pending HR Verification',
-                            message: `${empName}'s reimbursement claim for ${updatedClaim.type} (₹${Number(updatedClaim.amount).toLocaleString()}) was approved by Manager. Pending HR verification.`,
+                            title: 'Claim Pending HR Verification',
+                            message: `${empName}'s reimbursement claim for ${updatedClaim.type} (TShs Status: pending HR verification.`,
                             type: 'REIMBURSEMENT',
                             related_module: 'reimbursement',
                             related_id: updatedClaim.id,
-                            metadata: { claimId: updatedClaim.id, status }
+                            metadata: { claimId: updatedClaim.id, status: updatedClaim.status }
                         });
                     }
                 }
-            } else if (sLower.includes('finance approval') || sLower.includes('pending_finance') || sLower.includes('waiting_payout') || sLower === 'approved') {
+            } else if (sLower === 'pending_approval' && role === 'FINANCE') {
                 // HR approved -> Notify Finance users to process payout
                 const financeUsers = await prisma.user.findMany({
                     where: {
@@ -1839,12 +1940,12 @@ export class PayrollService {
                     if (fin.id !== actorId && fin.id !== updatedClaim.user_id) {
                         await notificationService.create({
                             user_id: fin.id,
-                            title: '💰 Claim Ready for Finance Payout',
-                            message: `${empName}'s reimbursement claim for ${updatedClaim.type} (₹${Number(updatedClaim.amount).toLocaleString()}) is approved and ready for payment processing.`,
+                            title: 'Claim Ready for Finance Payout',
+                            message: `Status: ready for payment processing.`,
                             type: 'REIMBURSEMENT',
                             related_module: 'reimbursement',
                             related_id: updatedClaim.id,
-                            metadata: { claimId: updatedClaim.id, status }
+                            metadata: { claimId: updatedClaim.id, status: updatedClaim.status }
                         });
                     }
                 }
@@ -1870,7 +1971,7 @@ export class PayrollService {
         const result = await prisma.expenseClaim.updateMany({
             where: { id: { in: ids } },
             data: {
-                status: 'Paid',
+                status: 'PAID',
                 payment_status: 'Paid',
                 payment_mode: paymentMode,
                 payment_reference: paymentReference,

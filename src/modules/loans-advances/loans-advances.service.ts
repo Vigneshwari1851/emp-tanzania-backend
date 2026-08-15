@@ -145,7 +145,7 @@ export class LoansAdvancesService {
                 where: { id },
                 data: { status: 'PENDING_HR', manager_remarks: remarks || null, manager_approved_at: new Date() }
             });
-            await this._notifyHR(`${empName}'s loan of ${loan.principalAmount} needs HR review.`, 'LOAN', id, { status: 'PENDING_HR', amount: loan.principalAmount, employeeName: empName });
+            await this._notifyHR(`${empName}'s loan of ${loan.principalAmount} needs HR approval.`, 'LOAN', id, { status: 'PENDING_HR', amount: loan.principalAmount, employeeName: empName });
             return updated;
         }
 
@@ -442,7 +442,7 @@ export class LoansAdvancesService {
                 where: { id },
                 data: { status: 'PENDING_HR', manager_remarks: remarks || null, manager_approved_at: new Date() }
             });
-            await this._notifyHR(`${empName}'s advance of ${advance.principalAmount} needs HR review.`, 'ADVANCE', id, { status: 'PENDING_HR', amount: advance.principalAmount, employeeName: empName });
+            await this._notifyHR(`${empName}'s advance of ${advance.principalAmount} needs HR approval.`, 'ADVANCE', id, { status: 'PENDING_HR', amount: advance.principalAmount, employeeName: empName });
             return updated;
         }
 

@@ -112,18 +112,118 @@ const findHRUserIds = async (excludeUserId?: number): Promise<number[]> => {
     const users = await prisma.user.findMany({
         where: {
             is_deleted: false,
-            status: true,
-            ...(excludeUserId ? { id: { not: excludeUserId } } : {}),
-            OR: [
-                { roles: { some: { role: { role_name: { contains: 'HR' } } } } },
-                { roles: { some: { role: { role_name: { contains: 'ADMIN' } } } } },
-                { details: { role: { role_name: { contains: 'HR' } } } },
-                { details: { role: { role_name: { contains: 'ADMIN' } } } }
-            ]
+            status: true
         },
-        select: { id: true }
+        include: {
+            roles: { include: { role: true } },
+            details: { include: { role: true } }
+        }
     });
-    return users.map(u => u.id);
+
+    return users.filter(u => {
+        if (excludeUserId && u.id === excludeUserId) return false;
+        const email = u.email || '';
+        const roleNames = [
+            (u as any).role || '',
+            u.details?.role?.role_name || '',
+            ...(u.roles || []).map(r => r.role?.role_name || (r as any).role_name || '')
+        ].join(' ').toUpperCase();
+
+        const isSuperAdmin = email.toLowerCase().includes('superadmin') || roleNames.includes('SUPER');
+        const isHR = email.toLowerCase().includes('hr') || roleNames.includes('HR') || isSuperAdmin;
+        
+        if (email.toLowerCase().includes('finance') && !isSuperAdmin) {
+            return false;
+        }
+
+        return isHR;
+    }).map(u => u.id);
+};
+
+const findFinanceUserIds = async (excludeUserId?: number): Promise<number[]> => {
+    const users = await prisma.user.findMany({
+        where: {
+            is_deleted: false,
+            status: true
+        },
+        include: {
+            roles: { include: { role: true } },
+            details: { include: { role: true } }
+        }
+    });
+
+    return users.filter(u => {
+        if (excludeUserId && u.id === excludeUserId) return false;
+        const email = u.email || '';
+        const roleNames = [
+            (u as any).role || '',
+            u.details?.role?.role_name || '',
+            ...(u.roles || []).map(r => r.role?.role_name || (r as any).role_name || '')
+        ].join(' ').toUpperCase();
+
+        const isSuperAdmin = email.toLowerCase().includes('superadmin') || roleNames.includes('SUPER');
+        const isFinance = email.toLowerCase().includes('finance') || email.toLowerCase().includes('account') || roleNames.includes('FINANCE') || roleNames.includes('ACCOUNT') || isSuperAdmin;
+
+        if (email.toLowerCase().includes('hr') && !isSuperAdmin) {
+            return false;
+        }
+
+        return isFinance;
+    }).map(u => u.id);
+};
+
+const AUTO_APPLY_FIELDS = new Set([
+    'first_name',
+    'middle_name',
+    'last_name',
+    'date_of_birth',
+    'gender',
+    'nationality',
+    'marital_status',
+    'blood_group'
+]);
+
+const PAYROLL_FIELDS = new Set([
+    'bank_name',
+    'branch_name',
+    'account_holder_name',
+    'account_number',
+    'ifsc_code',
+    'pan_number',
+    'aadhaar_number',
+    'passport_number',
+    'passport_expiry_date',
+    'driving_license_number',
+    'license_expiry_date'
+]);
+
+const applyChangesDirectly = async (userId: number, changes: Record<string, any>) => {
+    return prisma.$transaction(async (tx) => {
+        const { email, _previous, ...detailsChanges } = changes;
+        if (email) {
+            await tx.user.update({
+                where: { id: userId },
+                data: { email }
+            });
+        }
+        if (Object.keys(detailsChanges).length > 0) {
+            const casted: Record<string, any> = { ...detailsChanges };
+            if (casted.date_of_birth) casted.date_of_birth = new Date(casted.date_of_birth);
+            if (casted.passport_expiry_date) casted.passport_expiry_date = new Date(casted.passport_expiry_date);
+            if (casted.license_expiry_date) casted.license_expiry_date = new Date(casted.license_expiry_date);
+
+            for (const [key, value] of Object.entries(casted)) {
+                if (Array.isArray(value) || (value && typeof value === 'object')) {
+                    casted[key] = JSON.stringify(value);
+                }
+            }
+
+            await tx.userDetail.update({
+                where: { user_id: userId },
+                data: casted as Prisma.UserDetailUpdateInput
+            });
+        }
+    });
 };
 
 const getEmployeeName = (user: any): string => {
@@ -205,9 +305,6 @@ export class ChangeRequestService {
             if (emailExists) throw new AppError('Email is already in use by another employee', 400);
         }
 
-        const reportingManagerId = user.details?.reporting_manager_id ?? null;
-        const hasManager = !!reportingManagerId;
-
         const previousValues = capturePreviousValues(user, cleanChanges);
         const changedOnly: Record<string, any> = {};
         for (const [key, newValue] of Object.entries(cleanChanges)) {
@@ -216,41 +313,82 @@ export class ChangeRequestService {
             }
         }
         if (Object.keys(changedOnly).length === 0) {
-            throw new AppError('No changes detected — the submitted values match your current profile', 400);
+            throw new AppError('No changes detected - the submitted values match your current profile', 400);
         }
 
+        const autoChanges: Record<string, any> = {};
+        const approvalChanges: Record<string, any> = {};
+        for (const [key, value] of Object.entries(changedOnly)) {
+            if (AUTO_APPLY_FIELDS.has(key)) {
+                autoChanges[key] = value;
+            } else {
+                approvalChanges[key] = value;
+            }
+        }
+
+        // Apply autoChanges immediately if any exist
+        if (Object.keys(autoChanges).length > 0) {
+            await applyChangesDirectly(userId, autoChanges);
+        }
+
+        // If there are no approval-required changes, log the change request as APPROVED and return
+        if (Object.keys(approvalChanges).length === 0) {
+            const finalPrevious: Record<string, any> = {};
+            for (const key of Object.keys(autoChanges)) finalPrevious[key] = previousValues[key];
+
+            return prisma.employeeChangeRequest.create({
+                data: {
+                    user_id: userId,
+                    requested_changes: { ...autoChanges, _previous: finalPrevious },
+                    status: 'APPROVED',
+                    category: 'GENERAL',
+                    applied_at: new Date()
+                }
+            });
+        }
+
+        // Handle approval-required changes
+        const hasPayroll = Object.keys(approvalChanges).some(key => PAYROLL_FIELDS.has(key));
+        const category = hasPayroll ? 'PAYROLL' : 'GENERAL';
+        const status = hasPayroll ? 'PENDING_FINANCE_APPROVAL' : 'PENDING_HR_APPROVAL';
+
         const finalPrevious: Record<string, any> = {};
-        for (const key of Object.keys(changedOnly)) finalPrevious[key] = previousValues[key];
+        for (const key of Object.keys(approvalChanges)) finalPrevious[key] = previousValues[key];
 
         const request = await prisma.employeeChangeRequest.create({
             data: {
                 user_id: userId,
-                requested_changes: { ...changedOnly, _previous: finalPrevious },
-                status: hasManager ? 'PENDING_MANAGER' : 'PENDING_HR',
-                manager_id: hasManager ? reportingManagerId : null
+                requested_changes: { ...approvalChanges, _previous: finalPrevious },
+                status,
+                category
             }
         });
 
         const employeeName = getEmployeeName(user);
-        const fieldCount = Object.keys(changedOnly).length;
+        const fieldCount = Object.keys(approvalChanges).length;
 
-        if (hasManager) {
-            await notificationService.create({
-                user_id: reportingManagerId as number,
-                title: 'Profile Change Request',
-                message: `${employeeName} submitted ${fieldCount} profile change${fieldCount > 1 ? 's' : ''} awaiting your approval.`,
-                type: 'PROFILE_CHANGE',
-                related_module: 'profile-change',
-                related_id: request.id,
-                metadata: { requestId: request.id, employeeId: userId }
-            });
+        if (category === 'PAYROLL') {
+            const financeIds = await findFinanceUserIds();
+            const hrIds = await findHRUserIds();
+            const recipientIds = Array.from(new Set([...financeIds, ...hrIds]));
+            for (const fId of recipientIds) {
+                await notificationService.create({
+                    user_id: fId,
+                    title: 'Payroll Change Request',
+                    message: `${employeeName} submitted ${fieldCount} payroll change${fieldCount > 1 ? 's' : ''} awaiting HR & Finance approval.`,
+                    type: 'PROFILE_CHANGE',
+                    related_module: 'profile-change',
+                    related_id: request.id,
+                    metadata: { requestId: request.id, employeeId: userId }
+                });
+            }
         } else {
             const hrIds = await findHRUserIds();
             for (const hrId of hrIds) {
                 await notificationService.create({
                     user_id: hrId,
                     title: 'Profile Change Request',
-                    message: `${employeeName} submitted ${fieldCount} profile change${fieldCount > 1 ? 's' : ''} awaiting HR approval.`,
+                    message: `${employeeName} submitted ${fieldCount} contact change${fieldCount > 1 ? 's' : ''} awaiting HR approval.`,
                     type: 'PROFILE_CHANGE',
                     related_module: 'profile-change',
                     related_id: request.id,
@@ -286,13 +424,38 @@ export class ChangeRequestService {
     }
 
     async getInbox(userId: number) {
-        const roleNames = await getUserRoleNames(userId);
-        const isHRUser = isHR(roleNames);
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            include: {
+                roles: { include: { role: true } },
+                details: { include: { role: true } }
+            }
+        });
+        if (!user) return [];
+
+        const email = user.email || '';
+        const roleNames = [
+            (user as any).role || '',
+            user.details?.role?.role_name || '',
+            ...(user.roles || []).map(r => r.role?.role_name || (r as any).role_name || '')
+        ].join(' ').toUpperCase();
+
+        const isSuperAdmin = email.toLowerCase().includes('superadmin') || roleNames.includes('SUPER');
+        const isHRUser = email.toLowerCase().includes('hr') || roleNames.includes('HR') || isSuperAdmin;
+        const isFinanceUser = email.toLowerCase().includes('finance') || email.toLowerCase().includes('account') || roleNames.includes('FINANCE') || roleNames.includes('ACCOUNT') || isSuperAdmin;
+
+        const statusFilter: string[] = [];
+        if (isHRUser) statusFilter.push('PENDING_HR_APPROVAL');
+        if (isFinanceUser) statusFilter.push('PENDING_FINANCE_APPROVAL');
+
+        if (statusFilter.length === 0) {
+            return [];
+        }
 
         const pending = await prisma.employeeChangeRequest.findMany({
             where: {
                 user_id: { not: userId },
-                status: { in: ['PENDING_MANAGER', 'PENDING_HR'] }
+                status: { in: statusFilter }
             },
             orderBy: { created_at: 'asc' },
             include: {
@@ -312,15 +475,17 @@ export class ChangeRequestService {
             }
         });
 
-        const reportingEmployees = await prisma.userDetail.findMany({
-            where: { reporting_manager_id: userId },
-            select: { user_id: true }
-        });
-        const reportingUserIds = new Set(reportingEmployees.map(e => e.user_id));
-
         return pending.filter((r) => {
-            if (isHRUser) return true;
-            return r.status === 'PENDING_MANAGER' && (r.manager_id === userId || reportingUserIds.has(r.user_id));
+            if (isSuperAdmin) return true;
+            
+            if (r.status === 'PENDING_HR_APPROVAL' && isHRUser && (r.category === 'GENERAL' || !r.category)) {
+                if (email.toLowerCase().includes('finance')) return false;
+                return true;
+            }
+            if (r.status === 'PENDING_FINANCE_APPROVAL' && (isFinanceUser || isHRUser) && r.category === 'PAYROLL') {
+                return true;
+            }
+            return false;
         });
     }
 
@@ -328,7 +493,7 @@ export class ChangeRequestService {
         requestId: number,
         actorId: number,
         action: 'approve' | 'reject',
-        roleParam: 'manager' | 'hr',
+        roleParam: 'manager' | 'hr' | 'finance',
         note?: string
     ) {
         const request = await requestWithUser(requestId);
@@ -338,22 +503,14 @@ export class ChangeRequestService {
         }
 
         const employeeName = getEmployeeName(request.user);
-        const role = request.status === 'PENDING_HR' ? 'hr' : 'manager';
+        const roleNames = (await getUserRoleNames(actorId)).toUpperCase();
+        const isSuperAdmin = roleNames.includes('SUPER');
+        const isHRUser = roleNames.includes('HR') || roleNames.includes('ADMIN') || roleNames.includes('SYSTEM_ADMIN') || isSuperAdmin;
+        const isFinanceUser = roleNames.includes('FINANCE') || roleNames.includes('ACCOUNT') || roleNames.includes('PAYROLL') || roleNames.includes('ADMIN') || roleNames.includes('SYSTEM_ADMIN') || isSuperAdmin;
 
-        if (role === 'manager') {
-            if (request.status !== 'PENDING_MANAGER') {
-                throw new AppError('This request is no longer pending manager approval', 400);
-            }
-            if (request.manager_id !== actorId) {
-                const userDetail = await prisma.userDetail.findUnique({
-                    where: { user_id: request.user_id },
-                    select: { reporting_manager_id: true }
-                });
-                const isReportingManager = userDetail?.reporting_manager_id === actorId;
-                const roleNames = await getUserRoleNames(actorId);
-                if (!isReportingManager && !isHR(roleNames)) {
-                    throw new AppError('You are not the assigned manager for this request', 403);
-                }
+        if (request.status === 'PENDING_FINANCE_APPROVAL') {
+            if (!isFinanceUser && !isHRUser) {
+                throw new AppError('Only HR, Finance or admin users can approve payroll change requests', 403);
             }
 
             if (action === 'reject') {
@@ -361,63 +518,52 @@ export class ChangeRequestService {
                     where: { id: requestId },
                     data: {
                         status: 'REJECTED',
-                        manager_status: 'REJECTED',
-                        manager_note: note || null,
-                        manager_actioned_at: new Date()
+                        hr_id: actorId,
+                        hr_status: 'REJECTED',
+                        hr_note: note || null,
+                        hr_actioned_at: new Date()
                     }
                 });
                 await notificationService.create({
                     user_id: request.user_id,
                     title: 'Profile Change Request Rejected',
-                    message: `Your profile change request was rejected by your manager${note ? `: ${note}` : '.'}`,
+                    message: `Your payroll profile change request was rejected by Finance${note ? `: ${note}` : '.'}`,
                     type: 'PROFILE_CHANGE',
                     related_module: 'profile-change',
                     related_id: requestId,
-                    metadata: { requestId, status: 'REJECTED', stage: 'manager' }
+                    metadata: { requestId, status: 'REJECTED', stage: 'finance' }
                 });
                 return updated;
             }
 
+            await this.applyChanges(request);
             const updated = await prisma.employeeChangeRequest.update({
                 where: { id: requestId },
                 data: {
-                    status: 'PENDING_HR',
-                    manager_status: 'APPROVED',
-                    manager_note: note || null,
-                    manager_actioned_at: new Date()
+                    status: 'APPROVED',
+                    hr_id: actorId,
+                    hr_status: 'APPROVED',
+                    hr_note: note || null,
+                    hr_actioned_at: new Date(),
+                    applied_at: new Date()
                 }
             });
             await notificationService.create({
                 user_id: request.user_id,
-                title: 'Profile Change Request Approved by Manager',
-                message: 'Your profile change request was approved by your manager and is now awaiting HR approval.',
+                title: 'Profile Change Request Approved',
+                message: 'Your payroll profile change request was approved and your profile has been updated.',
                 type: 'PROFILE_CHANGE',
                 related_module: 'profile-change',
                 related_id: requestId,
-                metadata: { requestId, status: 'PENDING_HR', stage: 'manager' }
+                metadata: { requestId, status: 'APPROVED' }
             });
-            const hrIds = await findHRUserIds(actorId);
-            for (const hrId of hrIds) {
-                await notificationService.create({
-                    user_id: hrId,
-                    title: 'Profile Change Request Awaiting HR Approval',
-                    message: `${employeeName}'s profile change request was approved by their manager and is now awaiting HR approval.`,
-                    type: 'PROFILE_CHANGE',
-                    related_module: 'profile-change',
-                    related_id: requestId,
-                    metadata: { requestId, employeeId: request.user_id, status: 'PENDING_HR', stage: 'hr' }
-                });
-            }
             return updated;
         }
 
-        if (role === 'hr') {
-            if (request.status !== 'PENDING_HR') {
-                throw new AppError('This request is not pending HR approval', 400);
-            }
-            const roleNames = await getUserRoleNames(actorId);
-            if (!isHR(roleNames)) {
-                throw new AppError('Only HR or admin users can approve at this stage', 403);
+        // Default: GENERAL changes
+        if (request.status === 'PENDING_HR_APPROVAL' || request.status === 'PENDING_MANAGER' || request.status === 'PENDING_HR') {
+            if (!isHRUser) {
+                throw new AppError('Only HR or admin users can approve profile change requests', 403);
             }
 
             if (action === 'reject') {
@@ -467,7 +613,7 @@ export class ChangeRequestService {
             return updated;
         }
 
-        throw new AppError('Invalid approval role', 400);
+        throw new AppError('Invalid request status or unauthorized role', 400);
     }
 
     private async applyChanges(request: any) {

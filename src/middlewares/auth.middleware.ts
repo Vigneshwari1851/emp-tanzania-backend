@@ -107,9 +107,25 @@ export const authorize = (requiredPermissions: string[]) => {
         }
 
         const userPermissions = req.user.permissions || [];
-        const hasPermission = requiredPermissions.every((perm) =>
-            userPermissions.includes(perm)
-        );
+        const normalizePerm = (p) => p.toLowerCase().replace(/:/g, '.');
+        const normalizedUserPerms = userPermissions.map(normalizePerm);
+
+        const hasPermission = requiredPermissions.every((perm) => {
+            const normReq = normalizePerm(perm);
+            if (normalizedUserPerms.includes(normReq)) return true;
+            if (normReq === 'payroll.viewall' || normReq === 'payroll.viewgroup' || normReq === 'payroll.view') {
+                return (
+                    normalizedUserPerms.includes('payroll.view') ||
+                    normalizedUserPerms.includes('payroll.manage') ||
+                    normalizedUserPerms.includes('payroll.viewall') ||
+                    normalizedUserPerms.includes('payroll.viewgroup')
+                );
+            }
+            if (normReq === 'payroll.manage') {
+                return normalizedUserPerms.includes('payroll.manage');
+            }
+            return false;
+        });
 
         if (!hasPermission) {
             return sendError(res, 403, 'Forbidden: Insufficient permissions');

@@ -1,0 +1,1 @@
+import prisma from './config/prisma'; prisma.user.findUnique({ where: { id: 9 }, include: { roles: { include: { role: true } } } }).then(r => console.log(JSON.stringify(r, null, 2))).catch(console.error);

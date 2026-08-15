@@ -9,6 +9,7 @@ const router = Router();
 router.use(authenticate);
 
 router.get('/', newsController.listNews);
+router.get('/feed', newsController.getNewsFeed);
 router.get('/:id', newsController.getNews);
 
 router.post('/', authorize(['MANAGE_NEWS']), validateRequest(createNewsSchema), newsController.createNews);

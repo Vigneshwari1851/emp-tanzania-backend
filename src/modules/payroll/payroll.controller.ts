@@ -974,4 +974,142 @@ export class PayrollController {
             _errRes(res, error);
         }
     }
+
+    async getReimbursementPolicies(req: any, res: any) {
+        try {
+            const setting = await prisma.systemSetting.findUnique({
+                where: { key: 'reimbursement_policies' }
+            });
+            res.json({
+                success: true,
+                data: setting ? JSON.parse(setting.value) : [
+          {
+                    "id": "pol-1",
+                    "name": "Executive Travel Reimbursement",
+                    "code": "POL-EXEC-TRV",
+                    "description": "Travel and lodging policies for managers and above",
+                    "type": "Capped",
+                    "categories": [
+                              "Travel & Local Conveyance",
+                              "Hotel & Lodging",
+                              "Meals & Client Entertainment"
+                    ],
+                    "eligibility": {
+                              "departments": [
+                                        "All"
+                              ],
+                              "designations": [
+                                        "Manager",
+                                        "Director",
+                                        "VP",
+                                        "CEO"
+                              ],
+                              "locations": [
+                                        "All"
+                              ]
+                    },
+                    "maxLimit": 100000,
+                    "frequency": "Monthly",
+                    "receiptRequired": true,
+                    "minAmountForReceipt": 500,
+                    "workflow": [
+                              "Manager",
+                              "HR",
+                              "Finance"
+                    ],
+                    "effectiveDate": "2026-04-01",
+                    "expiryDate": "2027-03-31",
+                    "status": "Active"
+          },
+          {
+                    "id": "pol-2",
+                    "name": "Remote Broadband Allowance",
+                    "code": "POL-WFH-NET",
+                    "description": "Fixed monthly reimbursement for home internet expenses",
+                    "type": "Fixed",
+                    "categories": [
+                              "Internet & Broadband"
+                    ],
+                    "eligibility": {
+                              "departments": [
+                                        "All"
+                              ],
+                              "designations": [
+                                        "All"
+                              ],
+                              "locations": [
+                                        "All"
+                              ]
+                    },
+                    "maxLimit": 1500,
+                    "frequency": "Monthly",
+                    "receiptRequired": false,
+                    "minAmountForReceipt": 0,
+                    "workflow": [
+                              "Manager",
+                              "HR",
+                              "Finance"
+                    ],
+                    "effectiveDate": "2026-01-01",
+                    "expiryDate": "2026-12-31",
+                    "status": "Active"
+          },
+          {
+                    "id": "pol-3",
+                    "name": "Field Sales Mileage Plan",
+                    "code": "POL-SAL-MIL",
+                    "description": "Mileage payout for on-field customer engagements",
+                    "type": "Mileage",
+                    "categories": [
+                              "Fuel & Mileage Allowance"
+                    ],
+                    "eligibility": {
+                              "departments": [
+                                        "Sales",
+                                        "Marketing"
+                              ],
+                              "designations": [
+                                        "All"
+                              ],
+                              "locations": [
+                                        "All"
+                              ]
+                    },
+                    "maxLimit": 15000,
+                    "frequency": "Monthly",
+                    "receiptRequired": true,
+                    "minAmountForReceipt": 200,
+                    "workflow": [
+                              "Manager",
+                              "HR",
+                              "Finance"
+                    ],
+                    "effectiveDate": "2026-04-01",
+                    "expiryDate": "2027-03-31",
+                    "status": "Active"
+          }
+]
+            });
+        } catch (error: any) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+    }
+
+    async saveReimbursementPolicies(req: any, res: any) {
+        try {
+            const policies = req.body;
+            const valueStr = JSON.stringify(policies);
+            await prisma.systemSetting.upsert({
+                where: { key: 'reimbursement_policies' },
+                update: { value: valueStr },
+                create: { key: 'reimbursement_policies', value: valueStr }
+            });
+            res.json({
+                success: true,
+                data: policies
+            });
+        } catch (error: any) {
+            res.status(500).json({ success: false, message: error.message });
+        }
+    }
 }
