@@ -110,7 +110,7 @@ export class LoanApplicationsController {
         try {
             const userId = req.user?.id;
             if (!userId) return res.status(401).json({ success: false, message: 'Unauthorized' });
-            const result = await service.approveStep(Number(req.params.id), userId, req.body.remarks);
+            const result = await service.approveStep(Number(req.params.id), userId, req.body.remarks, req.body.expectedStep !== undefined ? Number(req.body.expectedStep) : undefined);
             _audit(req, 'APPLICATION_APPROVED_STEP', String(req.params.id), { newStatus: result.status });
             res.json({ success: true, data: result, message: `Approved at step ${result.currentStep}` });
         } catch (error: any) {
@@ -122,7 +122,7 @@ export class LoanApplicationsController {
         try {
             const userId = req.user?.id;
             if (!userId) return res.status(401).json({ success: false, message: 'Unauthorized' });
-            const result = await service.rejectStep(Number(req.params.id), userId, req.body.remarks);
+            const result = await service.rejectStep(Number(req.params.id), userId, req.body.remarks, req.body.expectedStep !== undefined ? Number(req.body.expectedStep) : undefined);
             _audit(req, 'APPLICATION_REJECTED', String(req.params.id), { remarks: req.body.remarks });
             res.json({ success: true, data: result, message: 'Application rejected' });
         } catch (error: any) {

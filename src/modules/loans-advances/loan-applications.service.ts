@@ -113,7 +113,12 @@ export class LoanApplicationsService {
         // Determine initial status based on workflow
         const bypass = data.bypassWorkflow === true;
         const hasWorkflow = loanType.approvalWorkflow.length > 0 && !bypass;
-        const initialStatus = hasWorkflow ? 'SUBMITTED' : 'APPROVED';
+        
+        let initialStatus = 'APPROVED';
+        if (hasWorkflow) {
+            const step1 = loanType.approvalWorkflow[0];
+            initialStatus = 'PENDING_' + step1.roleName.toUpperCase().replace(/[\s_-]+/g, '_');
+        }
         const currentStep = hasWorkflow ? 1 : 0;
 
         const application = await prisma.loanApplication.create({
@@ -132,6 +137,7 @@ export class LoanApplicationsService {
                 reason: data.reason || null,
                 status: initialStatus,
                 currentStep,
+                workflowSnapshot: JSON.stringify(loanType.approvalWorkflow),
                 startDate: hasWorkflow ? null : new Date(),
                 endDate: hasWorkflow ? null : new Date(Date.now() + tenure * 30 * 24 * 60 * 60 * 1000)
             }
@@ -139,48 +145,29 @@ export class LoanApplicationsService {
 
         // Create approval records for each workflow step
         if (hasWorkflow) {
-            const approvalData = loanType.approvalWorkflow.map(step => ({
-                applicationId: application.id,
-                stepOrder: step.stepOrder,
-                approverId: ud.reporting_manager_id || userId, // Default to manager, will be resolved on approval
-                status: step.stepOrder === 1 ? 'PENDING' : 'PENDING'
-            }));
+            const approvalData = loanType.approvalWorkflow.map(step => {
+                const stepRoleUpper = step.roleName.toUpperCase();
+                let stepApproverId = userId; // Default placeholder
+                if (stepRoleUpper.includes('MANAGER') && !stepRoleUpper.includes('HR') && !stepRoleUpper.includes('FINANCE')) {
+                    stepApproverId = ud.reporting_manager_id || userId;
+                }
+                return {
+                    applicationId: application.id,
+                    stepOrder: step.stepOrder,
+                    approverId: stepApproverId,
+                    status: 'PENDING'
+                };
+            });
             await prisma.loanApproval.createMany({ data: approvalData });
         }
 
         // Generate repayment schedule if auto-approved
         if (!hasWorkflow) {
             await this.generateRepaymentSchedule(application.id, tenure, emi, Number(loanType.interestRate), principal);
-        }
-
-        // Notify approvers (Reporting Manager + Step 1 approvers / Manager role)
-        const targetUserIds = new Set<number>();
-        if (ud.reporting_manager_id) {
-            targetUserIds.add(ud.reporting_manager_id);
-        }
-        if (hasWorkflow) {
-            const step1 = loanType.approvalWorkflow.find(s => s.stepOrder === 1);
-            if (step1) {
-                const stepApprovers = await this._getUsersByRole(step1.roleName);
-                stepApprovers.forEach(a => targetUserIds.add(a.id));
-            }
-        }
-        // Fallback to manager / HR role users if no specific manager assigned
-        if (targetUserIds.size === 0) {
-            const defaultApprovers = await this._getUsersByRole('manager');
-            defaultApprovers.forEach(a => targetUserIds.add(a.id));
-        }
-        targetUserIds.delete(userId);
-
-        const empName = `${ud.first_name || ''} ${ud.last_name || ''}`.trim() || 'Employee';
-        for (const targetId of targetUserIds) {
-            await this._notifyUser(
-                targetId,
-                '💰 New Loan Application Submitted',
-                `${empName} submitted a ${loanType.name} application (${appNumber} - ₹${Number(amount).toLocaleString()}). Pending review.`,
-                'LOAN_APPLICATION',
-                application.id
-            );
+        } else {
+            // Notify stage 1 approvers with fully loaded application model
+            const loadedApp = await this.getById(application.id);
+            await this._notifyApproversForStep(loadedApp, 1);
         }
 
         return await this.getById(application.id);
@@ -193,7 +180,9 @@ export class LoanApplicationsService {
         const app = await prisma.loanApplication.findUnique({ where: { id: applicationId } });
         if (!app) throw new Error('Application not found');
         if (app.userDetailId !== ud.id) throw new Error('Not your application');
-        if (!['DRAFT', 'SUBMITTED'].includes(app.status)) throw new Error('Cannot withdraw at this stage');
+        if (!['DRAFT', 'SUBMITTED', 'PENDING_MANAGER', 'PENDING_HR', 'PENDING_FINANCE'].includes(app.status) && !app.status.startsWith('PENDING_STEP')) {
+            throw new Error('Cannot withdraw at this stage');
+        }
 
         return await prisma.loanApplication.update({
             where: { id: applicationId },
@@ -292,7 +281,7 @@ export class LoanApplicationsService {
                         where: {
                             userDetailId: ud.id,
                             loanTypeId,
-                            status: { in: ['DRAFT', 'SUBMITTED', 'APPROVED', 'DISBURSED'] },
+                            status: { in: ['DRAFT', 'SUBMITTED', 'PENDING_MANAGER', 'PENDING_HR', 'PENDING_FINANCE', 'APPROVED', 'DISBURSED'] },
                             isActive: true
                         }
                     });
@@ -337,7 +326,7 @@ export class LoanApplicationsService {
 
     // ─── Approval Engine ─────────────────────────────────────────────────
 
-    async approveStep(applicationId: number, approverId: number, remarks?: string) {
+    async approveStep(applicationId: number, approverId: number, remarks?: string, expectedStep?: number) {
         const app = await prisma.loanApplication.findUnique({
             where: { id: applicationId },
             include: {
@@ -346,22 +335,60 @@ export class LoanApplicationsService {
             }
         });
         if (!app) throw new Error('Application not found');
-        if (!app.status.startsWith('PENDING_STEP') && app.status !== 'SUBMITTED') {
-            throw new Error('Application is not in a pending approval state');
+
+        if (expectedStep !== undefined && app.currentStep !== expectedStep) {
+            return app; // Idempotent guard
+        }
+        
+        // Idempotency: if already approved/settled/rejected, do nothing
+        if (['APPROVED', 'REJECTED', 'SETTLED', 'DISBURSED', 'WITHDRAWN'].includes(app.status)) {
+            return app;
         }
 
         const currentStepApproval = await prisma.loanApproval.findFirst({
             where: { applicationId, stepOrder: app.currentStep, status: 'PENDING' }
         });
-        if (!currentStepApproval) throw new Error('No pending approval found for current step');
+        if (!currentStepApproval) {
+            return app; // Already approved at this step
+        }
 
-        // Update the approval record
+        // Retrieve Snapshot Steps
+        let workflowSteps = [];
+        if (app.workflowSnapshot) {
+            try {
+                workflowSteps = JSON.parse(app.workflowSnapshot);
+            } catch (e) {
+                workflowSteps = app.loanType?.approvalWorkflow || [];
+            }
+        } else {
+            workflowSteps = app.loanType?.approvalWorkflow || [];
+        }
+
+        const currentStepWorkflow = workflowSteps.find((s: any) => s.stepOrder === app.currentStep);
+        if (!currentStepWorkflow) throw new Error('Workflow configuration not found for the current step');
+
+        // Check Permissions
+        const roleUpper = currentStepWorkflow.roleName.toUpperCase();
+        if (roleUpper === 'MANAGER' || roleUpper === 'REPORTING MANAGER') {
+            const isDirectManager = app.userDetail.reporting_manager_id === approverId;
+            const isAdmin = await this._userHasRole(approverId, 'ADMIN');
+            if (!isDirectManager && !isAdmin) {
+                throw new Error('You are not authorized to approve this request (must be direct reporting manager)');
+            }
+        } else {
+            const isAuthorized = await this._userHasRole(approverId, currentStepWorkflow.roleName);
+            if (!isAuthorized) {
+                throw new Error(`You are not authorized to approve this request (requires ${currentStepWorkflow.roleName} role)`);
+            }
+        }
+
+        // Update approval step
         await prisma.loanApproval.update({
             where: { id: currentStepApproval.id },
             data: { status: 'APPROVED', remarks: remarks || null, actionAt: new Date(), approverId }
         });
 
-        const totalSteps = app.loanType?.approvalWorkflow?.length || 1;
+        const totalSteps = workflowSteps.length || 1;
         const nextStep = app.currentStep + 1;
         const empDetail = app.userDetail;
         const empName = `${empDetail?.first_name || ''} ${empDetail?.last_name || ''}`.trim() || 'Employee';
@@ -415,34 +442,23 @@ export class LoanApplicationsService {
         }
 
         // Move to next step
-        const nextStatus = `PENDING_STEP_${nextStep}`;
-        await prisma.loanApplication.update({
+        const nextWorkflowStep = workflowSteps.find((s: any) => s.stepOrder === nextStep);
+        const nextStatus = 'PENDING_' + nextWorkflowStep.roleName.toUpperCase().replace(/[\s_-]+/g, '_');
+
+        const updatedApp = await prisma.loanApplication.update({
             where: { id: applicationId },
             data: { status: nextStatus, currentStep: nextStep }
         });
 
-        // Notify next approver group (HR / Finance)
-        const nextWorkflowStep = app.loanType?.approvalWorkflow?.find(s => s.stepOrder === nextStep);
-        const targetRoleName = nextWorkflowStep?.roleName || (nextStep === 2 ? 'hr' : 'finance');
-        const nextApprovers = await this._getUsersByRole(targetRoleName);
-
-        for (const a of nextApprovers) {
-            if (a.id !== approverId && a.id !== app.userDetail.user_id) {
-                await this._notifyUser(
-                    a.id,
-                    `📜 Loan Application - Pending ${targetRoleName.toUpperCase()} Review`,
-                    `${empName}'s ${app.loanType?.name || 'Loan'} application (${app.applicationNumber} - ₹${Number(app.requestedAmount).toLocaleString()}) approved at Step ${app.currentStep}. Pending ${targetRoleName} review.`,
-                    'LOAN_APPLICATION',
-                    applicationId
-                );
-            }
-        }
+        // Notify next approver group with fully loaded application model
+        const loadedApp = await this.getById(applicationId);
+        await this._notifyApproversForStep(loadedApp, nextStep);
 
         // Notify employee of progress
         await this._notifyUser(
             app.userDetail.user_id,
             'Application In Progress',
-            `Your ${app.applicationNumber} has been approved at step ${app.currentStep} of ${totalSteps}. Pending ${targetRoleName} review.`,
+            `Your ${app.applicationNumber} has been approved at step ${app.currentStep} of ${totalSteps}. Pending ${nextWorkflowStep?.roleName || 'next stage'} review.`,
             'LOAN_APPLICATION',
             applicationId
         );
@@ -450,26 +466,67 @@ export class LoanApplicationsService {
         return await this.getById(applicationId);
     }
 
-    async rejectStep(applicationId: number, approverId: number, remarks?: string) {
+    async rejectStep(applicationId: number, approverId: number, remarks?: string, expectedStep?: number) {
         const app = await prisma.loanApplication.findUnique({
             where: { id: applicationId },
             include: {
-                loanType: true,
+                loanType: { include: { approvalWorkflow: { orderBy: { stepOrder: 'asc' } } } },
                 userDetail: { include: { user: true } }
             }
         });
         if (!app) throw new Error('Application not found');
 
+        if (expectedStep !== undefined && app.currentStep !== expectedStep) {
+            return app; // Idempotent guard
+        }
+        if (['APPROVED', 'REJECTED', 'SETTLED', 'DISBURSED', 'WITHDRAWN'].includes(app.status)) {
+            return app;
+        }
+
         const currentStepApproval = await prisma.loanApproval.findFirst({
             where: { applicationId, stepOrder: app.currentStep, status: 'PENDING' }
         });
-        if (!currentStepApproval) throw new Error('No pending approval found for current step');
+        if (!currentStepApproval) {
+            return app;
+        }
 
+        // Retrieve Snapshot Steps
+        let workflowSteps = [];
+        if (app.workflowSnapshot) {
+            try {
+                workflowSteps = JSON.parse(app.workflowSnapshot);
+            } catch (e) {
+                workflowSteps = app.loanType?.approvalWorkflow || [];
+            }
+        } else {
+            workflowSteps = app.loanType?.approvalWorkflow || [];
+        }
+
+        const currentStepWorkflow = workflowSteps.find((s: any) => s.stepOrder === app.currentStep);
+        if (!currentStepWorkflow) throw new Error('Workflow configuration not found for current step');
+
+        // Check Permissions
+        const roleUpper = currentStepWorkflow.roleName.toUpperCase();
+        if (roleUpper === 'MANAGER' || roleUpper === 'REPORTING MANAGER') {
+            const isDirectManager = app.userDetail.reporting_manager_id === approverId;
+            const isAdmin = await this._userHasRole(approverId, 'ADMIN');
+            if (!isDirectManager && !isAdmin) {
+                throw new Error('You are not authorized to reject this request (must be direct reporting manager)');
+            }
+        } else {
+            const isAuthorized = await this._userHasRole(approverId, currentStepWorkflow.roleName);
+            if (!isAuthorized) {
+                throw new Error(`You are not authorized to reject this request (requires ${currentStepWorkflow.roleName} role)`);
+            }
+        }
+
+        // Update approval step
         await prisma.loanApproval.update({
             where: { id: currentStepApproval.id },
             data: { status: 'REJECTED', remarks: remarks || 'Rejected', actionAt: new Date(), approverId }
         });
 
+        // Set application as rejected
         await prisma.loanApplication.update({
             where: { id: applicationId },
             data: { status: 'REJECTED', isActive: false, outstandingBalance: 0 }
@@ -478,7 +535,7 @@ export class LoanApplicationsService {
         await this._notifyUser(
             app.userDetail.user_id,
             'Application Rejected',
-            `Your ${app.loanType.name} application ${app.applicationNumber} has been rejected.${remarks ? ` Reason: ${remarks}` : ''}`,
+            `Your ${app.loanType?.name || 'Loan'} application ${app.applicationNumber} has been rejected.${remarks ? ` Reason: ${remarks}` : ''}`,
             'LOAN_APPLICATION',
             applicationId
         );
@@ -487,15 +544,30 @@ export class LoanApplicationsService {
     }
 
     async getPendingApprovals(approverId: number, userRoles: string[]) {
-        const isSuperAdmin = userRoles.some(r => ['SUPER ADMIN', 'SUPER_ADMIN', 'CEO'].includes(r.toUpperCase()));
+        const user = await prisma.user.findUnique({
+            where: { id: approverId },
+            include: {
+                roles: { include: { role: true } },
+                details: { include: { role: true } }
+            }
+        });
 
-        // Find all workflow steps where this user's role matches
-        const userRoleNames = userRoles.map(r => r.toUpperCase());
+        const allRoleNames = Array.from(new Set([
+            ...(userRoles || []).map(r => (typeof r === 'string' ? r : (r as any)?.role_name || '')),
+            (user as any)?.role || '',
+            user?.details?.role?.role_name || '',
+            ...(user?.roles || []).map(r => r.role?.role_name || (r as any).role_name || '')
+        ])).map(r => String(r).toUpperCase()).filter(Boolean);
+
+        const isSuperAdmin = allRoleNames.some(r => ['SUPER ADMIN', 'SUPER_ADMIN', 'CEO', 'ADMIN', 'SYSTEM ADMINISTRATOR'].includes(r));
 
         const pendingApps = await prisma.loanApplication.findMany({
             where: {
                 isActive: true,
-                status: { startsWith: 'PENDING_STEP' }
+                OR: [
+                    { status: { startsWith: 'PENDING_' } },
+                    { status: 'SUBMITTED' }
+                ]
             },
             include: {
                 userDetail: { include: { user: true, department: true, designation: true } },
@@ -506,16 +578,29 @@ export class LoanApplicationsService {
             orderBy: { createdAt: 'asc' }
         });
 
-        // Filter: show only applications where the user can approve the current step
         return pendingApps.filter(app => {
             if (isSuperAdmin) return true;
 
-            const currentStepWorkflow = app.loanType.approvalWorkflow.find((s: { stepOrder: number }) => s.stepOrder === app.currentStep);
+            let workflowSteps = [];
+            if (app.workflowSnapshot) {
+                try {
+                    workflowSteps = JSON.parse(app.workflowSnapshot);
+                } catch (e) {
+                    workflowSteps = app.loanType?.approvalWorkflow || [];
+                }
+            } else {
+                workflowSteps = app.loanType?.approvalWorkflow || [];
+            }
+
+            const currentStepWorkflow = workflowSteps.find((s: any) => s.stepOrder === app.currentStep);
             if (!currentStepWorkflow) return false;
 
-            return userRoleNames.includes(currentStepWorkflow.roleName.toUpperCase()) ||
-                   userRoleNames.includes('SUPER ADMIN') ||
-                   userRoleNames.includes('ADMIN');
+            const stepRole = currentStepWorkflow.roleName.toUpperCase();
+            if (stepRole === 'MANAGER' || stepRole === 'REPORTING MANAGER') {
+                return app.userDetail.reporting_manager_id === approverId;
+            }
+
+            return allRoleNames.some(r => r.includes(stepRole) || r.includes('ADMIN') || r.includes('SUPER ADMIN') || r.includes('SUPER_ADMIN'));
         });
     }
 
@@ -613,7 +698,14 @@ export class LoanApplicationsService {
             byType
         ] = await Promise.all([
             prisma.loanApplication.count(),
-            prisma.loanApplication.count({ where: { status: { startsWith: 'PENDING' } } }),
+            prisma.loanApplication.count({
+                where: {
+                    OR: [
+                        { status: { startsWith: 'PENDING_' } },
+                        { status: 'SUBMITTED' }
+                    ]
+                }
+            }),
             prisma.loanApplication.count({ where: { status: 'APPROVED' } }),
             prisma.loanApplication.count({ where: { status: 'REJECTED' } }),
             prisma.loanApplication.count({ where: { status: 'SETTLED' } }),
@@ -707,17 +799,95 @@ export class LoanApplicationsService {
     }
 
     private async _getUsersByRole(roleName: string) {
-        const cleanName = (roleName || '').trim();
-        return await prisma.user.findMany({
-            where: {
-                OR: [
-                    { roles: { some: { role: { role_name: { contains: cleanName } } } } },
-                    { details: { role: { role_name: { contains: cleanName } } } },
-                    { roles: { some: { role: { role_name: { contains: 'admin' } } } } },
-                    { details: { role: { role_name: { contains: 'admin' } } } }
-                ]
-            },
-            select: { id: true }
+        const cleanName = (roleName || '').trim().toUpperCase();
+        if (!cleanName) return [];
+        
+        const allUsers = await prisma.user.findMany({
+            include: {
+                roles: { include: { role: true } },
+                details: { include: { role: true } }
+            }
         });
+
+        return allUsers.filter(user => {
+            const roleNames = Array.from(new Set([
+                (user as any)?.role || '',
+                user?.details?.role?.role_name || '',
+                ...(user?.roles || []).map(r => r.role?.role_name || (r as any).role_name || '')
+            ])).map(r => String(r).toUpperCase()).filter(Boolean);
+
+            return roleNames.some(r => r.includes(cleanName) || cleanName.includes(r));
+        }).map(user => ({ id: user.id }));
+    }
+
+    private async _userHasRole(userId: number, roleName: string): Promise<boolean> {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            include: {
+                roles: { include: { role: true } },
+                details: { include: { role: true } }
+            }
+        });
+        if (!user) return false;
+
+        const roleNames = Array.from(new Set([
+            (user as any)?.role || '',
+            user?.details?.role?.role_name || '',
+            ...(user?.roles || []).map(r => r.role?.role_name || (r as any).role_name || '')
+        ])).map(r => String(r).toUpperCase()).filter(Boolean);
+
+        const isSuperAdmin = roleNames.some(r => ['SUPER ADMIN', 'SUPER_ADMIN', 'CEO', 'ADMIN', 'SYSTEM ADMINISTRATOR'].includes(r));
+        if (isSuperAdmin) return true;
+
+        const cleanRole = roleName.toUpperCase();
+        return roleNames.some(r => r.includes(cleanRole) || cleanRole.includes(r));
+    }
+
+    private async _notifyApproversForStep(app: any, stepOrder: number) {
+        let workflowSteps = [];
+        if (app.workflowSnapshot) {
+            try {
+                workflowSteps = JSON.parse(app.workflowSnapshot);
+            } catch (e) {
+                workflowSteps = app.loanType?.approvalWorkflow || [];
+            }
+        } else {
+            workflowSteps = app.loanType?.approvalWorkflow || [];
+        }
+
+        const step = workflowSteps.find((s: any) => s.stepOrder === stepOrder);
+        if (!step) return;
+
+        const roleName = step.roleName.toUpperCase();
+        const empName = `${app.userDetail?.first_name || ''} ${app.userDetail?.last_name || ''}`.trim() || 'Employee';
+        const amountStr = Number(app.requestedAmount).toLocaleString();
+        
+        let targetUserIds: number[] = [];
+
+        if (roleName === 'MANAGER' || roleName === 'REPORTING MANAGER' || (roleName.includes('MANAGER') && !roleName.includes('HR') && !roleName.includes('FINANCE'))) {
+            if (app.userDetail?.reporting_manager_id) {
+                targetUserIds = [app.userDetail.reporting_manager_id];
+            } else {
+                const defaultApprovers = await this._getUsersByRole('manager');
+                targetUserIds = defaultApprovers.map(u => u.id);
+            }
+        } else {
+            const roleUsers = await this._getUsersByRole(roleName);
+            const adminUsers = await this._getUsersByRole('admin');
+            const superAdminUsers = await this._getUsersByRole('super admin');
+            targetUserIds = [...roleUsers.map(u => u.id), ...adminUsers.map(u => u.id), ...superAdminUsers.map(u => u.id)];
+        }
+
+        targetUserIds = Array.from(new Set(targetUserIds)).filter(id => id !== app.userDetail?.user_id);
+
+        for (const targetId of targetUserIds) {
+            await this._notifyUser(
+                targetId,
+                `📜 Pending Loan Review`,
+                `${empName} submitted a ${app.loanType?.name || 'Loan'} application (& #40;LA${app.id}& #41; - TSh  ${amountStr}). Pending ${roleName} review.`,
+                'LOAN_APPLICATION',
+                app.id
+            );
+        }
     }
 }

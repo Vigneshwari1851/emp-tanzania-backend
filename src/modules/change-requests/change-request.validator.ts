@@ -11,7 +11,7 @@ export const createChangeRequestSchema = z.object({
 export const decideChangeRequestSchema = z.object({
     body: z.object({
         action: z.enum(['approve', 'reject']),
-        role: z.enum(['manager', 'hr']),
+        role: z.enum(['manager', 'hr', 'finance']),
         note: z.preprocess((val) => {
             if (val === null || val === undefined) return undefined;
             if (typeof val === 'string' && val.trim() === '') return undefined;

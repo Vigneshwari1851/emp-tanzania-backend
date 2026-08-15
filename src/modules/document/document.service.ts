@@ -30,6 +30,7 @@ export class DocumentService {
         version: data.version ?? '1.0',
         uploaded_by: userId,
         user_id: data.user_id ?? null,
+        target_department: data.target_department ?? 'All Departments',
       },
     });
 
@@ -115,6 +116,8 @@ export class DocumentService {
     tab?: string;
     is_restricted?: boolean;
     search?: string;
+    user_department_name?: string;
+    can_manage?: boolean;
   }) {
     const where: any = {};
 
@@ -136,6 +139,18 @@ export class DocumentService {
         { description: { contains: params.search } },
         { category: { contains: params.search } },
       ];
+    }
+
+    // Filter by department if the user is NOT an admin/manager
+    if (!params?.can_manage) {
+      if (params?.user_department_name) {
+        where.OR = [
+          { target_department: { contains: 'All Departments' } },
+          { target_department: { contains: params.user_department_name } }
+        ];
+      } else {
+        where.target_department = { contains: 'All Departments' };
+      }
     }
 
     const items = await prisma.document.findMany({
@@ -233,6 +248,8 @@ export class DocumentService {
       created_at: item.created_at,
       updated_at: item.updated_at,
       tags: item.tags || [],
+      file_url: item.file_url || '',
+      target_department: item.target_department || 'All Departments',
     };
   }
 

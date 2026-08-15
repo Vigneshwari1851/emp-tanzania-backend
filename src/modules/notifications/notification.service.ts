@@ -169,7 +169,35 @@ export class NotificationService {
                     for (const loan of pendingLoans) {
                         if (loan.userDetail?.user_id === userId) continue;
                         const isDirectManager = loan.userDetail?.reporting_manager_id === userId || (loan.userDetail?.user_id && directReportIds.has(loan.userDetail.user_id));
-                        if (isDirectManager || isHR || isFinance || isManager) {
+                        
+                        let workflowSteps = [];
+                        if (loan.workflowSnapshot) {
+                            try {
+                                workflowSteps = JSON.parse(loan.workflowSnapshot);
+                            } catch (e) {
+                                workflowSteps = (loan.loanType as any)?.approvalWorkflow || [];
+                            }
+                        } else {
+                            workflowSteps = (loan.loanType as any)?.approvalWorkflow || [];
+                        }
+
+                        const currentStepWorkflow = workflowSteps.find((s: any) => s.stepOrder === loan.currentStep);
+                        if (!currentStepWorkflow) continue;
+
+                        const stepRole = currentStepWorkflow.roleName.toUpperCase();
+                        let shouldNotify = false;
+
+                        if (stepRole === 'MANAGER' || stepRole === 'REPORTING MANAGER') {
+                            shouldNotify = isDirectManager;
+                        } else if (stepRole === 'HR' || stepRole === 'HR MANAGER' || stepRole === 'HR_MANAGER' || stepRole.includes('HR')) {
+                            shouldNotify = isHR;
+                        } else if (stepRole === 'FINANCE' || stepRole === 'FINANCE MANAGER' || stepRole === 'FINANCE_MANAGER' || stepRole.includes('FINANCE') || stepRole.includes('DISBURSAL')) {
+                            shouldNotify = isFinance;
+                        } else {
+                            shouldNotify = roleNames.includes(stepRole.toUpperCase());
+                        }
+
+                        if (shouldNotify) {
                             const existing = await prisma.notification.findFirst({
                                 where: {
                                     user_id: userId,

@@ -209,6 +209,7 @@ model EmployeeChangeRequest {
   id                   Int        @id @default(autoincrement())
   user_id              Int
   requested_changes    Json
+  category             String?
   status               String     @default("PENDING_MANAGER")
   manager_id           Int?
   manager_status       String?
@@ -878,6 +879,12 @@ model ExpenseClaim {
   payment_date      DateTime?
   payment_reference String?
   paid_by           Int?
+  approval_sequence     String?       @db.Text
+  workflow_sequence     String?       @db.Text
+  current_step_index    Int           @default(0)
+  current_assigned_role String?
+  approval_logs         String?       @db.Text
+  payroll_batch_id      String?
   organization      Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   user              User          @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
@@ -2376,6 +2383,7 @@ model LoanApplication {
   reason             String?  @db.Text
   status             String   @default("DRAFT") // DRAFT | SUBMITTED | PENDING_STEP_1..N | APPROVED | REJECTED | SETTLED | DISBURSED | WITHDRAWN
   currentStep        Int      @default(0)
+  workflowSnapshot   String?  @db.Text
   startDate          DateTime?
   endDate            DateTime?
   isActive           Boolean  @default(true)
@@ -2479,6 +2487,7 @@ model Document {
   version         String   @default("1.0")
   user_id         Int?
   uploaded_by     Int
+  target_department String?  @default("All Departments")
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
   uploader        User     @relation("DocumentUploader", fields: [uploaded_by], references: [id])

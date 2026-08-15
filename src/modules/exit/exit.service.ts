@@ -228,7 +228,7 @@ export class ExitService {
   async getExitStats(userId: number, roles: string[], orgId?: number) {
     // Determine if user is a manager/admin to see all cases
     const normalizedRoles = roles.map(r => r.toUpperCase());
-    const isAdmin = normalizedRoles.some(r => ['SUPER ADMIN', 'SUPER_ADMIN', 'ADMIN', 'CEO', 'SYSTEM ADMINISTRATOR'].includes(r));
+    const isAdmin = normalizedRoles.some(r => ['SUPER ADMIN', 'SUPER_ADMIN', 'ADMIN', 'CEO', 'SYSTEM ADMINISTRATOR', 'HR', 'HR MANAGER', 'HR_MANAGER', 'HR EXECUTIVE', 'HR_EXECUTIVE'].includes(r));
     const isManager = normalizedRoles.some(r => ['MANAGER', 'TEAM MANAGER'].includes(r));
 
     const baseWhere: any = {};
@@ -287,7 +287,7 @@ export class ExitService {
   async getAllExitRequests(params: { search?: string; status?: string; userId?: number; roles?: string[]; orgId?: number }) {
     const { search, status, userId, roles = [], orgId } = params;
     const normalizedRoles = roles.map(r => r.toUpperCase());
-    const isAdmin = normalizedRoles.some(r => ['SUPER ADMIN', 'SUPER_ADMIN', 'ADMIN', 'CEO', 'SYSTEM ADMINISTRATOR'].includes(r));
+    const isAdmin = normalizedRoles.some(r => ['SUPER ADMIN', 'SUPER_ADMIN', 'ADMIN', 'CEO', 'SYSTEM ADMINISTRATOR', 'HR', 'HR MANAGER', 'HR_MANAGER', 'HR EXECUTIVE', 'HR_EXECUTIVE'].includes(r));
     const isManager = normalizedRoles.some(r => ['MANAGER', 'TEAM MANAGER'].includes(r));
 
     const where: any = {};
@@ -1458,3 +1458,4 @@ export class ExitService {
 }
 
 export const exitService = new ExitService();
+

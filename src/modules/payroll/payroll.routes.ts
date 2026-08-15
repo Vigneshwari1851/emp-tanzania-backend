@@ -114,4 +114,8 @@ router.get('/reports/pf-ecr', authenticate as any, canView, (req, res) => contro
 router.get('/system-settings', authenticate as any, canManage, (req, res) => controller.getSystemSettings(req as any, res));
 router.post('/system-settings', authenticate as any, canManage, validateRequest(saveSystemSettingsSchema), (req, res) => controller.saveSystemSettings(req as any, res));
 
+  // Custom Reimbursement Policies
+  router.get('/policies', authenticate as any, (req, res) => controller.getReimbursementPolicies(req as any, res));
+  router.post('/policies', authenticate as any, canManage, (req, res) => controller.saveReimbursementPolicies(req as any, res));
+
 export default router;

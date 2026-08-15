@@ -5,23 +5,37 @@ export class NewsService {
     title: string;
     content: string;
     image?: string | null;
-    access_type: string;
+    access_type?: string;
     department_ids?: number[];
-    status: string;
+    status?: string;
+    is_global?: boolean;
+    target_department_ids?: (string | number)[];
   }) {
+    let access_type = data.access_type || 'public';
+    if (data.is_global !== undefined) {
+      access_type = data.is_global ? 'public' : 'department';
+    }
+
+    let department_ids = data.department_ids || [];
+    if (data.target_department_ids !== undefined) {
+      department_ids = data.target_department_ids.map(id => Number(id)).filter(id => !isNaN(id));
+    }
+
+    const status = data.status || 'published';
+
     const news = await prisma.company_news.create({
       data: {
         title: data.title,
         content: data.content,
         image_url: data.image ?? null,
-        access_type: data.access_type,
-        status: data.status,
+        access_type,
+        status,
         created_by: userId,
         // @ts-ignore
         updated_at: new Date(),
-        departments: data.access_type === 'department' && data.department_ids?.length
+        departments: access_type === 'department' && department_ids.length
           ? {
-              create: data.department_ids.map((deptId) => ({
+              create: department_ids.map((deptId) => ({
                 department_id: deptId,
               })),
             }
@@ -36,12 +50,28 @@ export class NewsService {
     title: string;
     content: string;
     image?: string | null;
-    access_type: string;
+    access_type?: string;
     department_ids?: number[];
-    status: string;
+    status?: string;
+    is_global?: boolean;
+    target_department_ids?: (string | number)[];
   }) {
     const existing = await prisma.company_news.findUnique({ where: { id } });
     if (!existing) throw new Error('News item not found');
+
+    let access_type = data.access_type || existing.access_type;
+    if (data.is_global !== undefined) {
+      access_type = data.is_global ? 'public' : 'department';
+    }
+
+    let department_ids = data.department_ids;
+    if (data.target_department_ids !== undefined) {
+      department_ids = data.target_department_ids.map(id => Number(id)).filter(id => !isNaN(id));
+    } else if (access_type !== 'department') {
+      department_ids = [];
+    }
+
+    const status = data.status || existing.status;
 
     await prisma.company_news.update({
       where: { id },
@@ -49,18 +79,18 @@ export class NewsService {
         title: data.title,
         content: data.content,
         image_url: data.image ?? null,
-        access_type: data.access_type,
-        status: data.status,
+        access_type,
+        status,
       },
     });
 
-    if (data.access_type === 'department') {
+    if (access_type === 'department') {
       await prisma.company_news_departments.deleteMany({
         where: { company_news_id: id },
       });
-      if (data.department_ids?.length) {
+      if (department_ids?.length) {
         await prisma.company_news_departments.createMany({
-          data: data.department_ids.map((deptId) => ({
+          data: department_ids.map((deptId) => ({
             company_news_id: id,
             department_id: deptId,
           })),
@@ -79,6 +109,8 @@ export class NewsService {
     status?: string;
     access_type?: string;
     department_id?: number;
+    user_department_id?: number | null;
+    can_manage?: boolean;
   }) {
     const where: any = {};
 
@@ -90,16 +122,36 @@ export class NewsService {
       where.access_type = params.access_type;
     }
 
-    if (params?.department_id) {
-      where.OR = [
-        { access_type: 'public' },
-        {
-          access_type: 'department',
-          departments: {
-            some: { department_id: params.department_id },
+    // Enforce department filtering for non-managers
+    if (!params?.can_manage) {
+      if (params?.user_department_id) {
+        where.OR = [
+          { access_type: 'public' },
+          {
+            access_type: 'department',
+            departments: {
+              some: { department_id: params.user_department_id },
+            },
           },
-        },
-      ];
+        ];
+      } else {
+        // Guard Clause: If currentUser.department_id is missing or null, return only is_global == true posts
+        where.access_type = 'public';
+      }
+    } else {
+      // For managers/admins, filter by department only if department_id is set, or if they have a user_department_id when requesting published news feed
+      const targetDeptId = params?.department_id || (params?.status === 'published' ? params?.user_department_id : undefined);
+      if (targetDeptId) {
+        where.OR = [
+          { access_type: 'public' },
+          {
+            access_type: 'department',
+            departments: {
+              some: { department_id: targetDeptId },
+            },
+          },
+        ];
+      }
     }
 
     const items = await prisma.company_news.findMany({
@@ -183,13 +235,17 @@ export class NewsService {
       ? `${item.users.details.first_name ?? ''} ${item.users.details.last_name ?? ''}`.trim()
       : null;
 
+    const departmentIds = item.departments?.map((d: any) => d.department_id) ?? [];
+
     return {
       id: item.id,
       title: item.title,
       content: item.content,
       image: item.image_url,
       access_type: item.access_type,
-      department_ids: item.departments?.map((d: any) => d.department_id) ?? [],
+      is_global: item.access_type === 'public',
+      target_department_ids: departmentIds.map(String),
+      department_ids: departmentIds,
       departments: item.departments?.map((d: any) => ({
         id: d.department.id,
         department_name: d.department.department_name,

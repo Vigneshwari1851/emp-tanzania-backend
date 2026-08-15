@@ -75,13 +75,55 @@ export const updateDocument = async (req: AuthRequest, res: Response, next: Next
 
 // ─── List ──────────────────────────────────────────────────────────────────────
 
+import prisma from '../../config/prisma';
+
 export const listDocuments = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
+    const userId = Number(req.user?.id);
+    const userPermissions = req.user?.permissions || [];
+    const userRoles = req.user?.roles || [];
+
+    const hasManagePermission = userPermissions.includes('documents.manage') || userPermissions.includes('documents:manage');
+    
+    const normalizedRoles = [];
+    for (const r of userRoles) {
+      if (typeof r === 'string') {
+        normalizedRoles.push(r.toUpperCase());
+      } else if (r && typeof r === 'object') {
+        const name = (r as any).role_name || (r as any).name || ((r as any).role && (r as any).role.role_name);
+        if (name) normalizedRoles.push(String(name).toUpperCase());
+      }
+    }
+
+    const isManagementRole = normalizedRoles.some(r =>
+      r.includes('SUPER') ||
+      r.includes('ADMIN') ||
+      r.includes('HR') ||
+      r.includes('FINANCE') ||
+      r.includes('MANAGER')
+    );
+
+    const canManage = hasManagePermission || isManagementRole;
+
+    const userDetail = await prisma.userDetail.findUnique({
+      where: { user_id: userId },
+      select: {
+        department: {
+          select: {
+            department_name: true
+          }
+        }
+      }
+    });
+    const userDeptName = userDetail?.department?.department_name;
+
     const params = {
       category: req.query.category as string | undefined,
       tab: req.query.tab as string | undefined,
       search: req.query.search as string | undefined,
       is_restricted: req.query.is_restricted === 'true' ? true : req.query.is_restricted === 'false' ? false : undefined,
+      user_department_name: userDeptName,
+      can_manage: canManage,
     };
     const docs = await documentService.list(params);
     sendResponse(res, 200, true, 'Documents retrieved successfully', docs);
@@ -174,7 +216,7 @@ export const uploadDocumentFile = async (req: AuthRequest, res: Response, next: 
       return sendResponse(res, 400, false, 'No file uploaded', null);
     }
 
-    const fileUrl = `/public/upload/${req.file.filename}`;
+    const fileUrl = `/upload/${req.file.filename}`;
     const fileInfo = {
       file_url: fileUrl,
       file_name: req.file.originalname,

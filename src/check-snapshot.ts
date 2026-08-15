@@ -1,0 +1,1 @@
+import prisma from './config/prisma'; prisma.loanApplication.findMany({ include: { loanType: { include: { approvalWorkflow: true } } } }).then(r => console.log(JSON.stringify(r.map(a => ({ id: a.id, status: a.status, currentStep: a.currentStep, snapshot: a.workflowSnapshot, typeWorkflow: a.loanType?.approvalWorkflow })), null, 2))).catch(console.error);
