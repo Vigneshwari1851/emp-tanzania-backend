@@ -229,6 +229,17 @@ export class EmployeeService {
         }
       }
 
+      // Resolve reporting manager for CEO constraint
+      let finalReportingManagerId = detailsData.reporting_manager_id ? Number(detailsData.reporting_manager_id) : undefined;
+      if (role_id) {
+        const role = await tx.role.findUnique({
+          where: { id: Number(role_id) }
+        });
+        if (role && role.role_name.toLowerCase() === 'ceo') {
+          finalReportingManagerId = null as any;
+        }
+      }
+
       // 3. Create the UserDetail attached to the User
       const userDetail = await tx.userDetail.create({
         data: {
@@ -236,6 +247,7 @@ export class EmployeeService {
           role_id: role_id ? Number(role_id) : undefined,
           team_id: team_id === null ? null : (team_id ? Number(team_id) : undefined),
           ...detailsData,
+          reporting_manager_id: finalReportingManagerId,
           designation_id: detailsData.designation_id ? Number(detailsData.designation_id) : undefined,
           is_draft: isDraftBool,
           payroll_group_id: detailsData.payroll_group_id ? Number(detailsData.payroll_group_id) : undefined
@@ -249,6 +261,18 @@ export class EmployeeService {
             role_id: Number(role_id)
           }
         });
+
+        if (detailsData.department_id) {
+          const role = await tx.role.findUnique({
+            where: { id: Number(role_id) }
+          });
+          if (role && role.role_name.toLowerCase() === 'manager') {
+            await tx.department.update({
+              where: { id: Number(detailsData.department_id) },
+              data: { manager_id: user.id }
+            });
+          }
+        }
       }
 
       return await tx.user.findUnique({
@@ -801,6 +825,21 @@ export class EmployeeService {
         });
       }
 
+      // Resolve reporting manager for CEO constraint
+      const currentRole = role_id !== undefined ? (role_id === null ? null : Number(role_id)) : (employee.details?.role_id);
+      let finalReportingManagerId = detailsData.reporting_manager_id !== undefined
+        ? (detailsData.reporting_manager_id === null ? null : Number(detailsData.reporting_manager_id))
+        : (employee.details?.reporting_manager_id);
+
+      if (currentRole) {
+        const role = await tx.role.findUnique({
+          where: { id: currentRole }
+        });
+        if (role && role.role_name.toLowerCase() === 'ceo') {
+          finalReportingManagerId = null;
+        }
+      }
+
       // 2. Update or Create UserDetail
       if (employee.details) {
         await tx.userDetail.update({
@@ -809,6 +848,7 @@ export class EmployeeService {
             role_id: role_id === null ? null : (role_id ? Number(role_id) : undefined),
             team_id: team_id === null ? null : (team_id ? Number(team_id) : undefined),
             ...detailsData,
+            reporting_manager_id: finalReportingManagerId,
             designation_id: detailsData.designation_id === null ? null : (detailsData.designation_id ? Number(detailsData.designation_id) : undefined),
             ...(role_id && { role_id: Number(role_id) }),
             payroll_group_id: detailsData.payroll_group_id ? Number(detailsData.payroll_group_id) : undefined,
@@ -821,7 +861,8 @@ export class EmployeeService {
             user_id: id,
             role_id: role_id ? Number(role_id) : undefined,
             team_id: team_id ? Number(team_id) : undefined,
-            ...detailsData
+            ...detailsData,
+            reporting_manager_id: finalReportingManagerId
           }
         });
       }
@@ -836,6 +877,53 @@ export class EmployeeService {
             role_id: Number(role_id)
           }
         });
+      }
+
+      // Automatically manage department manager assignments
+      const currentDept = detailsData.department_id !== undefined ? (detailsData.department_id === null ? null : Number(detailsData.department_id)) : (employee.details?.department_id);
+
+      let isNewRoleManager = false;
+      if (currentRole) {
+        const role = await tx.role.findUnique({
+          where: { id: currentRole }
+        });
+        if (role && role.role_name.toLowerCase() === 'manager') {
+          isNewRoleManager = true;
+        }
+      }
+
+      if (isNewRoleManager && currentDept) {
+        // Set them as manager of the new department
+        await tx.department.update({
+          where: { id: currentDept },
+          data: { manager_id: id }
+        });
+
+        // If department changed, clear them from the old department's manager_id
+        if (employee.details?.department_id && employee.details.department_id !== currentDept) {
+          const oldDept = await tx.department.findUnique({
+            where: { id: employee.details.department_id }
+          });
+          if (oldDept && oldDept.manager_id === id) {
+            await tx.department.update({
+              where: { id: employee.details.department_id },
+              data: { manager_id: null }
+            });
+          }
+        }
+      } else {
+        // If they are NOT manager in the new setup, check if they were manager in the old department
+        if (employee.details?.department_id) {
+          const oldDept = await tx.department.findUnique({
+            where: { id: employee.details.department_id }
+          });
+          if (oldDept && oldDept.manager_id === id) {
+            await tx.department.update({
+              where: { id: employee.details.department_id },
+              data: { manager_id: null }
+            });
+          }
+        }
       }
 
       return await tx.user.findUnique({
