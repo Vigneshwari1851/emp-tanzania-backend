@@ -83,9 +83,11 @@ export const createReimbursementSchema = z.object({
 // ─── Pay Cycle ─────────────────────────────────────────────────────────
 export const updatePayCycleSchema = z.object({
     body: z.object({
-        payFrequency: z.enum(['monthly', 'bi_weekly', 'weekly', 'quarterly']).optional(),
-        payDay: z.coerce.number().int().min(1).max(31).optional(),
-        payMonthOffset: z.coerce.number().int().min(0).max(12).optional(),
+        frequency: z.enum(['monthly', 'bi-monthly', 'bi_weekly', 'weekly', 'daily', 'quarterly', 'annually']).optional(),
+        payDay: z.string().optional(),
+        attendanceStartDay: z.coerce.number().int().min(1).max(31).optional(),
+        attendanceEndDay: z.coerce.number().int().min(1).max(31).optional(),
+        cutoffDay: z.coerce.number().int().min(1).max(31).optional(),
     })
 });
 

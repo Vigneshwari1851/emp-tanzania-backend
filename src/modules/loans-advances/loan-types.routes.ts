@@ -13,10 +13,10 @@ router.post('/', authenticate, canManage, (req, res) => controller.create(req, r
 router.put('/:id', authenticate, canManage, (req, res) => controller.update(req, res));
 router.patch('/:id/toggle', authenticate, canManage, (req, res) => controller.toggleActive(req, res));
 
-router.get('/:id/rules', authenticate, canManage, (req, res) => controller.getEligibilityRules(req, res));
+router.get('/:id/rules', authenticate, (req, res) => controller.getEligibilityRules(req, res));
 router.put('/:id/rules', authenticate, canManage, (req, res) => controller.updateEligibilityRules(req, res));
 
-router.get('/:id/workflow', authenticate, canManage, (req, res) => controller.getApprovalWorkflow(req, res));
+router.get('/:id/workflow', authenticate, (req, res) => controller.getApprovalWorkflow(req, res));
 router.put('/:id/workflow', authenticate, canManage, (req, res) => controller.updateApprovalWorkflow(req, res));
 
 export default router;

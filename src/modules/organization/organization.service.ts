@@ -103,41 +103,116 @@ export class OrganizationService {
                 }
             });
 
-            // 8. Create default Admin User
-            const hashedPassword = await bcrypt.hash('admin1234', 10);
-            const adminEmail = `admin@${slug}.com`;
-            const adminUser = await tx.user.create({
-                data: {
-                    email: adminEmail,
-                    username: `${slug}_admin`,
-                    password: hashedPassword,
-                    status: true
-                }
-            });
+            // 7.5 Create standard User Types for this organization
+            const userTypesData = [
+                { name: 'Admin', system_key: 'ADMIN', description: 'Administrative access' },
+                { name: 'Employee', system_key: 'EMPLOYEE', description: 'Standard employee access' },
+                { name: 'HR Head', system_key: 'HR_HEAD', description: 'HR department head' },
+                { name: 'Finance Manager', system_key: 'FINANCE_MANAGER', description: 'Finance department manager' },
+                { name: 'Manager', system_key: 'MANAGER', description: 'Reporting manager access' }
+            ];
 
-            // 9. Create UserDetail for Admin
-            await tx.userDetail.create({
-                data: {
-                    user_id: adminUser.id,
-                    first_name: org.entity_name,
-                    last_name: 'Admin',
-                    employee_id: `${org.company_code || 'ORG'}001`,
-                    department_id: deptAdmin.id,
-                    designation_id: desigAdmin.id,
-                    country: org.country || 'India',
-                    employment_type: 'full-time',
-                    start_date: new Date(),
-                    joining_date: new Date()
-                }
-            });
+            const createdUserTypes = [];
+            for (const ut of userTypesData) {
+                const typeRecord = await tx.user_types.create({
+                    data: {
+                        organization_id: org.id,
+                        name: ut.name,
+                        system_key: ut.system_key,
+                        description: ut.description
+                    }
+                });
+                createdUserTypes.push(typeRecord);
+            }
+            const adminUserType = createdUserTypes.find(ut => ut.system_key === 'ADMIN')!;
 
-            // 10. Assign Admin role to User
-            await tx.userRole.create({
-                data: {
-                    user_id: adminUser.id,
-                    role_id: adminRole.id
+            let adminUserId = data.user_id;
+            let adminEmail = `admin@${slug}.com`;
+            let adminUsername = `${slug}_admin`;
+
+            if (adminUserId) {
+                const existingUser = await tx.user.findUnique({
+                    where: { id: adminUserId }
+                });
+                if (existingUser) {
+                    adminEmail = existingUser.email;
+                    adminUsername = existingUser.username || existingUser.email;
                 }
-            });
+
+                await tx.userDetail.upsert({
+                    where: { user_id: adminUserId },
+                    update: {
+                        department_id: deptAdmin.id,
+                        designation_id: desigAdmin.id,
+                        role_id: adminRole.id,
+                        user_type_id: adminUserType.id,
+                        country: org.country || 'India',
+                        employment_type: 'full-time',
+                        employee_id: `${org.company_code || org.slug.toUpperCase()}-001`,
+                    },
+                    create: {
+                        user_id: adminUserId,
+                        first_name: org.entity_name,
+                        last_name: 'Admin',
+                        employee_id: `${org.company_code || org.slug.toUpperCase()}-001`,
+                        department_id: deptAdmin.id,
+                        designation_id: desigAdmin.id,
+                        role_id: adminRole.id,
+                        user_type_id: adminUserType.id,
+                        country: org.country || 'India',
+                        employment_type: 'full-time',
+                        start_date: new Date(),
+                        joining_date: new Date()
+                    }
+                });
+
+                await tx.userRole.upsert({
+                    where: { user_id_role_id: { user_id: adminUserId, role_id: adminRole.id } },
+                    update: {},
+                    create: {
+                        user_id: adminUserId,
+                        role_id: adminRole.id
+                    }
+                });
+            } else {
+                // 8. Create default Admin User
+                const hashedPassword = await bcrypt.hash('admin1234', 10);
+                const adminUser = await tx.user.create({
+                    data: {
+                        email: adminEmail,
+                        username: adminUsername,
+                        password: hashedPassword,
+                        status: true
+                    }
+                });
+                adminUserId = adminUser.id;
+
+                // 9. Create UserDetail for Admin
+                await tx.userDetail.create({
+                    data: {
+                        user_id: adminUser.id,
+                        first_name: org.entity_name,
+                        last_name: 'Admin',
+                        employee_id: `${org.company_code || org.slug.toUpperCase()}-001`,
+                        department_id: deptAdmin.id,
+                        designation_id: desigAdmin.id,
+                        role_id: adminRole.id,
+                        user_type_id: adminUserType.id,
+                        country: org.country || 'India',
+                        employment_type: 'full-time',
+                        start_date: new Date(),
+                        joining_date: new Date()
+                    }
+                });
+
+                // 10. Assign Admin role to User
+                await tx.userRole.create({
+                    data: {
+                        user_id: adminUser.id,
+                        role_id: adminRole.id
+                    }
+                });
+            }
 
             // 11. Create OrganizationConfig (platform-admin settings)
             await tx.organizationConfig.create({

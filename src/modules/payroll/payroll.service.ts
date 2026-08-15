@@ -478,6 +478,7 @@ export class PayrollService {
     }
 
     async updatePayCycle(orgId: number, data: any) {
+        const toDayStr = (v: any) => (v === undefined || v === null || v === '' ? undefined : String(v));
         const current = await this.getPayCycle(orgId);
         if (current) {
             return await prisma.payCycle.update({
@@ -485,9 +486,9 @@ export class PayrollService {
                 data: {
                     frequency: data.frequency,
                     pay_day: data.payDay,
-                    attendance_start_day: data.attendanceStartDay,
-                    attendance_end_day: data.attendanceEndDay,
-                    cutoff_day: data.cutoffDay
+                    attendance_start_day: toDayStr(data.attendanceStartDay),
+                    attendance_end_day: toDayStr(data.attendanceEndDay),
+                    cutoff_day: toDayStr(data.cutoffDay)
                 }
             });
         }
@@ -496,9 +497,9 @@ export class PayrollService {
                 organization_id: orgId,
                 frequency: data.frequency,
                 pay_day: data.payDay,
-                attendance_start_day: data.attendanceStartDay,
-                attendance_end_day: data.attendanceEndDay,
-                cutoff_day: data.cutoffDay
+                attendance_start_day: toDayStr(data.attendanceStartDay),
+                attendance_end_day: toDayStr(data.attendanceEndDay),
+                cutoff_day: toDayStr(data.cutoffDay)
             }
         });
     }
