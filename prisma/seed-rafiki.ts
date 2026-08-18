@@ -8,28 +8,53 @@ async function main() {
 
     // 0. Seed System Settings (Statutory Configs for Tanzania)
     const systemSettingsData = [
-        { key: 'EPF_WAGE_CEILING', value: '999999999' },
-        { key: 'EPF_EMPLOYEE_RATE', value: '0.10' }, // 10% NSSF Employee rate
-        { key: 'EPF_EMPLOYER_EPS_RATE', value: '0.10' }, // 10% NSSF Employer rate
-        { key: 'EPF_EMPLOYER_EPF_RATE', value: '0.00' },
-        { key: 'ESI_WAGE_CEILING', value: '999999999' },
-        { key: 'ESI_EMPLOYEE_RATE', value: '0.03' }, // 3% NHIF Employee rate
-        { key: 'ESI_EMPLOYER_RATE', value: '0.03' }, // 3% NHIF Employer rate
-        { key: 'GRATUITY_YEARS_THRESHOLD', value: '5' },
-        { key: 'GRATUITY_MULTIPLIER', value: '15' },
+        // --- Tanzania NSSF (10% employee + 10% employer, no ceiling) ---
+        { key: 'TZ_NSSF_EMPLOYEE_RATE', value: '0.10' },
+        { key: 'TZ_NSSF_EMPLOYER_RATE', value: '0.10' },
+        { key: 'TZ_NSSF_WAGE_CEILING', value: '999999999' },
+        // --- Tanzania SDL (3.5% employer-only, 10+ employees) ---
+        { key: 'TZ_SDL_RATE', value: '0.035' },
+        { key: 'TZ_SDL_MIN_EMPLOYEES', value: '10' },
+        // --- Tanzania WCF (0.6% employer) ---
+        { key: 'TZ_WCF_RATE', value: '0.006' },
+        // --- Tanzania HESLB (15% of basic salary) ---
+        { key: 'TZ_HESLB_RATE', value: '0.15' },
+        // --- Tanzania PAYE monthly tax bands (TZS) ---
+        // [upper_limit, rate] — processed sequentially
+        { key: 'TZ_PAYE_BANDS', value: '[[270000,0],[520000,0.08],[760000,0.20],[1000000,0.25],[null,0.30]]' },
+        // --- Tanzania PAYE monthly reliefs (TZS) ---
+        { key: 'TZ_PERSONAL_RELIEF', value: '16250' },        // 195,000/yr = 16,250/mo
+        { key: 'TZ_INSURANCE_RELIEF', value: '1250' },        // 15,000/yr = 1,250/mo
+        { key: 'TZ_MORTGAGE_RELIEF_MAX', value: '40000' },    // max 40,000/mo
+        { key: 'TZ_DISABLED_PERSON_RELIEF', value: '16250' },  // 195,000/yr
+        // --- Non-resident flat rate ---
+        { key: 'TZ_NON_RESIDENT_RATE', value: '0.15' },
+        // --- Overtime ---
+        { key: 'OVERTIME_MULTIPLIER', value: '1.5' },
+        { key: 'TZ_OVERTIME_HOLIDAY_MULTIPLIER', value: '2.0' },
+        // --- Legacy India keys (zeroed out for TZ context) ---
+        { key: 'EPF_WAGE_CEILING', value: '0' },
+        { key: 'EPF_EMPLOYEE_RATE', value: '0' },
+        { key: 'EPF_EMPLOYER_EPS_RATE', value: '0' },
+        { key: 'EPF_EMPLOYER_EPF_RATE', value: '0' },
+        { key: 'ESI_WAGE_CEILING', value: '0' },
+        { key: 'ESI_EMPLOYEE_RATE', value: '0' },
+        { key: 'ESI_EMPLOYER_RATE', value: '0' },
+        { key: 'GRATUITY_YEARS_THRESHOLD', value: '0' },
+        { key: 'GRATUITY_MULTIPLIER', value: '0' },
         { key: 'GRATUITY_DIVISOR', value: '26' },
         { key: 'LEAVE_ENCASHMENT_DIVISOR', value: '30' },
         { key: 'STANDARD_DEDUCTION_OLD', value: '0' },
         { key: 'STANDARD_DEDUCTION_NEW', value: '0' },
-        { key: 'HRA_METRO_PERCENT', value: '0.00' },
-        { key: 'HRA_NON_METRO_PERCENT', value: '0.00' },
-        { key: 'HRA_RENT_BASIC_PERCENT', value: '0.00' },
+        { key: 'HRA_METRO_PERCENT', value: '0' },
+        { key: 'HRA_NON_METRO_PERCENT', value: '0' },
+        { key: 'HRA_RENT_BASIC_PERCENT', value: '0' },
         { key: 'GLOBAL_80C_LIMIT', value: '0' },
         { key: 'REBATE_87A_LIMIT_OLD', value: '0' },
         { key: 'REBATE_87A_AMOUNT_OLD', value: '0' },
         { key: 'REBATE_87A_LIMIT_NEW', value: '0' },
         { key: 'REBATE_87A_AMOUNT_NEW', value: '0' },
-        // Tanzania progressive annual tax slabs (exceeding 270,000 TZS monthly -> 3,240,000 TZS annual)
+        // Legacy tax slab keys (kept for backward compat, same as TZ bands)
         { key: 'TAX_SLABS_OLD', value: '[[0,3240000,0],[3240000,6240000,0.08],[6240000,9120000,0.20],[9120000,12000000,0.25],[12000000,null,0.30]]' },
         { key: 'TAX_SLABS_NEW', value: '[[0,3240000,0],[3240000,6240000,0.08],[6240000,9120000,0.20],[9120000,12000000,0.25],[12000000,null,0.30]]' }
     ];
@@ -42,6 +67,60 @@ async function main() {
         });
     }
     console.log('✔ System settings seeded (Tanzania Statutory Values).');
+
+    // 0b. Seed TZ-specific Tax Declaration Sections
+    const tzTaxSections = [
+        {
+            section: 'INSURANCE',
+            label: 'Insurance Relief',
+            limit: 300000,  // TSh 300,000/yr max
+            instruments: ['Life Insurance Premium', 'Health Insurance Premium', 'Education Insurance Premium'],
+            status: true,
+        },
+        {
+            section: 'MORTGAGE',
+            label: 'Mortgage Interest Relief',
+            limit: 480000,  // TSh 480,000/yr max (40k x 12)
+            instruments: ['Primary Residence Mortgage Interest'],
+            status: true,
+        },
+        {
+            section: 'DISABLED',
+            label: 'Disabled Person Relief',
+            limit: 195000,  // TSh 195,000/yr
+            instruments: ['Certified Disability'],
+            status: true,
+        },
+        {
+            section: 'DEPENDANTS',
+            label: 'Dependant Relief',
+            limit: 195000,  // TSh 195,000 per dependant (max 4 dependants)
+            instruments: ['Child Under 18', 'Child in Full-Time Education', 'Dependant Spouse'],
+            status: true,
+        },
+        {
+            section: 'VOLUNTARY_PENSION',
+            label: 'Voluntary Pension (Beyond NSSF)',
+            limit: 600000,  // TSh 600,000/yr (50k x 12)
+            instruments: ['Voluntary Pension Contribution', 'Approved Pension Fund'],
+            status: true,
+        },
+    ];
+
+    for (const sec of tzTaxSections) {
+        const existing = await prisma.taxSection.findFirst({
+            where: { section: sec.section },
+        });
+        if (!existing) {
+            await prisma.taxSection.create({ data: sec });
+        } else {
+            await prisma.taxSection.update({
+                where: { id: existing.id },
+                data: sec,
+            });
+        }
+    }
+    console.log('✔ TZ tax declaration sections seeded (INSURANCE, MORTGAGE, DISABLED, DEPENDANTS, VOLUNTARY_PENSION).');
 
     // 1. Create Modules
     const modulesData = [
@@ -220,7 +299,7 @@ async function main() {
 
     const moduleMap: Record<string, number> = {};
     for (const m of moduleCodes) {
-        const mod = await prisma.feature_modules.upsert({
+        const mod = await prisma.featureModule.upsert({
             where: { code: m.code },
             update: { name: m.name },
             create: { code: m.code, name: m.name },
@@ -235,14 +314,14 @@ async function main() {
     ];
 
     for (const ed of editions) {
-        const edition = await prisma.editions.upsert({
+        const edition = await prisma.edition.upsert({
             where: { code: ed.code },
             update: { name: ed.name, description: ed.description },
             create: { code: ed.code, name: ed.name, description: ed.description },
         });
 
         for (const modCode of ed.modules) {
-            await prisma.edition_modules.upsert({
+            await prisma.editionModule.upsert({
                 where: { editionId_featureModuleId: { editionId: edition.id, featureModuleId: moduleMap[modCode]! } },
                 update: {},
                 create: { editionId: edition.id, featureModuleId: moduleMap[modCode]! },
@@ -252,11 +331,11 @@ async function main() {
     console.log('✔ Editions (Enterprise Subscription) seeded.');
 
     // 7. Seed Default Tenant pointing to Enterprise Subscription
-    const enterprise = await prisma.editions.findUnique({ where: { code: 'ENTERPRISE' } });
-    await prisma.tenants.upsert({
+    const enterprise = await prisma.edition.findUnique({ where: { code: 'ENTERPRISE' } });
+    await prisma.tenant.upsert({
         where: { id: 1 },
         update: { editionId: enterprise!.id },
-        create: { id: 1, name: 'Default Tenant', editionId: enterprise!.id },
+        create: { id: 1, tenantCode: 'rafiki', name: 'Default Tenant', editionId: enterprise!.id, billingEmail: 'billing@rafiki.com', status: 'ACTIVE' },
     });
     console.log('✔ Default Tenant Subscription seeded (Enterprise).');
 
@@ -268,6 +347,7 @@ async function main() {
             other_tax_id: '{"cin":"BRELA-987654"}',
         },
         create: {
+            tenantId: 1,
             entity_name: 'Rafiki',
             company_code: 'RAFIKI',
             company_type: 'Sole Proprietorship',
@@ -282,7 +362,7 @@ async function main() {
             state: 'Dar es Salaam',
             country: 'Tanzania',
             zip: '11101',
-            standard_working_hours_per_week: 40,
+            standard_working_hours_per_week: 45,
             working_days: JSON.parse('["Monday","Tuesday","Wednesday","Thursday","Friday"]'),
             public_holidays: JSON.parse('[]'),
             pay_frequency: 'Monthly',
@@ -323,14 +403,22 @@ async function main() {
     console.log('✔ Department seeded (Administration).');
 
     // 11. Create Designation (System Administrator)
-    const desigAdmin = await prisma.designation.create({
-        data: {
-            designation_name: 'System Administrator',
-            designation_code: 'SYSADMIN',
-            department_id: deptAdmin.id,
-            organization_id: org.id,
-        },
+    const existingDesig = await prisma.designation.findFirst({
+        where: { organization_id: org.id, designation_code: 'SYSADMIN' },
     });
+    const desigAdmin = existingDesig
+        ? await prisma.designation.update({
+            where: { id: existingDesig.id },
+            data: { department_id: deptAdmin.id },
+        })
+        : await prisma.designation.create({
+            data: {
+                designation_name: 'System Administrator',
+                designation_code: 'SYSADMIN',
+                department_id: deptAdmin.id,
+                organization_id: org.id,
+            },
+        });
     console.log('✔ Designation seeded (System Administrator).');
 
     // 12. Create Org-scoped Roles for Rafiki Microfinance
@@ -346,23 +434,34 @@ async function main() {
     const seededOrgRoles: Record<string, any> = {};
 
     for (const item of orgRolesToCreate) {
-        const createdOrgRole = await prisma.role.create({
-            data: {
-                role_name: item.role_name,
-                organization_id: org.id,
-                description: item.description,
-            },
+        const existingRole = await prisma.role.findFirst({
+            where: { organization_id: org.id, role_name: item.role_name },
         });
+        const createdOrgRole = existingRole
+            ? await prisma.role.update({
+                where: { id: existingRole.id },
+                data: { description: item.description },
+            })
+            : await prisma.role.create({
+                data: {
+                    role_name: item.role_name,
+                    organization_id: org.id,
+                    description: item.description,
+                },
+            });
         seededOrgRoles[item.role_name] = createdOrgRole;
 
         // Assign permissions
-        const permsToAssign = item.isFullAccess 
-            ? createdPermissions 
-            : item.role_name === 'employee' 
-                ? employeePermissions 
+        const permsToAssign = item.isFullAccess
+            ? createdPermissions
+            : item.role_name === 'employee'
+                ? employeePermissions
                 : adminManagerPermissions;
 
         const scope = item.role_name === 'employee' ? 'OWN' : 'GLOBAL';
+
+        // Clear existing permissions for this role first
+        await prisma.rolePermission.deleteMany({ where: { role_id: createdOrgRole.id } });
 
         for (const perm of permsToAssign) {
             await prisma.rolePermission.create({
@@ -387,37 +486,120 @@ async function main() {
 
     let adminUserTypeId: number | null = null;
     for (const ut of userTypesData) {
-        const typeRecord = await prisma.user_types.create({
-            data: {
-                organization_id: org.id,
-                name: ut.name,
-                system_key: ut.system_key,
-                description: ut.description,
-            },
+        const existing = await prisma.user_types.findFirst({
+            where: { organization_id: org.id, name: ut.name },
         });
+        const typeRecord = existing
+            ? await prisma.user_types.update({
+                where: { id: existing.id },
+                data: { system_key: ut.system_key, description: ut.description },
+            })
+            : await prisma.user_types.create({
+                data: {
+                    organization_id: org.id,
+                    name: ut.name,
+                    system_key: ut.system_key,
+                    description: ut.description,
+                },
+            });
         if (ut.system_key === 'ADMIN') adminUserTypeId = typeRecord.id;
     }
     console.log('✔ User types seeded.');
 
     // 14. Create OrganizationConfig (Tanzania Primary Color: #2153e8)
-    await prisma.organizationConfig.create({
-        data: {
-            organization_id: org.id,
-            primary_color: '#2153e8',
-            secondary_color: '#1e40af',
-            sso_provider: 'local',
-            mfa_policy: 'email_otp',
-            mfa_required_admins: true,
-        },
+    const existingOrgConfig = await prisma.organizationConfig.findFirst({
+        where: { organization_id: org.id },
     });
+    if (existingOrgConfig) {
+        await prisma.organizationConfig.update({
+            where: { id: existingOrgConfig.id },
+            data: {
+                primary_color: '#2153e8',
+                secondary_color: '#1e40af',
+                sso_provider: 'local',
+                mfa_policy: 'email_otp',
+                mfa_required_admins: true,
+            },
+        });
+    } else {
+        await prisma.organizationConfig.create({
+            data: {
+                organization_id: org.id,
+                primary_color: '#2153e8',
+                secondary_color: '#1e40af',
+                sso_provider: 'local',
+                mfa_policy: 'email_otp',
+                mfa_required_admins: true,
+            },
+        });
+    }
     console.log('✔ Organization config seeded.');
+
+    // 14b. Seed Tanzania Statutory Leave Policies
+    const tzLeavePolicies = [
+        {
+            policy_name: 'Tanzania Maternity Leave',
+            leave_type: 'Maternity',
+            days_per_year: 84,
+            carry_forward_days: 0,
+            leave_category: 'paid',
+            requires_document: true,
+            description: 'Tanzania statutory maternity leave: 84 days fully paid. 100 days for multiple births (configure separately).',
+        },
+        {
+            policy_name: 'Tanzania Maternity Leave (Multiple Births)',
+            leave_type: 'Maternity',
+            days_per_year: 100,
+            carry_forward_days: 0,
+            leave_category: 'paid',
+            requires_document: true,
+            description: 'Tanzania statutory maternity leave for multiple births: 100 days fully paid.',
+        },
+        {
+            policy_name: 'Tanzania Paternity Leave',
+            leave_type: 'Paternity',
+            days_per_year: 3,
+            carry_forward_days: 0,
+            leave_category: 'paid',
+            requires_document: true,
+            description: 'Tanzania statutory paternity leave: 3 paid days, must be taken within 7 days of childbirth.',
+        },
+        {
+            policy_name: 'Annual Leave',
+            leave_type: 'Annual',
+            days_per_year: 28,
+            carry_forward_days: 7,
+            leave_category: 'paid',
+            requires_document: false,
+            description: 'Tanzania Employment Act: 28 working days annual leave for employees with 12+ months of service.',
+        },
+        {
+            policy_name: 'Sick Leave',
+            leave_type: 'Sick',
+            days_per_year: 126,
+            carry_forward_days: 0,
+            leave_category: 'paid',
+            requires_document: true,
+            description: 'Tanzania Employment Act: Up to 126 days sick leave (first 3 months paid, remainder unpaid).',
+        },
+    ];
+
+    for (const policy of tzLeavePolicies) {
+        await prisma.leavePolicy.upsert({
+            where: { policy_name: policy.policy_name },
+            update: {},
+            create: policy,
+        });
+    }
+    console.log('✔ Tanzania Statutory Leave Policies seeded.');
 
     // 15. Create Admin User linked to the organization (with tenant admin role)
     const adminPassword = await bcrypt.hash('password123', 10);
     const adminUser = await prisma.user.upsert({
-        where: { email: 'admin@rafiki.com' },
+        where: { tenantId_email: { tenantId: 1, email: 'admin@rafiki.com' } },
         update: { password: adminPassword },
         create: {
+            tenantId: 1,
             username: 'rafiki_admin',
             email: 'admin@rafiki.com',
             password: adminPassword,

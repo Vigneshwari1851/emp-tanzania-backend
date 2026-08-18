@@ -38,6 +38,7 @@ import documentRoutes from './modules/document/document.routes';
 import loansAdvancesRoutes from './modules/loans-advances/loans-advances.routes';
 import loanTypesRoutes from './modules/loans-advances/loan-types.routes';
 import loanApplicationsRoutes from './modules/loans-advances/loan-applications.routes';
+import statutoryRoutes from './modules/statutory/statutory.routes';
 
 
 import path from 'path';
@@ -100,6 +101,7 @@ app.use('/documents', documentRoutes);
 app.use('/loans-advances', loansAdvancesRoutes);
 app.use('/loan-types', loanTypesRoutes);
 app.use('/loan-applications', loanApplicationsRoutes);
+app.use('/statutory', statutoryRoutes);
 import changeRequestRoutes from './modules/change-requests/change-request.routes';
 app.use('/change-requests', changeRequestRoutes);
 import feedbackRoutes from './modules/feedback/feedback.routes';

@@ -463,12 +463,26 @@ export class CandidateService {
       });
       if (!candidate) throw new Error('Candidate not found');
 
+      // Resolve tenantId
+      const orgId = candidate.applications?.[0]?.job?.organization_id;
+      let tenantId = 1;
+      if (orgId) {
+        const org = await tx.organization.findUnique({
+          where: { id: orgId },
+          select: { tenantId: true }
+        });
+        if (org) {
+          tenantId = org.tenantId;
+        }
+      }
+
       // Extract bank details
       const bankDetails: any = candidate.bank_details;
 
       // Create User in core module
       const user = await tx.user.create({
         data: {
+          tenantId,
           email: candidate.email,
           username: candidate.email.split('@')[0],
           password: 'Password@123', // Default

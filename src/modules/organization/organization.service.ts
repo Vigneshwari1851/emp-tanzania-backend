@@ -30,14 +30,15 @@ export class OrganizationService {
             // 1. Create Organization
             const org = await tx.organization.create({
                 data: {
-                    ...rest as Omit<Prisma.OrganizationCreateInput, 'branches'>,
+                    ...rest,
+                    tenant: { connect: { id: Number(rest.tenantId || 1) } },
                     slug,
                     branches: {
-                        create: branch.map((b) => ({
-                            ...b as Prisma.BranchCreateWithoutOrganizationInput,
+                        create: branch.map((b: any) => ({
+                            ...b,
                         }))
                     }
-                },
+                } as any,
                 include: {
                     branches: true
                 }
@@ -179,6 +180,7 @@ export class OrganizationService {
                 const hashedPassword = await bcrypt.hash('admin1234', 10);
                 const adminUser = await tx.user.create({
                     data: {
+                        tenantId: org.tenantId,
                         email: adminEmail,
                         username: adminUsername,
                         password: hashedPassword,

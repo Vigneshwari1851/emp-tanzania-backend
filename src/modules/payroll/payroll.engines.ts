@@ -418,6 +418,259 @@ export class UAEPayrollEngine implements IPayrollEngine {
 }
 
 /**
+ * 5. TANZANIA PAYROLL ENGINE
+ *    PAYE (progressive 5-band), NSSF (10%+10%), SDL (3.5% employer),
+ *    WCF (0.6% employer), HESLB (15% of basic), Non-resident 15% flat.
+ */
+export class TZPayrollEngine implements IPayrollEngine {
+    async calculate(input: PayrollInput): Promise<PayrollEngineResult> {
+        const { employeeId, actualGross, earnings, deductions, apiDetails } = input;
+
+        const localDeductions = { ...deductions };
+        const employerContributions: Record<string, number> = {};
+
+        // ── Basic salary (for NSSF/HESLB base) ──────────────────────────
+        const basic = earnings['Basic'] || earnings['Basic Salary'] || (actualGross * 0.5);
+
+        // ================================================================
+        // A. NSSF — 10% employee + 10% employer, NO ceiling
+        // ================================================================
+        const nssfEmpRate  = await getSetting('TZ_NSSF_EMPLOYEE_RATE', 0.10);
+        const nssfErRate   = await getSetting('TZ_NSSF_EMPLOYER_RATE', 0.10);
+
+        const nssfEmployee = Math.round(actualGross * nssfEmpRate);
+        const nssfEmployer = Math.round(actualGross * nssfErRate);
+
+        localDeductions['NSSF Employee (10%)'] = nssfEmployee;
+        employerContributions['NSSF Employer (10%)'] = nssfEmployer;
+
+        // ================================================================
+        // B. SDL — 3.5% of gross, employer-only, requires ≥10 employees
+        // ================================================================
+        const sdlRate        = await getSetting('TZ_SDL_RATE', 0.035);
+        const sdlMinEmployees = await getSetting('TZ_SDL_MIN_EMPLOYEES', 10);
+
+        // Count active employees in the same org (best-effort, falls back to 0)
+        let activeEmployeeCount = 0;
+        try {
+            // apiDetails should carry orgId from payroll service
+            const orgId = apiDetails?.organization_id;
+            if (orgId) {
+                activeEmployeeCount = await prisma.userDetail.count({
+                    where: {
+                        organization_id: orgId,
+                        exit_date: null,
+                        user: { status: true, is_deleted: false },
+                    },
+                });
+            }
+        } catch { /* swallow — default to 0 means SDL skipped */ }
+
+        if (activeEmployeeCount >= sdlMinEmployees) {
+            const sdlAmount = Math.round(actualGross * sdlRate);
+            employerContributions['SDL (3.5%)'] = sdlAmount;
+        }
+
+        // ================================================================
+        // C. WCF — 0.6% employer contribution on gross labour costs
+        // ================================================================
+        const wcfRate = await getSetting('TZ_WCF_RATE', 0.006);
+        const wcfAmount = Math.round(actualGross * wcfRate);
+        employerContributions['WCF (0.6%)'] = wcfAmount;
+
+        // ================================================================
+        // D. HESLB — 15% of basic salary (if employee has outstanding loan)
+        // ================================================================
+        const heslbRate = await getSetting('TZ_HESLB_RATE', 0.15);
+        const hasHeslbLoan = apiDetails?.heslb_status === true;
+        if (hasHeslbLoan) {
+            const heslbDeduction = Math.round(basic * heslbRate);
+            localDeductions['HESLB (15%)'] = heslbDeduction;
+        }
+
+        // ================================================================
+        // E. PAYE — Monthly progressive tax (5 bands)
+        // ================================================================
+        const residencyStatus = (apiDetails?.residency_status || 'RESIDENT').toUpperCase();
+        const personalRelief    = await getSetting('TZ_PERSONAL_RELIEF', 16250);
+        const insuranceRelief   = await getSetting('TZ_INSURANCE_RELIEF', 1250);
+        const mortgageReliefMax = await getSetting('TZ_MORTGAGE_RELIEF_MAX', 40000);
+        const nonResidentRate   = await getSetting('TZ_NON_RESIDENT_RATE', 0.15);
+
+        // Gross annual for PAYE
+        const annualGross = actualGross * 12;
+
+        let annualTax = 0;
+        let netTaxableIncome = annualGross;
+
+        if (residencyStatus === 'NON_RESIDENT') {
+            // Non-resident: flat 15% on gross (no reliefs)
+            annualTax = Math.round(annualGross * nonResidentRate);
+        } else {
+            // ── Resident: progressive tax on taxable income ──────────
+            // Statutory exclusions from gross income
+            const nssfAnnual = nssfEmployee * 12; // employee NSSF is exempt
+
+            // ── Declaration-based reliefs (annual) ───────────────────
+            let insuranceReliefAnnual = insuranceRelief * 12; // default from settings
+            let mortgageReliefAnnual = (apiDetails?.mortgage_interest || 0) * 12;
+            let disabledReliefAnnual = 0;
+            let dependantReliefAnnual = 0;
+            let voluntaryPensionAnnual = 0;
+
+            try {
+                const orgId = apiDetails?.organization_id;
+                if (orgId) {
+                    const currentYear = new Date().getFullYear();
+                    const currentMonth = new Date().getMonth();
+                    const fyStart = currentMonth < 3 ? currentYear - 1 : currentYear;
+                    const fyEnd = fyStart + 1;
+                    const financialYear = `${fyStart}-${String(fyEnd).slice(-2)}`;
+
+                    const declarations = await prisma.taxDeclaration.findMany({
+                        where: {
+                            user_id: employeeId,
+                            status: 'Approved',
+                            financial_year: financialYear,
+                            organization_id: orgId,
+                        },
+                    });
+
+                    if (declarations.length > 0) {
+                        // Insurance relief: 10% of actual premium, capped at TSh 300,000/yr (25,000/mo)
+                        const insuranceTotal = declarations
+                            .filter(d => d.section === 'INSURANCE')
+                            .reduce((sum, d) => sum + Number(d.amount), 0);
+                        const insuranceReliefCap = await getSetting('TZ_INSURANCE_RELIEF', 1250) * 12;
+                        insuranceReliefAnnual = Math.min(insuranceTotal * 0.10, insuranceReliefCap);
+
+                        // Mortgage interest relief: actual interest, capped at TSh 480,000/yr (40,000/mo)
+                        const mortgageDeclarations = declarations.filter(d => d.section === 'MORTGAGE');
+                        if (mortgageDeclarations.length > 0) {
+                            const mortgageTotal = mortgageDeclarations.reduce((sum, d) => sum + Number(d.amount), 0);
+                            const mortgageReliefCap = await getSetting('TZ_MORTGAGE_RELIEF_MAX', 40000) * 12;
+                            mortgageReliefAnnual = Math.min(mortgageTotal, mortgageReliefCap);
+                        }
+
+                        // Disabled person relief: TSh 195,000/yr (16,250/mo) — binary (has cert or not)
+                        const hasDisability = declarations.some(d => d.section === 'DISABLED');
+                        if (hasDisability) {
+                            disabledReliefAnnual = await getSetting('TZ_DISABLED_PERSON_RELIEF', 16250) * 12;
+                        }
+
+                        // Dependant relief: TSh 195,000 per dependant, max 4
+                        const dependantDeclarations = declarations.filter(d => d.section === 'DEPENDANTS');
+                        const maxDependants = 4;
+                        const dependantCount = Math.min(dependantDeclarations.length, maxDependants);
+                        const dependantReliefPerDep = await getSetting('TZ_PERSONAL_RELIEF', 16250) * 12;
+                        dependantReliefAnnual = dependantCount * dependantReliefPerDep;
+
+                        // Voluntary pension: deducted from gross (not capped by relief)
+                        const pensionDeclarations = declarations.filter(d => d.section === 'VOLUNTARY_PENSION');
+                        voluntaryPensionAnnual = pensionDeclarations.reduce((sum, d) => sum + Number(d.amount), 0);
+                    }
+                }
+            } catch { /* fall back to default reliefs */ }
+
+            // Total reliefs (annual)
+            const totalReliefs = (personalRelief * 12) + insuranceReliefAnnual + disabledReliefAnnual + dependantReliefAnnual;
+
+            // Mortgage relief (capped)
+            const cappedMortgageRelief = Math.min(mortgageReliefAnnual, mortgageReliefMax * 12);
+
+            // Taxable income = gross - NSSF employee - total reliefs - mortgage relief - voluntary pension
+            netTaxableIncome = Math.max(0, annualGross - nssfAnnual - totalReliefs - cappedMortgageRelief - voluntaryPensionAnnual);
+
+            // Load PAYE bands: StatutoryConfig (org-scoped) → system_settings → hardcoded defaults
+            const defaultBands: [number | null, number][] = [
+                [270000, 0],
+                [520000, 0.08],
+                [760000, 0.20],
+                [1000000, 0.25],
+                [null, 0.30],
+            ];
+            let payeBands: [number | null, number][] = defaultBands;
+            let bandsLoaded = false;
+            try {
+                const orgId = apiDetails?.organization_id;
+                if (orgId) {
+                    const record = await prisma.statutoryConfig.findFirst({
+                        where: {
+                            organization_id: orgId,
+                            config_type: 'PAYE',
+                            key: 'TZ_PAYE_BANDS',
+                            is_active: true,
+                        },
+                        orderBy: { effective_from: 'desc' },
+                    });
+                    if (record && record.value) {
+                        const parsed = JSON.parse(record.value);
+                        if (Array.isArray(parsed) && parsed.length > 0) {
+                            payeBands = parsed;
+                            bandsLoaded = true;
+                        }
+                    }
+                }
+                if (!bandsLoaded) {
+                    const setting = await prisma.systemSetting.findUnique({ where: { key: 'TZ_PAYE_BANDS' } });
+                    if (setting && setting.value) {
+                        const parsed = JSON.parse(setting.value);
+                        if (Array.isArray(parsed) && parsed.length > 0) payeBands = parsed;
+                    }
+                }
+            } catch { /* use defaults */ }
+
+            // Calculate tax using monthly bands applied to monthly taxable income
+            const monthlyTaxable = netTaxableIncome / 12;
+            let monthlyTax = 0;
+            let prevUpper = 0;
+
+            for (const [upper, rate] of payeBands) {
+                const upperBound = upper ?? Infinity;
+                if (monthlyTaxable <= upperBound) {
+                    monthlyTax = (monthlyTaxable - prevUpper) * rate;
+                    break;
+                }
+                prevUpper = upperBound;
+            }
+
+            // The cumulative tax for the band that was fully exceeded
+            // Need to sum all fully-exceeded bands
+            annualTax = 0;
+            prevUpper = 0;
+            for (const [upper, rate] of payeBands) {
+                const upperBound = upper ?? Infinity;
+                if (monthlyTaxable > upperBound) {
+                    annualTax += (upperBound - prevUpper) * rate;
+                    prevUpper = upperBound;
+                } else {
+                    annualTax += (monthlyTaxable - prevUpper) * rate;
+                    break;
+                }
+            }
+            annualTax = Math.round(annualTax * 12); // annualize
+        }
+
+        const monthlyTax = Math.round(annualTax / 12);
+        if (monthlyTax > 0) {
+            localDeductions['PAYE'] = monthlyTax;
+        }
+
+        return {
+            deductions: localDeductions,
+            employerContributions,
+            taxInfo: {
+                annualIncome: annualGross,
+                totalExemptions: residencyStatus === 'NON_RESIDENT' ? 0 : (nssfEmployee * 12 + (personalRelief + insuranceRelief) * 12),
+                netTaxableIncome,
+                annualTds: annualTax,
+                monthlyTds: monthlyTax,
+            },
+        };
+    }
+}
+
+/**
  * 5. DEFAULT ENGINE (Standard gross-to-net, no statutory/tax overrides)
  */
 export class DefaultPayrollEngine implements IPayrollEngine {
@@ -459,6 +712,9 @@ export class PayrollEngineFactory {
             case 'UAE':
             case 'UNITED ARAB EMIRATES':
                 return new UAEPayrollEngine();
+            case 'TZ':
+            case 'TANZANIA':
+                return new TZPayrollEngine();
             default:
                 return new DefaultPayrollEngine();
         }

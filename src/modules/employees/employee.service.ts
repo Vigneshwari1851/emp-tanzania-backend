@@ -10,7 +10,7 @@ export class EmployeeService {
     const { email, password, username, status, role_id, team_id, bulk_upload, ...detailsData } = data;
 
     // Check if email already exists
-    const existingUser = await prisma.user.findUnique({ where: { email } });
+    const existingUser = await prisma.user.findFirst({ where: { email, tenantId: orgId } });
     if (existingUser && !data.is_draft) {
       throw new AppError('Email is already in use', 400);
     }
@@ -129,9 +129,22 @@ export class EmployeeService {
       : (status !== undefined ? (String(status) === 'true') : true);
 
     return await prisma.$transaction(async (tx) => {
+      // Find tenantId for organization
+      let tenantId = 1;
+      if (orgId) {
+        const org = await tx.organization.findUnique({
+          where: { id: orgId },
+          select: { tenantId: true }
+        });
+        if (org) {
+          tenantId = org.tenantId;
+        }
+      }
+
       // 1. Create the base User
       const user = await tx.user.create({
         data: {
+          tenantId,
           email,
           password: hashedPassword,
           username,
@@ -1050,7 +1063,7 @@ export class EmployeeService {
     };
 
     if (email) {
-      const user = await prisma.user.findUnique({
+      const user = await prisma.user.findFirst({
         where: { email },
         select: { id: true }
       });

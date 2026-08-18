@@ -146,7 +146,7 @@ export class AuthService {
             });
         }
 
-        let user = await prisma.user.findUnique({
+        let user = await prisma.user.findFirst({
             where: { email },
             include: {
                 details: {
@@ -232,6 +232,7 @@ export class AuthService {
             email: u.email,
             role_id: u.details?.role_id,
             orgId: orgId,
+            tenantId: u.tenantId,
             roles,
             permissions,
             jti: sessionId,
@@ -277,6 +278,7 @@ export class AuthService {
                 id: u.id,
                 email: u.email,
                 orgId,
+                tenantId: u.tenantId,
                 orgSlug: resolvedOrgSlug,
                 role_id: u.details?.role_id,
                 role_name: u.details?.role?.role_name || u.roles?.[0]?.role?.role_name || null,
@@ -288,7 +290,7 @@ export class AuthService {
     }
 
     async initiateForgotPassword(email: string) {
-        const user = await prisma.user.findUnique({ where: { email } });
+        const user = await prisma.user.findFirst({ where: { email } });
         if (!user) {
             return { message: 'If the email exists, a reset link will be sent.' };
         }
@@ -332,8 +334,13 @@ export class AuthService {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        const userRecord = await prisma.user.findFirst({ where: { email } });
+        if (!userRecord) {
+            throw new AppError('User not found', 404);
+        }
+
         await prisma.user.update({
-            where: { email },
+            where: { id: userRecord.id },
             data: {
                 password: hashedPassword,
                 failed_login_attempts: 0,

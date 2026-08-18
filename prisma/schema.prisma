@@ -9,8 +9,9 @@ datasource db {
 
 model User {
   id                  Int                     @id @default(autoincrement())
+  tenantId            Int                     @map("tenant_id")
   username            String?
-  email               String                  @unique
+  email               String
   password            String
   status              Boolean                 @default(true)
   is_deleted          Boolean                 @default(false)
@@ -74,7 +75,9 @@ model User {
   advanceFinanceApprovals Advance[]           @relation("AdvanceFinanceApprover")
   loanApprovals          LoanApproval[]
   loginSessions          LoginSession[]
+  tenant                 Tenant                  @relation(fields: [tenantId], references: [id], onDelete: Restrict)
 
+  @@unique([tenantId, email])
   @@map("users")
 }
 
@@ -147,6 +150,14 @@ model UserDetail {
   license_expiry_date    DateTime?
   pan_number             String?
   aadhaar_number         String?
+  national_id            String?       // Tanzania NIN (National Identification Number)
+  tax_identification_number String?    // Tanzania TIN (Tax Identification Number)
+  nssf_number            String?       // Tanzania NSSF registration number
+  heslb_status           Boolean?      @default(false) // true = has outstanding HESLB loan
+  heslb_loan_balance     Decimal?      @db.Decimal(15, 2)
+  residency_status       String?       @default("RESIDENT") // RESIDENT | NON_RESIDENT
+  organization_id        Int?
+  organization           Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   bank_name              String?
   branch_name            String?
   account_holder_name    String?
@@ -343,6 +354,7 @@ model PasswordResetToken {
 
 model Organization {
   id                              Int                      @id @default(autoincrement())
+  tenantId                        Int                      @map("tenant_id")
   user_id                         Int?
   entity_name                     String
   company_code                    String?
@@ -415,6 +427,20 @@ model Organization {
   taxSections                     TaxSection[]
   user_types                      user_types[]
   config                          OrganizationConfig?
+  // --- Reverse relations for newly added organization_id fields ---
+  userDetails                     UserDetail[]
+  leavePolicies                   LeavePolicy[]
+  leaveRequests                   LeaveRequest[]
+  leaveBalances                   LeaveBalance[]
+  attendances                     Attendance[]
+  integrations                    Integration[]
+  documents                       Document[]
+  auditLogs                       AuditLog[]
+  holidays                        holidays[]
+  statutoryConfigs                StatutoryConfig[]
+  statutoryDeadlines              StatutoryDeadline[]
+  statutorySubmissions            StatutorySubmission[]
+  tenant                          Tenant                   @relation(fields: [tenantId], references: [id], onDelete: Restrict)
 
   @@map("organizations")
 }
@@ -510,11 +536,14 @@ model LeavePolicy {
   description          String?        @db.Text
   requires_document    Boolean        @default(false)
   document_url         String?        @db.Text
+  organization_id      Int?
   created_at           DateTime       @default(now())
   updated_at           DateTime       @updatedAt
   leaveBalances        LeaveBalance[]
   leaveRequests        LeaveRequest[]
+  organization         Organization?  @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
+  @@index([organization_id])
   @@map("leave_policies")
 }
 
@@ -531,6 +560,8 @@ model LeaveRequest {
   approved_by          Int?
   rejection_reason     String?     @db.Text
   attachment_url       String?     @db.Text
+  multiple_birth       Boolean     @default(false) // Tanzania: 100 days for multiple births vs 84
+  organization_id      Int?
   applied_at           DateTime    @default(now())
   created_at           DateTime    @default(now())
   updated_at           DateTime    @updatedAt
@@ -538,9 +569,11 @@ model LeaveRequest {
   leave_policy         LeavePolicy @relation(fields: [leave_policy_id], references: [id])
   manager              User?       @relation("ReportingManagerLeave", fields: [reporting_manager_id], references: [id])
   user                 User        @relation("UserLeaveRequests", fields: [user_id], references: [id])
+  organization         Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@index([user_id])
   @@index([leave_policy_id])
+  @@index([organization_id])
   @@index([approved_by], map: "leave_requests_approved_by_fkey")
   @@index([reporting_manager_id], map: "leave_requests_reporting_manager_id_fkey")
   @@map("leave_requests")
@@ -553,32 +586,40 @@ model LeaveBalance {
   balance         Float       @default(0)
   used            Float       @default(0)
   year            Int
+  organization_id Int?
   created_at      DateTime    @default(now())
   updated_at      DateTime    @updatedAt
   leave_policy    LeavePolicy @relation(fields: [leave_policy_id], references: [id])
   user            User        @relation(fields: [user_id], references: [id])
+  organization    Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, leave_policy_id, year])
   @@index([leave_policy_id], map: "leave_balances_leave_policy_id_fkey")
+  @@index([organization_id])
   @@map("leave_balances")
 }
 
 model Attendance {
-  id         Int       @id @default(autoincrement())
-  user_id    Int
-  date       DateTime  @db.Date
-  check_in   DateTime?
-  check_out  DateTime?
-  work_hours Float     @default(0)
-  status     String    @default("PRESENT")
-  location   String?
-  remarks    String?   @db.Text
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  user       User      @relation(fields: [user_id], references: [id])
+  id              Int       @id @default(autoincrement())
+  user_id         Int
+  date            DateTime  @db.Date
+  check_in        DateTime?
+  check_out       DateTime?
+  work_hours      Float     @default(0)
+  overtime_hours  Float     @default(0) // TZ: overtime tracking
+  overtime_type   String?   // NORMAL (1.5x) | HOLIDAY (2.0x)
+  status          String    @default("PRESENT")
+  location        String?
+  remarks         String?   @db.Text
+  organization_id Int?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  user            User      @relation(fields: [user_id], references: [id])
+  organization    Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, date])
   @@index([user_id])
+  @@index([organization_id])
   @@map("attendance")
 }
 
@@ -597,14 +638,17 @@ model CustomField {
 }
 
 model Integration {
-  id         Int      @id @default(autoincrement())
-  name       String
-  provider   String
-  config     Json?
-  status     Boolean  @default(false)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id              Int      @id @default(autoincrement())
+  name            String
+  provider        String
+  config          Json?
+  status          Boolean  @default(false)
+  organization_id Int?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  organization    Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
+  @@index([organization_id])
   @@map("integrations")
 }
 
@@ -2455,19 +2499,22 @@ model LoanDocument {
 }
 
 model AuditLog {
-  id        Int      @id @default(autoincrement())
-  module    String   @db.VarChar(50)
-  action    String   @db.VarChar(50)
-  entityId  String
-  actorId   Int
-  oldValue  Json?
-  newValue  Json?
-  ipAddress String?
-  createdAt DateTime @default(now())
+  id              Int      @id @default(autoincrement())
+  module          String   @db.VarChar(50)
+  action          String   @db.VarChar(50)
+  entityId        String
+  actorId         Int
+  oldValue        Json?
+  newValue        Json?
+  ipAddress       String?
+  organization_id Int?
+  createdAt       DateTime @default(now())
+  organization    Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@index([module, action])
   @@index([actorId])
   @@index([createdAt])
+  @@index([organization_id])
   @@map("audit_logs")
 }
 
@@ -2487,50 +2534,141 @@ model Document {
   version         String   @default("1.0")
   user_id         Int?
   uploaded_by     Int
+  organization_id Int?
   target_department String?  @default("All Departments")
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
   uploader        User     @relation("DocumentUploader", fields: [uploaded_by], references: [id])
   owner           User?    @relation("DocumentOwner", fields: [user_id], references: [id])
+  organization    Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@index([uploaded_by], map: "documents_uploaded_by_fkey")
   @@index([user_id], map: "documents_user_id_fkey")
+  @@index([organization_id])
   @@map("documents")
 }
 
-model tenants {
-  id        Int    @id @default(autoincrement())
-  name      String
-  editionId Int
+model Tenant {
+  id                Int                     @id @default(autoincrement())
+  tenantCode        String                  @unique @map("tenant_code")
+  name              String
+  status            String                  @default("ACTIVE")
+  billingEmail      String                  @map("billing_email")
+  editionId         Int                     @map("edition_id")
+  subscriptionStart DateTime                @default(now()) @map("subscription_start")
+  subscriptionEnd   DateTime?               @map("subscription_end")
+  createdAt         DateTime                @default(now()) @map("created_at")
+  updatedAt         DateTime                @updatedAt @map("updated_at")
+  
+  users             User[]
+  organizations     Organization[]
+  featureOverrides  TenantFeatureOverride[]
+  edition           Edition                 @relation(fields: [editionId], references: [id], onDelete: Restrict)
+
+  @@map("tenants")
 }
 
-model editions {
-  id          Int     @id @default(autoincrement())
-  code        String  @unique
+model Edition {
+  id          Int            @id @default(autoincrement())
+  code        String         @unique
   name        String
   description String?
+  tenants     Tenant[]
+  entitlements Entitlement[]
+
+  @@map("editions")
 }
 
-model edition_modules {
+model EditionModule {
   editionId       Int
   featureModuleId Int
 
   @@id([editionId, featureModuleId])
+  @@map("edition_modules")
 }
 
-model feature_modules {
-  id          Int     @id @default(autoincrement())
-  code        String  @unique
+model FeatureModule {
+  id          Int                     @id @default(autoincrement())
+  code        String                  @unique
   name        String
   description String?
+  overrides   TenantFeatureOverride[]
+
+  @@map("feature_modules")
 }
 
-model tenant_feature_overrides {
+model TenantFeatureOverride {
   tenantId        Int
   featureModuleId Int
   enabled         Boolean @default(true)
+  tenant          Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  featureModule   FeatureModule @relation(fields: [featureModuleId], references: [id], onDelete: Cascade)
 
   @@id([tenantId, featureModuleId])
+  @@map("tenant_feature_overrides")
+}
+
+model PlatformUser {
+  id        Int                @id @default(autoincrement())
+  email     String             @unique
+  password  String
+  status    String             @default("ACTIVE")
+  createdAt DateTime           @default(now()) @map("created_at")
+  updatedAt DateTime           @updatedAt @map("updated_at")
+  roles     PlatformUserRole[]
+
+  @@map("platform_users")
+}
+
+model PlatformRole {
+  id          Int                      @id @default(autoincrement())
+  roleName    String                   @unique @map("role_name")
+  description String?
+  users       PlatformUserRole[]
+  permissions PlatformRolePermission[]
+
+  @@map("platform_roles")
+}
+
+model PlatformPermission {
+  id             Int                      @id @default(autoincrement())
+  permissionName String                   @unique @map("permission_name")
+  description    String?
+  roles          PlatformRolePermission[]
+
+  @@map("platform_permissions")
+}
+
+model PlatformUserRole {
+  userId     Int          @map("user_id")
+  roleId     Int          @map("role_id")
+  assignedAt DateTime     @default(now()) @map("assigned_at")
+  user       PlatformUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role       PlatformRole @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  @@id([userId, roleId])
+  @@map("platform_user_roles")
+}
+
+model PlatformRolePermission {
+  roleId       Int                @map("role_id")
+  permissionId Int                @map("permission_id")
+  role         PlatformRole       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   PlatformPermission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+  @@map("platform_role_permissions")
+}
+
+model Entitlement {
+  id             Int      @id @default(autoincrement())
+  editionId      Int      @map("edition_id")
+  entitlementKey String   @map("entitlement_key")
+  limitValue     Int      @map("limit_value")
+  edition        Edition  @relation(fields: [editionId], references: [id], onDelete: Cascade)
+
+  @@unique([editionId, entitlementKey])
+  @@map("entitlements")
 }
 
 model announcements {
@@ -2577,16 +2715,19 @@ model company_news_departments {
 }
 
 model holidays {
-  id         Int      @id @default(autoincrement())
-  name       String
-  date       DateTime
-  year       Int
-  type       String   @default("public")
-  is_active  Boolean  @default(true)
-  created_at DateTime @default(now())
-  updated_at DateTime
+  id              Int      @id @default(autoincrement())
+  name            String
+  date            DateTime
+  year            Int
+  type            String   @default("public")
+  is_active       Boolean  @default(true)
+  organization_id Int?
+  created_at      DateTime @default(now())
+  updated_at      DateTime
+  organization    Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@unique([name, year])
+  @@index([organization_id])
 }
 
 model user_type_permissions {
@@ -2700,4 +2841,64 @@ model Feedback {
   @@index([user_id])
   @@index([status])
   @@map("feedback")
+}
+
+// ============================================================
+// Tanzania Statutory Configuration (tenant-scoped, versioned)
+// ============================================================
+
+model StatutoryConfig {
+  id              Int      @id @default(autoincrement())
+  organization_id Int
+  config_type     String   @db.VarChar(50) // PAYE | NSSF | SDL | WCF | HESLB | OVERTIME | LEAVE
+  key             String   @db.VarChar(100)
+  value           String   @db.Text
+  effective_from  DateTime @default(now())
+  effective_to    DateTime?
+  is_active       Boolean  @default(true)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  organization    Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, config_type, key, effective_from])
+  @@index([organization_id])
+  @@index([config_type])
+  @@map("statutory_configs")
+}
+
+model StatutoryDeadline {
+  id                  Int      @id @default(autoincrement())
+  organization_id     Int
+  deadline_type       String   @db.VarChar(50) // PAYE | NSSF | SDL | WCF | HESLB
+  day_of_month        Int      @default(7) // Default: 7th of month
+  reminder_days_before Int     @default(3)
+  is_active           Boolean  @default(true)
+  created_at          DateTime @default(now())
+  updated_at          DateTime @updatedAt
+  organization        Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, deadline_type])
+  @@index([organization_id])
+  @@map("statutory_deadlines")
+}
+
+model StatutorySubmission {
+  id              Int      @id @default(autoincrement())
+  organization_id Int
+  submission_type String   @db.VarChar(50) // PAYE | NSSF | SDL | WCF | HESLB
+  period          String   @db.VarChar(20) // "2026-01", "2026-02" (YYYY-MM)
+  status          String   @default("PENDING") // PENDING | SUBMITTED | OVERDUE | FAILED
+  submitted_at    DateTime?
+  due_date        DateTime
+  reference_number String?
+  amount          Decimal? @db.Decimal(15, 2)
+  notes           String?  @db.Text
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  organization    Organization @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, submission_type, period])
+  @@index([organization_id])
+  @@index([status])
+  @@map("statutory_submissions")
 }
