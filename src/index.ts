@@ -64,46 +64,46 @@ app.get('/', (req, res) => {
     return sendResponse(res, 200, true, 'Employee Management API is running');
 });
 
-app.use('/rafiki/auth', authRoutes);
-app.use('/rafiki/roles', rolesRoutes);
-app.use('/rafiki/organizations', organizationRoutes);
-app.use('/rafiki/teams', teamRoutes);
-app.use('/rafiki/departments', departmentRoutes);
-app.use('/rafiki/employees', employeeRoutes);
-app.use('/rafiki/leave-policies', leavePolicyRoutes);
-app.use('/rafiki/leaves', leaveRoutes);
-app.use('/rafiki/attendance', attendanceRoutes);
-app.use('/rafiki/permissions', permissionsRoutes);
-app.use('/rafiki/settings', settingsRoutes);
-app.use('/rafiki/branches', branchRoutes);
-app.use('/rafiki/notifications', notificationRoutes);
-app.use('/rafiki/banks', bankRoutes);
-app.use('/rafiki/payroll', payrollRoutes);
-app.use('/rafiki/exit', exitRoutes);
-app.use('/rafiki/designations', designationRoutes);
-app.use('/rafiki/assets', assetRoutes);
-app.use('/rafiki/assignments', assignmentRoutes);
-app.use('/rafiki/lms', lmsRoutes);
-app.use('/rafiki/audit', auditRoutes);
-app.use('/rafiki/recruitment', recruitmentRoutes);
-app.use('/rafiki/public/surveys', publicSurveyRoutes);
-app.use('/rafiki/survey', surveyRoutes);
-app.use('/rafiki/edition', editionRoutes);
-app.use('/rafiki/surveys', surveyRoutes);
-app.use('/rafiki/user-types', userTypeRoutes);
-app.use('/rafiki/news', newsRoutes);
+app.use('/auth', authRoutes);
+app.use('/roles', rolesRoutes);
+app.use('/organizations', organizationRoutes);
+app.use('/teams', teamRoutes);
+app.use('/departments', departmentRoutes);
+app.use('/employees', employeeRoutes);
+app.use('/leave-policies', leavePolicyRoutes);
+app.use('/leaves', leaveRoutes);
+app.use('/attendance', attendanceRoutes);
+app.use('/permissions', permissionsRoutes);
+app.use('/settings', settingsRoutes);
+app.use('/branches', branchRoutes);
+app.use('/notifications', notificationRoutes);
+app.use('/banks', bankRoutes);
+app.use('/payroll', payrollRoutes);
+app.use('/exit', exitRoutes);
+app.use('/designations', designationRoutes);
+app.use('/assets', assetRoutes);
+app.use('/assignments', assignmentRoutes);
+app.use('/lms', lmsRoutes);
+app.use('/audit', auditRoutes);
+app.use('/recruitment', recruitmentRoutes);
+app.use('/public/surveys', publicSurveyRoutes);
+app.use('/survey', surveyRoutes);
+app.use('/edition', editionRoutes);
+app.use('/surveys', surveyRoutes);
+app.use('/user-types', userTypeRoutes);
+app.use('/news', newsRoutes);
 import * as newsController from './modules/news/news.controller';
 import { authenticate } from './middlewares/auth.middleware';
 app.get('/api/news-feed', authenticate, newsController.getNewsFeed);
 app.get('/news-feed', authenticate, newsController.getNewsFeed);
-app.use('/rafiki/documents', documentRoutes);
-app.use('/rafiki/loans-advances', loansAdvancesRoutes);
-app.use('/rafiki/loan-types', loanTypesRoutes);
-app.use('/rafiki/loan-applications', loanApplicationsRoutes);
+app.use('/documents', documentRoutes);
+app.use('/loans-advances', loansAdvancesRoutes);
+app.use('/loan-types', loanTypesRoutes);
+app.use('/loan-applications', loanApplicationsRoutes);
 import changeRequestRoutes from './modules/change-requests/change-request.routes';
-app.use('/rafiki/change-requests', changeRequestRoutes);
+app.use('/change-requests', changeRequestRoutes);
 import feedbackRoutes from './modules/feedback/feedback.routes';
-app.use('/rafiki/feedback', feedbackRoutes);
+app.use('/feedback', feedbackRoutes);
 
 
 // Generic file upload endpoint for Asset Images and other modules
@@ -127,7 +127,7 @@ const singleUpload = multer({
     limits: { fileSize: 20 * 1024 * 1024 }
 }).single('file');
 
-app.post('/rafiki/upload', (req, res) => {
+app.post('/upload', (req, res) => {
     singleUpload(req, res, (err) => {
         if (err) {
             console.error('Upload error:', err);
