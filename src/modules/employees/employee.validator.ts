@@ -192,7 +192,7 @@ const fullSchema = z.object({
   employment_type: trimString.min(1, 'Employment type is required'),
   start_date: trimString.min(1, 'Start date is required'),
   work_location: trimString.min(1, 'Work location is required'),
-  base_salary: z.coerce.number().min(1, 'Base salary is required'),
+  base_salary: z.coerce.number().min(699000, 'Base salary must be at least TZS 699,000'),
   bank_name: trimString.min(1, 'Bank name is required'),
   account_holder_name: trimString.min(1, 'Account holder name is required'),
   account_number: trimString.min(1, 'Account number is required'),
@@ -308,7 +308,7 @@ const updateFullSchema = z.object({
     }
     const parsed = Number(val);
     return isNaN(parsed) ? undefined : parsed;
-  }, z.number().optional()),
+  }, z.number().min(699000, 'Base salary must be at least TZS 699,000').optional()),
   currency: trimStringOptional,
   salary_frequency: trimStringOptional,
   compensation_breakdown: z.unknown().optional(),

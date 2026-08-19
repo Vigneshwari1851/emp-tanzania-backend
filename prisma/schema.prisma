@@ -180,6 +180,10 @@ model UserDetail {
   team_id                Int?
   user_type_id           Int?
   verification_statuses  Json?
+  is_heslb_beneficiary   Boolean       @default(false)
+  is_disabled            Boolean       @default(false)
+  heslb_index_number     String?
+  nssf_number            String?
   absence_status         String?
   sub_status             String?
   advances               Advance[]
@@ -389,6 +393,9 @@ model Organization {
   schedule_type                   String?                  @default("fixed")
   enable_shifts                   Boolean                  @default(false)
   shifts                          Json?
+  tra_tin                         String?
+  nssf_employer_number            String?
+  wcf_employer_number             String?
   assetAssignments                AssetAssignment[]
   assetCategories                 AssetCategory[]
   assetDocuments                  AssetDocument[]
@@ -415,6 +422,7 @@ model Organization {
   taxSections                     TaxSection[]
   user_types                      user_types[]
   config                          OrganizationConfig?
+  tzTaxPolicies                   TzTaxPolicy[]
 
   @@map("organizations")
 }
@@ -2701,3 +2709,26 @@ model Feedback {
   @@index([status])
   @@map("feedback")
 }
+
+model TzTaxPolicy {
+  id                    Int           @id @default(autoincrement())
+  version               Int           @default(1)
+  status                String        @default("active") // "active", "draft", "inactive"
+  effective_date        DateTime
+  paye_slabs            Json          // Array of { lowerLimit: number, upperLimit: number | null, rate: number, fixedAmount: number }
+  employee_nssf_rate    Decimal       @db.Decimal(5, 4) // e.g. 0.1000 for 10%
+  employer_nssf_rate    Decimal       @db.Decimal(5, 4) // e.g. 0.1000 for 10%
+  sdl_rate              Decimal       @default(0.0350) @db.Decimal(5, 4) // 3.5%
+  wcf_rate              Decimal       @default(0.0050) @db.Decimal(5, 4) // 0.5%
+  heslb_rate            Decimal       @default(0.1500) @db.Decimal(5, 4) // 15%
+  sdl_threshold         Int           @default(10)
+  personal_relief_annual Decimal      @default(270000) @db.Decimal(12, 2) // TZS/year
+  disability_relief_annual Decimal    @default(270000) @db.Decimal(12, 2) // TZS/year
+  created_at            DateTime      @default(now())
+  updated_at            DateTime      @updatedAt
+  organization_id       Int?
+  organization          Organization? @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@map("tz_tax_policies")
+}
+

@@ -164,3 +164,33 @@ export const saveSystemSettingsSchema = z.object({
         description: z.string().max(500).optional(),
     }))
 });
+
+// ─── Tanzania Tax Policies ──────────────────────────────────────────────
+export const createTzTaxPolicySchema = z.object({
+    body: z.object({
+        effective_date: z.coerce.string().or(z.coerce.date()),
+        status: z.enum(['active', 'draft', 'inactive']).optional(),
+        employee_nssf_rate: z.coerce.number().min(0).max(0.1),
+        employer_nssf_rate: z.coerce.number().min(0).max(1),
+        sdl_rate: z.coerce.number().min(0).max(1).optional(),
+        wcf_rate: z.coerce.number().min(0).max(1).optional(),
+        heslb_rate: z.coerce.number().min(0).max(1).optional(),
+        sdl_threshold: z.coerce.number().int().nonnegative().optional(),
+        personal_relief_annual: z.coerce.number().nonnegative().optional(),
+        disability_relief_annual: z.coerce.number().nonnegative().optional(),
+        paye_slabs: z.array(z.object({
+            lowerLimit: z.coerce.number().nonnegative(),
+            upperLimit: z.coerce.number().nullable(),
+            rate: z.coerce.number().nonnegative(),
+            fixedAmount: z.coerce.number().nonnegative()
+        })).min(1)
+    })
+});
+
+export const updateTzTaxPolicyStatusSchema = z.object({
+    params: z.object({ id: z.coerce.number().int().positive() }),
+    body: z.object({
+        status: z.enum(['active', 'draft', 'inactive'])
+    })
+});
+

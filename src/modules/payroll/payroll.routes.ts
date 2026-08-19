@@ -7,7 +7,8 @@ import {
     createGroupSchema, createTaxSectionSchema, createReimbursementSchema,
     updatePayCycleSchema, createRunSchema, submitClaimSchema,
     updateTaxRegimeSchema, submitDeclarationSchema, submitForm12BSchema,
-    processPaymentSchema, batchPaymentSchema, saveSystemSettingsSchema
+    processPaymentSchema, batchPaymentSchema, saveSystemSettingsSchema,
+    createTzTaxPolicySchema, updateTzTaxPolicyStatusSchema
 } from './payroll.validator';
 
 const router = Router();
@@ -117,5 +118,20 @@ router.post('/system-settings', authenticate as any, canManage, validateRequest(
   // Custom Reimbursement Policies
   router.get('/policies', authenticate as any, (req, res) => controller.getReimbursementPolicies(req as any, res));
   router.post('/policies', authenticate as any, canManage, (req, res) => controller.saveReimbursementPolicies(req as any, res));
+
+  // Tanzania Tax Policies
+  router.get('/tanzania/tax-policies', authenticate as any, canManage, (req, res) => controller.getTzTaxPolicies(req as any, res));
+  router.get('/tanzania/tax-policies/active', authenticate as any, (req, res) => controller.getActiveTzTaxPolicy(req as any, res));
+  router.post('/tanzania/tax-policies', authenticate as any, canManage, validateRequest(createTzTaxPolicySchema), (req, res) => controller.createTzTaxPolicy(req as any, res));
+  router.put('/tanzania/tax-policies/:id', authenticate as any, canManage, validateRequest(createTzTaxPolicySchema), (req, res) => controller.updateTzTaxPolicy(req as any, res));
+  router.patch('/tanzania/tax-policies/:id/status', authenticate as any, canManage, validateRequest(updateTzTaxPolicyStatusSchema), (req, res) => controller.updateTzTaxPolicyStatus(req as any, res));
+
+  // Tanzania Statutory Compliance Reports
+  router.get('/tanzania/compliance/paye/:year/:month', authenticate as any, canView, (req, res) => controller.getTzPayeReport(req as any, res));
+  router.get('/tanzania/compliance/sdl/:year/:month', authenticate as any, canView, (req, res) => controller.getTzSdlReport(req as any, res));
+  router.get('/tanzania/compliance/nssf/:year/:month', authenticate as any, canView, (req, res) => controller.getTzNssfReport(req as any, res));
+  router.get('/tanzania/compliance/heslb/:year/:month', authenticate as any, canView, (req, res) => controller.getTzHeslbReport(req as any, res));
+  router.get('/tanzania/compliance/wcf/:year/:month', authenticate as any, canView, (req, res) => controller.getTzWcfReport(req as any, res));
+  router.get('/tanzania/compliance/check/:year/:month', authenticate as any, canView, (req, res) => controller.checkTzFinalizedPayroll(req as any, res));
 
 export default router;
