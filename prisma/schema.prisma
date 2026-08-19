@@ -2683,6 +2683,7 @@ enum QuestionType {
   RATING
   TEXT
   YES_NO
+  NPS
 }
 
 model Feedback {

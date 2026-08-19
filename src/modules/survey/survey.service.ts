@@ -389,17 +389,10 @@ export class SurveyService {
     }
 
     if (filters?.department && filters.department !== 'All Departments') {
-      whereCondition.responses = {
-        some: {
-          user: {
-            details: {
-              department: {
-                department_name: filters.department
-              }
-            }
-          }
-        }
-      };
+      whereCondition.OR = [
+        { target_department: { contains: filters.department } },
+        { target_department: 'All Departments' }
+      ];
     }
 
     const surveys = await prisma.survey.findMany({
