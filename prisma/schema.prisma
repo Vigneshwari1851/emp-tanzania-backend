@@ -163,6 +163,7 @@ model UserDetail {
   dl_doc                 String?
   pan_doc                String?
   aadhaar_doc            String?
+  nssf_doc               String?
   created_at             DateTime      @default(now())
   updated_at             DateTime      @updatedAt
   designation_id         Int?
