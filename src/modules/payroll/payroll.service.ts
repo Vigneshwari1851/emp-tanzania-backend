@@ -982,20 +982,23 @@ export class PayrollService {
             }
         });
 
-        if (reimbTypes.length === 0) {
-            throw new AppError(`No active reimbursement policy found for category "${data.type}".`, 400);
-        }
-
         let reimbType = reimbTypes.find(t => t.department_id === userDeptId);
         if (!reimbType) {
             reimbType = reimbTypes.find(t => t.department_id === null);
         }
 
         if (!reimbType) {
-            throw new AppError(
-                `Your department (${userDeptName}) is not eligible to claim reimbursement for "${data.type}".`,
-                400
-            );
+            // Auto-create the reimbursement type in the DB to match the frontend policy category
+            reimbType = await prisma.reimbursementType.create({
+                data: {
+                    type: data.type,
+                    label: data.type,
+                    limit: 100000,
+                    period: 'Monthly',
+                    status: true,
+                    organization_id: orgId
+                }
+            });
         }
 
         const typeLimit = Number(reimbType.limit);
@@ -1095,9 +1098,36 @@ export class PayrollService {
 
             const recipientIds = new Set();
 
-            // 1. Add reporting manager
-            if (userDetail2?.reporting_manager_id) {
-                recipientIds.add(userDetail2.reporting_manager_id);
+            // 1. Add recipients based on the first step of the workflow sequence
+            const firstStep = mappedSequence[0];
+            if (firstStep === 'MANAGER') {
+                if (userDetail2?.reporting_manager_id) {
+                    recipientIds.add(userDetail2.reporting_manager_id);
+                }
+            } else if (firstStep === 'HR') {
+                const hrUsers = await prisma.user.findMany({
+                    where: {
+                        OR: [
+                            { roles: { some: { role: { role_name: { contains: 'hr' } } } } },
+                            { roles: { some: { role: { role_name: { contains: 'HR' } } } } },
+                            { details: { role: { role_name: { contains: 'hr' } } } },
+                            { details: { role: { role_name: { contains: 'HR' } } } }
+                        ]
+                    },
+                    select: { id: true }
+                });
+                for (const hr of hrUsers) recipientIds.add(hr.id);
+            } else if (firstStep === 'FINANCE') {
+                const financeUsers = await prisma.user.findMany({
+                    where: {
+                        OR: [
+                            { roles: { some: { role: { role_name: { in: ['finance', 'Finance', 'account', 'payroll'] } } } } },
+                            { details: { role: { role_name: { in: ['finance', 'Finance', 'account', 'payroll'] } } } }
+                        ]
+                    },
+                    select: { id: true }
+                });
+                for (const fin of financeUsers) recipientIds.add(fin.id);
             }
 
             // 2. ALWAYS notify admins as well
@@ -2012,14 +2042,19 @@ export class PayrollService {
 
             // 1. Employee Notification (Updates employee on status progress)
             let empTitle = `Reimbursement Status: ${updatedClaim.status}`;
-            let empMessage = `Your reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}) is now Status: ${updatedClaim.status}.`;
+            let empMessage = `Your reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}) is now ${updatedClaim.status}.`;
 
             if (sLower === 'pending_approval' && role === 'HR') {
                 empTitle = 'Claim Approved by Manager';
                 empMessage = `Your manager approved your reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}). Pending HR review.`;
             } else if (sLower === 'pending_approval' && role === 'FINANCE') {
-                empTitle = 'Claim Verified by HR';
-                empMessage = `HR verified your reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}). Pending Finance payout.`;
+                if (currentClaim.current_assigned_role === 'MANAGER') {
+                    empTitle = 'Claim Approved by Manager';
+                    empMessage = `Your manager approved your reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}). Pending Finance review.`;
+                } else {
+                    empTitle = 'Claim Verified by HR';
+                    empMessage = `HR verified your reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}). Pending Finance payout.`;
+                }
             } else if (sLower === 'ready_for_payroll_review') {
                 empTitle = 'Claim Fully Approved!';
                 empMessage = `Your reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}) has been fully approved.`;
@@ -2114,7 +2149,7 @@ export class PayrollService {
                         await notificationService.create({
                             user_id: hr.id,
                             title: 'Claim Pending HR Verification',
-                            message: `${empName}'s reimbursement claim for ${updatedClaim.type} (TShs Status: pending HR verification.`,
+                            message: `${empName}'s reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}) is pending HR verification.`,
                             type: 'REIMBURSEMENT',
                             related_module: 'reimbursement',
                             related_id: updatedClaim.id,
@@ -2138,7 +2173,7 @@ export class PayrollService {
                         await notificationService.create({
                             user_id: fin.id,
                             title: 'Claim Ready for Finance Payout',
-                            message: `Status: ready for payment processing.`,
+                            message: `${empName}'s reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}) is ready for payment processing.`,
                             type: 'REIMBURSEMENT',
                             related_module: 'reimbursement',
                             related_id: updatedClaim.id,
