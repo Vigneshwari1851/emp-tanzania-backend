@@ -130,6 +130,8 @@ export class NotificationService {
                         shouldNotify = isHR;
                     } else if (claimAssignedRole === 'FINANCE') {
                         shouldNotify = isFinance;
+                    } else if (claimAssignedRole === 'ADMIN') {
+                        shouldNotify = false;
                     } else {
                         shouldNotify = isDirectManager || isHR || isFinance;
                     }
