@@ -2137,7 +2137,7 @@ export class PayrollService {
 
             // 1. Employee Notification (Updates employee on status progress)
             let empTitle = `Reimbursement Status: ${updatedClaim.status}`;
-            let empMessage = `Your reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}) is now Status: ${updatedClaim.status}.`;
+            let empMessage = `Your reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}) is now ${updatedClaim.status}.`;
 
             if (sLower === 'pending_approval' && role === 'HR') {
                 empTitle = 'Claim Approved by Manager';
@@ -2239,7 +2239,7 @@ export class PayrollService {
                         await notificationService.create({
                             user_id: hr.id,
                             title: 'Claim Pending HR Verification',
-                            message: `${empName}'s reimbursement claim for ${updatedClaim.type} (TShs Status: pending HR verification.`,
+                            message: `${empName}'s reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}) is pending HR verification.`,
                             type: 'REIMBURSEMENT',
                             related_module: 'reimbursement',
                             related_id: updatedClaim.id,
@@ -2263,7 +2263,7 @@ export class PayrollService {
                         await notificationService.create({
                             user_id: fin.id,
                             title: 'Claim Ready for Finance Payout',
-                            message: `Status: ready for payment processing.`,
+                            message: `${empName}'s reimbursement claim for ${updatedClaim.type} (TShs ${Number(updatedClaim.amount).toLocaleString()}) is ready for payment processing.`,
                             type: 'REIMBURSEMENT',
                             related_module: 'reimbursement',
                             related_id: updatedClaim.id,
