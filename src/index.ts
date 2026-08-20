@@ -38,6 +38,10 @@ import documentRoutes from './modules/document/document.routes';
 import loansAdvancesRoutes from './modules/loans-advances/loans-advances.routes';
 import loanTypesRoutes from './modules/loans-advances/loan-types.routes';
 import loanApplicationsRoutes from './modules/loans-advances/loan-applications.routes';
+import changeRequestRoutes from './modules/change-requests/change-request.routes';
+import feedbackRoutes from './modules/feedback/feedback.routes';
+import * as newsController from './modules/news/news.controller';
+import { authenticate } from './middlewares/auth.middleware';
 
 
 import path from 'path';
@@ -59,51 +63,56 @@ app.use((req, res, next) => {
     next();
 });
 
-// Routes
-app.get('/', (req, res) => {
+
+// All API routes are mounted under /rafiki so that the production build
+// (which uses base: '/rafiki/') works without a reverse proxy stripping the prefix.
+// The Vite dev proxy already rewrites /rafiki/* → /* so local dev is unaffected.
+const apiRouter = express.Router();
+
+apiRouter.get('/', (req, res) => {
     return sendResponse(res, 200, true, 'Employee Management API is running');
 });
 
-app.use('/auth', authRoutes);
-app.use('/roles', rolesRoutes);
-app.use('/organizations', organizationRoutes);
-app.use('/teams', teamRoutes);
-app.use('/departments', departmentRoutes);
-app.use('/employees', employeeRoutes);
-app.use('/leave-policies', leavePolicyRoutes);
-app.use('/leaves', leaveRoutes);
-app.use('/attendance', attendanceRoutes);
-app.use('/permissions', permissionsRoutes);
-app.use('/settings', settingsRoutes);
-app.use('/branches', branchRoutes);
-app.use('/notifications', notificationRoutes);
-app.use('/banks', bankRoutes);
-app.use('/payroll', payrollRoutes);
-app.use('/exit', exitRoutes);
-app.use('/designations', designationRoutes);
-app.use('/assets', assetRoutes);
-app.use('/assignments', assignmentRoutes);
-app.use('/lms', lmsRoutes);
-app.use('/audit', auditRoutes);
-app.use('/recruitment', recruitmentRoutes);
-app.use('/public/surveys', publicSurveyRoutes);
-app.use('/survey', surveyRoutes);
-app.use('/edition', editionRoutes);
-app.use('/surveys', surveyRoutes);
-app.use('/user-types', userTypeRoutes);
-app.use('/news', newsRoutes);
-import * as newsController from './modules/news/news.controller';
-import { authenticate } from './middlewares/auth.middleware';
-app.get('/api/news-feed', authenticate, newsController.getNewsFeed);
-app.get('/news-feed', authenticate, newsController.getNewsFeed);
-app.use('/documents', documentRoutes);
-app.use('/loans-advances', loansAdvancesRoutes);
-app.use('/loan-types', loanTypesRoutes);
-app.use('/loan-applications', loanApplicationsRoutes);
-import changeRequestRoutes from './modules/change-requests/change-request.routes';
-app.use('/change-requests', changeRequestRoutes);
-import feedbackRoutes from './modules/feedback/feedback.routes';
-app.use('/feedback', feedbackRoutes);
+apiRouter.use('/auth', authRoutes);
+apiRouter.use('/roles', rolesRoutes);
+apiRouter.use('/organizations', organizationRoutes);
+apiRouter.use('/teams', teamRoutes);
+apiRouter.use('/departments', departmentRoutes);
+apiRouter.use('/employees', employeeRoutes);
+apiRouter.use('/leave-policies', leavePolicyRoutes);
+apiRouter.use('/leaves', leaveRoutes);
+apiRouter.use('/attendance', attendanceRoutes);
+apiRouter.use('/permissions', permissionsRoutes);
+apiRouter.use('/settings', settingsRoutes);
+apiRouter.use('/branches', branchRoutes);
+apiRouter.use('/notifications', notificationRoutes);
+apiRouter.use('/banks', bankRoutes);
+apiRouter.use('/payroll', payrollRoutes);
+apiRouter.use('/exit', exitRoutes);
+apiRouter.use('/designations', designationRoutes);
+apiRouter.use('/assets', assetRoutes);
+apiRouter.use('/assignments', assignmentRoutes);
+apiRouter.use('/lms', lmsRoutes);
+apiRouter.use('/audit', auditRoutes);
+apiRouter.use('/recruitment', recruitmentRoutes);
+apiRouter.use('/public/surveys', publicSurveyRoutes);
+apiRouter.use('/survey', surveyRoutes);
+apiRouter.use('/edition', editionRoutes);
+apiRouter.use('/surveys', surveyRoutes);
+apiRouter.use('/user-types', userTypeRoutes);
+apiRouter.use('/news', newsRoutes);
+apiRouter.get('/api/news-feed', authenticate, newsController.getNewsFeed);
+apiRouter.get('/news-feed', authenticate, newsController.getNewsFeed);
+apiRouter.use('/documents', documentRoutes);
+apiRouter.use('/loans-advances', loansAdvancesRoutes);
+apiRouter.use('/loan-types', loanTypesRoutes);
+apiRouter.use('/loan-applications', loanApplicationsRoutes);
+apiRouter.use('/change-requests', changeRequestRoutes);
+apiRouter.use('/feedback', feedbackRoutes);
+
+// Mount all API routes under /rafiki (production) and also at root (local dev fallback)
+app.use('/rafiki', apiRouter);
+app.use('/', apiRouter);
 
 
 // Generic file upload endpoint for Asset Images and other modules

@@ -234,7 +234,7 @@ export class PayrollReportService {
             
             const empId = details?.employee_id || `EMP-${user.id}`;
             const empName = `${details?.first_name || ''} ${details?.last_name || ''}`.trim();
-            const dept = details?.department?.department_name || 'N/A';
+            const dept = (details as any)?.department?.department_name || 'N/A';
             const status = slip.status;
             
             const breakdown = slip.breakdown as any || {};
@@ -355,6 +355,321 @@ export class PayrollReportService {
             }))
         };
     }
+
+    /**
+     * Generate Excel Helper
+     */
+    private async generateExcel(
+        filename: string,
+        headers: { header: string, key: string, width: number }[],
+        rows: any[],
+        metadata?: Record<string, string | null | undefined>
+    ): Promise<Buffer> {
+        const workbook = new ExcelJS.Workbook();
+        const sheet = workbook.addWorksheet('Report');
+        
+        if (metadata) {
+            Object.entries(metadata).forEach(([k, v]) => {
+                if (v) {
+                    const metaRow = sheet.addRow([`${k}: ${v}`]);
+                    metaRow.font = { italic: true, size: 10 };
+                }
+            });
+            if (Object.values(metadata).some(Boolean)) {
+                sheet.addRow([]); // Blank spacer line
+            }
+        }
+
+        const headerRow = sheet.addRow(headers.map(h => h.header));
+        headerRow.font = { bold: true };
+
+        headers.forEach((h, idx) => {
+            sheet.getColumn(idx + 1).width = h.width;
+        });
+
+        rows.forEach(row => {
+            const rowValues = headers.map(h => row[h.key]);
+            sheet.addRow(rowValues);
+        });
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        return buffer as unknown as Buffer;
+    }
+
+    /**
+     * Helper to retrieve finalized payslips with snapshots for Tanzania reports
+     */
+    private async getFinalizedTzPayslips(orgId: number, year: string, month: string): Promise<any[]> {
+        const periodStr = `${year}-${String(month).padStart(2, '0')}`;
+        const payslips = await prisma.payslip.findMany({
+            where: {
+                organization_id: orgId,
+                month: periodStr,
+                status: { in: ['PAID', 'FINANCE_APPROVED'] }
+            },
+            include: {
+                user: {
+                    include: { details: true }
+                }
+            },
+            orderBy: { created_at: 'desc' }
+        });
+
+        // Deduplicate latest per employee
+        const latestPerEmployee = new Map<number, typeof payslips[0]>();
+        payslips.forEach(slip => {
+            if (!latestPerEmployee.has(slip.user_id)) {
+                latestPerEmployee.set(slip.user_id, slip);
+            }
+        });
+
+        return Array.from(latestPerEmployee.values());
+    }
+
+    /**
+     * Tanzania PAYE Report
+     */
+    async generateTzPayeReport(orgId: number, year: string, month: string): Promise<Buffer> {
+        const slips: any[] = await this.getFinalizedTzPayslips(orgId, year, month);
+        if (slips.length === 0) {
+            throw new Error(`No finalized payroll runs found for ${year}-${month}`);
+        }
+
+        const org = await prisma.organization.findUnique({ where: { id: orgId } });
+        const metadata = {
+            'Employer Name': org?.entity_name,
+            'Employer TRA TIN': org?.tra_tin || org?.tin
+        };
+
+        const headers = [
+            { header: 'Employee Name', key: 'name', width: 25 },
+            { header: 'TIN', key: 'tin', width: 15 },
+            { header: 'Basic Salary', key: 'basic', width: 15 },
+            { header: 'Allowances', key: 'allowances', width: 15 },
+            { header: 'Gross Pay', key: 'gross', width: 15 },
+            { header: 'Employee NSSF', key: 'nssf', width: 15 },
+            { header: 'Taxable Income', key: 'taxable', width: 15 },
+            { header: 'PAYE', key: 'paye', width: 15 },
+            { header: 'HESLB Deduction', key: 'heslb', width: 15 }
+        ];
+
+        const rows = slips.map(slip => {
+            const details = slip.user?.details;
+            const bd: any = slip.breakdown ? (typeof slip.breakdown === 'string' ? JSON.parse(slip.breakdown) : slip.breakdown) : {};
+            const snap = bd?.taxPolicySnapshot || {};
+
+            const baseSalary = parseFloat(details?.base_salary?.toString() || '0');
+            const gross = parseFloat(slip.gross_amount.toString());
+            const allowances = Math.max(0, gross - baseSalary);
+            const employeeNssf = snap.employeeNssfCalculated || 0;
+            const taxableIncome = Math.max(0, gross - employeeNssf);
+            const paye = snap.payeCalculated || 0;
+            const heslb = snap.calculatedHeslb || 0;
+
+            return {
+                name: `${details?.first_name || ''} ${details?.last_name || ''}`.trim(),
+                tin: details?.pan_number || '',
+                basic: baseSalary,
+                allowances: allowances,
+                gross: gross,
+                nssf: employeeNssf,
+                taxable: taxableIncome,
+                paye: paye,
+                heslb: heslb
+            };
+        });
+
+        return this.generateExcel(getTzComplianceFilename('PAYE', year, month), headers, rows, metadata);
+    }
+
+    /**
+     * Tanzania SDL Report
+     */
+    async generateTzSdlReport(orgId: number, year: string, month: string): Promise<Buffer> {
+        const slips: any[] = await this.getFinalizedTzPayslips(orgId, year, month);
+        if (slips.length === 0) {
+            throw new Error(`No finalized payroll runs found for ${year}-${month}`);
+        }
+
+        const org = await prisma.organization.findUnique({ where: { id: orgId } });
+        const metadata = {
+            'Employer Name': org?.entity_name,
+            'Employer TRA TIN': org?.tra_tin || org?.tin
+        };
+
+        const headers = [
+            { header: 'Employee Name', key: 'name', width: 25 },
+            { header: 'Gross Pay', key: 'gross', width: 15 },
+            { header: 'SDL Rate (%)', key: 'rate', width: 15 },
+            { header: 'SDL Contribution', key: 'contribution', width: 15 }
+        ];
+
+        const rows = slips.map(slip => {
+            const details = slip.user?.details;
+            const bd: any = slip.breakdown ? (typeof slip.breakdown === 'string' ? JSON.parse(slip.breakdown) : slip.breakdown) : {};
+            const snap = bd?.taxPolicySnapshot || {};
+
+            const gross = parseFloat(slip.gross_amount.toString());
+            const rate = snap.sdlRate || 0.035;
+            const contribution = snap.calculatedSdl || 0;
+
+            return {
+                name: `${details?.first_name || ''} ${details?.last_name || ''}`.trim(),
+                gross: gross,
+                rate: rate * 100,
+                contribution: contribution
+            };
+        });
+
+        return this.generateExcel(getTzComplianceFilename('SDL', year, month), headers, rows, metadata);
+    }
+
+    /**
+     * Tanzania NSSF Report
+     */
+    async generateTzNssfReport(orgId: number, year: string, month: string): Promise<Buffer> {
+        const slips: any[] = await this.getFinalizedTzPayslips(orgId, year, month);
+        if (slips.length === 0) {
+            throw new Error(`No finalized payroll runs found for ${year}-${month}`);
+        }
+
+        const org = await prisma.organization.findUnique({ where: { id: orgId } });
+        const metadata = {
+            'Employer Name': org?.entity_name,
+            'NSSF Employer Number': org?.nssf_employer_number
+        };
+
+        const headers = [
+            { header: 'NSSF Number', key: 'nssfNum', width: 20 },
+            { header: 'Employee Name', key: 'name', width: 25 },
+            { header: 'Gross Salary', key: 'gross', width: 15 },
+            { header: 'Employee NSSF Contribution', key: 'empNssf', width: 25 },
+            { header: 'Employer NSSF Contribution', key: 'empyrNssf', width: 25 },
+            { header: 'Total Contribution', key: 'total', width: 15 }
+        ];
+
+        const rows = slips.map(slip => {
+            const details = slip.user?.details;
+            const bd: any = slip.breakdown ? (typeof slip.breakdown === 'string' ? JSON.parse(slip.breakdown) : slip.breakdown) : {};
+            const snap = bd?.taxPolicySnapshot || {};
+
+            const gross = parseFloat(slip.gross_amount.toString());
+            const empNssf = snap.employeeNssfCalculated || 0;
+            const empyrNssf = snap.employerNssfCalculated || 0;
+
+            return {
+                nssfNum: details?.nssf_number || '',
+                name: `${details?.first_name || ''} ${details?.last_name || ''}`.trim(),
+                gross: gross,
+                empNssf: empNssf,
+                empyrNssf: empyrNssf,
+                total: empNssf + empyrNssf
+            };
+        });
+
+        return this.generateExcel(getTzComplianceFilename('NSSF', year, month), headers, rows, metadata);
+    }
+
+    /**
+     * Tanzania HESLB Report
+     */
+    async generateTzHeslbReport(orgId: number, year: string, month: string): Promise<Buffer> {
+        const slips: any[] = await this.getFinalizedTzPayslips(orgId, year, month);
+        if (slips.length === 0) {
+            throw new Error(`No finalized payroll runs found for ${year}-${month}`);
+        }
+
+        const org = await prisma.organization.findUnique({ where: { id: orgId } });
+        const metadata = {
+            'Employer Name': org?.entity_name,
+            'Employer TRA TIN': org?.tra_tin || org?.tin
+        };
+
+        // Filter for employees with an applicable HESLB deduction
+        const heslbSlips = slips.filter(slip => {
+            const bd: any = slip.breakdown ? (typeof slip.breakdown === 'string' ? JSON.parse(slip.breakdown) : slip.breakdown) : {};
+            const snap = bd?.taxPolicySnapshot || {};
+            return snap.heslbApplicable === true || (snap.calculatedHeslb && snap.calculatedHeslb > 0);
+        });
+
+        if (heslbSlips.length === 0) {
+            throw new Error(`No finalized HESLB beneficiaries found for ${year}-${month}`);
+        }
+
+        const headers = [
+            { header: 'HESLB Index Number', key: 'indexNum', width: 20 },
+            { header: 'Employee Name', key: 'name', width: 25 },
+            { header: 'Basic Salary', key: 'basic', width: 15 },
+            { header: 'HESLB Rate (%)', key: 'rate', width: 15 },
+            { header: 'HESLB Deduction', key: 'deduction', width: 15 }
+        ];
+
+        const rows = heslbSlips.map(slip => {
+            const details = slip.user?.details;
+            const bd: any = slip.breakdown ? (typeof slip.breakdown === 'string' ? JSON.parse(slip.breakdown) : slip.breakdown) : {};
+            const snap = bd?.taxPolicySnapshot || {};
+
+            const basic = snap.basicSalaryUsedForHeslb || parseFloat(details?.base_salary?.toString() || '0');
+            const rate = snap.heslbRate || 0.15;
+            const deduction = snap.calculatedHeslb || 0;
+
+            return {
+                indexNum: snap.heslbIndexNumber || details?.heslb_index_number || '',
+                name: `${details?.first_name || ''} ${details?.last_name || ''}`.trim(),
+                basic: basic,
+                rate: rate * 100,
+                deduction: deduction
+            };
+        });
+
+        return this.generateExcel(getTzComplianceFilename('HESLB', year, month), headers, rows, metadata);
+    }
+
+    /**
+     * Tanzania WCF Report
+     */
+    async generateTzWcfReport(orgId: number, year: string, month: string): Promise<Buffer> {
+        const slips: any[] = await this.getFinalizedTzPayslips(orgId, year, month);
+        if (slips.length === 0) {
+            throw new Error(`No finalized payroll runs found for ${year}-${month}`);
+        }
+
+        const org = await prisma.organization.findUnique({ where: { id: orgId } });
+        const metadata = {
+            'Employer Name': org?.entity_name,
+            'WCF Employer Number': org?.wcf_employer_number
+        };
+
+        const headers = [
+            { header: 'Employee Name', key: 'name', width: 25 },
+            { header: 'Gross Salary', key: 'gross', width: 15 },
+            { header: 'WCF Rate (%)', key: 'rate', width: 15 },
+            { header: 'WCF Contribution', key: 'contribution', width: 15 }
+        ];
+
+        const rows = slips.map(slip => {
+            const details = slip.user?.details;
+            const bd: any = slip.breakdown ? (typeof slip.breakdown === 'string' ? JSON.parse(slip.breakdown) : slip.breakdown) : {};
+            const snap = bd?.taxPolicySnapshot || {};
+
+            const gross = parseFloat(slip.gross_amount.toString());
+            const rate = snap.wcfRate || 0.005;
+            const contribution = snap.calculatedWcf || 0;
+
+            return {
+                name: `${details?.first_name || ''} ${details?.last_name || ''}`.trim(),
+                gross: gross,
+                rate: rate * 100,
+                contribution: contribution
+            };
+        });
+
+        return this.generateExcel(getTzComplianceFilename('WCF', year, month), headers, rows, metadata);
+    }
+}
+
+export function getTzComplianceFilename(type: 'PAYE' | 'SDL' | 'NSSF' | 'HESLB' | 'WCF', year: string, month: string): string {
+    return `Tanzania_${type}_${year}_${String(month).padStart(2, '0')}.xlsx`;
 }
 
 export const payrollReportService = new PayrollReportService();

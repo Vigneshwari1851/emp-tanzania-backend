@@ -54,6 +54,7 @@ export const upload = multer({
     { name: 'dl_doc', maxCount: 1 },
     { name: 'pan_doc', maxCount: 1 },
     { name: 'aadhaar_doc', maxCount: 1 },
+    { name: 'nssf_doc', maxCount: 1 },
     { name: 'education_docs', maxCount: 10 },
     { name: 'employment_docs', maxCount: 10 },
     { name: 'certification_docs', maxCount: 10 },

@@ -12,6 +12,8 @@ export interface PayrollInput {
     earnings: Record<string, number>;
     deductions: Record<string, number>;
     apiDetails: any;
+    month?: number;
+    year?: number;
 }
 
 export interface PayrollEngineResult {
@@ -23,6 +25,7 @@ export interface PayrollEngineResult {
         netTaxableIncome: number;
         annualTds: number;
         monthlyTds: number;
+        taxPolicySnapshot?: any;
     };
 }
 
@@ -438,6 +441,168 @@ export class DefaultPayrollEngine implements IPayrollEngine {
 }
 
 /**
+ * 6. TANZANIA PAYROLL ENGINE
+ */
+export class TZPayrollEngine implements IPayrollEngine {
+    async calculate(input: PayrollInput): Promise<PayrollEngineResult> {
+        const { baseSalary, actualGross, deductions, apiDetails, month, year } = input;
+        const localDeductions = { ...deductions };
+        const employerContributions: Record<string, number> = {};
+
+        const orgId = apiDetails?.organization_id || 1;
+        
+        // 1. Determine effective date for policy match (first day of payroll month)
+        const calcMonth = month || (new Date().getMonth() + 1);
+        const calcYear = year || new Date().getFullYear();
+        const targetDate = new Date(Date.UTC(calcYear, calcMonth - 1, 1));
+
+        // 2. Fetch the correct TzTaxPolicy version from db
+        const policy = await prisma.tzTaxPolicy.findFirst({
+            where: {
+                organization_id: orgId,
+                status: 'active',
+                effective_date: { lte: targetDate }
+            },
+            orderBy: [
+                { effective_date: 'desc' },
+                { version: 'desc' }
+            ]
+        });
+
+        if (!policy) {
+            throw new Error(`No active Tanzania tax policy found for organization ID ${orgId} effective on or before ${targetDate.toISOString().split('T')[0]}.`);
+        }
+
+        // 3. NSSF Contribution Calculation
+        const empNssfRate = parseFloat(policy.employee_nssf_rate.toString()) || 0.10;
+        const empyrNssfRate = parseFloat(policy.employer_nssf_rate.toString()) || 0.10;
+
+        const employeeNSSF = Math.round(actualGross * empNssfRate);
+        const employerNSSF = Math.round(actualGross * empyrNssfRate);
+
+        localDeductions['NSSF Pension'] = employeeNSSF;
+        employerContributions['Employer NSSF'] = employerNSSF;
+
+        // 4. PAYE Calculation
+        // Gross income subject to PAYE is calculated AFTER NSSF deduction (NSSF is tax-deductible in TZ)
+        const taxableIncome = Math.max(0, actualGross - employeeNSSF);
+
+        // Compute PAYE progressively based on configured slabs
+        const slabs = policy.paye_slabs as any[];
+        let payeAmount = 0;
+
+        // Find the slab where the taxable income falls
+        const matchedSlab = slabs.find(s => {
+            const min = parseFloat(s.lowerLimit);
+            const max = s.upperLimit === null || s.upperLimit === undefined ? Infinity : parseFloat(s.upperLimit);
+            return taxableIncome >= min && taxableIncome <= max;
+        });
+
+        if (matchedSlab) {
+            const min = parseFloat(matchedSlab.lowerLimit);
+            const rate = parseFloat(matchedSlab.rate);
+            const fixed = parseFloat(matchedSlab.fixedAmount);
+            
+            const excessBase = min > 0 ? min - 1 : 0;
+            payeAmount = Math.round(fixed + (taxableIncome - excessBase) * (rate / 100));
+        }
+
+        // 4b. Apply Tax Reliefs (Personal Relief + Disability Relief)
+        const personalReliefAnnual = parseFloat(policy.personal_relief_annual?.toString() || '270000');
+        const disabilityReliefAnnual = parseFloat(policy.disability_relief_annual?.toString() || '270000');
+        const personalReliefMonthly = Math.round(personalReliefAnnual / 12);
+        const disabilityReliefMonthly = apiDetails?.is_disabled ? Math.round(disabilityReliefAnnual / 12) : 0;
+        const totalRelief = personalReliefMonthly + disabilityReliefMonthly;
+        payeAmount = Math.max(0, payeAmount - totalRelief);
+
+        if (payeAmount > 0) {
+            localDeductions['PAYE Tax'] = payeAmount;
+        } else {
+            localDeductions['PAYE Tax'] = 0;
+        }
+
+        // 5. HESLB Repayment Deduction (Dynamic rate from policy)
+        const heslbRate = parseFloat(policy.heslb_rate?.toString() || '0.15');
+        let heslbAmount = 0;
+        const isHeslbBeneficiary = apiDetails?.is_heslb_beneficiary === true;
+        if (isHeslbBeneficiary) {
+            heslbAmount = Math.round(baseSalary * heslbRate);
+            localDeductions['HESLB Loan Deduction'] = heslbAmount;
+        } else {
+            localDeductions['HESLB Loan Deduction'] = 0;
+        }
+
+        // 6. SDL Contribution (Employer Cost)
+        const sdlThreshold = policy.sdl_threshold ?? 10;
+        const sdlRate = parseFloat(policy.sdl_rate.toString()) ?? 0.035;
+        
+        // Count active employees in organization
+        const activeEmployeeCount = await prisma.user.count({
+            where: {
+                status: true,
+                roles: {
+                    some: {
+                        role: {
+                            organization_id: orgId
+                        }
+                    }
+                }
+            }
+        });
+
+        let sdlAmount = 0;
+        if (activeEmployeeCount >= sdlThreshold) {
+            sdlAmount = Math.round(actualGross * sdlRate);
+            employerContributions['Employer SDL'] = sdlAmount;
+        } else {
+            employerContributions['Employer SDL'] = 0;
+        }
+
+        // 7. WCF Contribution (Employer Cost)
+        const wcfRate = parseFloat(policy.wcf_rate.toString()) ?? 0.005;
+        const wcfAmount = Math.round(actualGross * wcfRate);
+        employerContributions['Employer WCF'] = wcfAmount;
+
+        return {
+            deductions: localDeductions,
+            employerContributions,
+            taxInfo: {
+                annualIncome: actualGross * 12,
+                totalExemptions: employeeNSSF * 12,
+                netTaxableIncome: taxableIncome,
+                annualTds: payeAmount * 12,
+                monthlyTds: payeAmount,
+                taxPolicySnapshot: {
+                    taxPolicyId: policy.id,
+                    taxPolicyVersion: policy.version,
+                    effectiveDate: policy.effective_date,
+                    payeSlabs: policy.paye_slabs,
+                    employeeNssfRate: empNssfRate,
+                    employerNssfRate: empyrNssfRate,
+                    employeeNssfCalculated: employeeNSSF,
+                    employerNssfCalculated: employerNSSF,
+                    payeCalculated: payeAmount,
+                    // New expanded policy fields
+                    sdlRate: sdlRate,
+                    sdlThreshold: sdlThreshold,
+                    wcfRate: wcfRate,
+                    heslbRate: heslbRate,
+                    heslbApplicable: isHeslbBeneficiary,
+                    heslbIndexNumber: apiDetails?.heslb_index_number || null,
+                    basicSalaryUsedForHeslb: isHeslbBeneficiary ? baseSalary : 0,
+                    calculatedHeslb: heslbAmount,
+                    calculatedSdl: sdlAmount,
+                    calculatedWcf: wcfAmount,
+                    personalReliefMonthly,
+                    disabilityReliefMonthly,
+                    totalReliefApplied: totalRelief
+                }
+            }
+        };
+    }
+}
+
+/**
  * PAYROLL ENGINE FACTORY
  */
 export class PayrollEngineFactory {
@@ -459,6 +624,9 @@ export class PayrollEngineFactory {
             case 'UAE':
             case 'UNITED ARAB EMIRATES':
                 return new UAEPayrollEngine();
+            case 'TZ':
+            case 'TANZANIA':
+                return new TZPayrollEngine();
             default:
                 return new DefaultPayrollEngine();
         }

@@ -134,6 +134,10 @@ const documentFields = {
   license_expiry_date: trimStringOptional,
   pan_number: trimStringOptional,
   aadhaar_number: trimStringOptional,
+  nssf_number: trimStringOptional,
+  is_heslb_beneficiary: coerceBoolean.optional(),
+  heslb_index_number: trimStringOptional,
+  is_disabled: coerceBoolean.optional(),
 };
 
 const mediaFields = {

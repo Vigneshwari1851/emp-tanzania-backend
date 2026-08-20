@@ -513,6 +513,119 @@ export class PayrollService {
   }
 
   async createPayslip(orgId: number, data: any, actorId?: number) {
+    // Enrich breakdown with Tanzania tax policy snapshot if org country is Tanzania
+    try {
+      const org = await prisma.organization.findUnique({ where: { id: orgId }, select: { country: true } });
+      const isTanzaniaOrg = org?.country === 'TZ' || org?.country === 'TANZANIA';
+      if (isTanzaniaOrg) {
+        const userDetail = await prisma.userDetail.findUnique({
+          where: { user_id: parseInt(data.userId) }
+        });
+        const parts = data.month.split('-'); // e.g. "2026-08"
+        const year = parseInt(parts[0]);
+        const month = parseInt(parts[1]);
+        const targetDate = new Date(Date.UTC(year, month - 1, 1));
+        
+        const policy = await prisma.tzTaxPolicy.findFirst({
+          where: {
+            organization_id: orgId,
+            status: 'active',
+            effective_date: { lte: targetDate }
+          },
+          orderBy: [
+            { effective_date: 'desc' },
+            { version: 'desc' }
+          ]
+        });
+
+        if (policy) {
+          let payeVal = 0;
+          let nssfVal = 0;
+          let heslbVal = 0;
+          const empNssfRate = parseFloat(policy.employee_nssf_rate.toString()) || 0.10;
+          const empyrNssfRate = parseFloat(policy.employer_nssf_rate.toString()) || 0.10;
+          const sdlRate = parseFloat(policy.sdl_rate.toString()) || 0.035;
+          const wcfRate = parseFloat(policy.wcf_rate.toString()) || 0.005;
+          const sdlThreshold = policy.sdl_threshold ?? 10;
+
+          const deductionsArrayOrObj = data.breakdown?.deductions;
+          if (Array.isArray(deductionsArrayOrObj)) {
+            const payeItem = deductionsArrayOrObj.find((d: any) => d.label === 'PAYE Tax' || d.name === 'PAYE Tax');
+            const nssfItem = deductionsArrayOrObj.find((d: any) => d.label === 'NSSF Pension' || d.name === 'NSSF Pension');
+            const heslbItem = deductionsArrayOrObj.find((d: any) => d.label === 'HESLB Loan Deduction' || d.name === 'HESLB Loan Deduction');
+            payeVal = payeItem ? parseFloat(payeItem.value || payeItem.amount || 0) : 0;
+            nssfVal = nssfItem ? parseFloat(nssfItem.value || nssfItem.amount || 0) : 0;
+            heslbVal = heslbItem ? parseFloat(heslbItem.value || heslbItem.amount || 0) : 0;
+          } else if (deductionsArrayOrObj && typeof deductionsArrayOrObj === 'object') {
+            payeVal = parseFloat(deductionsArrayOrObj['PAYE Tax'] || 0);
+            nssfVal = parseFloat(deductionsArrayOrObj['NSSF Pension'] || 0);
+            heslbVal = parseFloat(deductionsArrayOrObj['HESLB Loan Deduction'] || 0);
+          }
+
+          // Calculate employer NSSF, WCF, and SDL based on headcount
+          const gross = parseFloat(data.grossAmount || 0);
+          const employerNssfVal = Math.round(gross * empyrNssfRate);
+          const wcfVal = Math.round(gross * wcfRate);
+
+          const activeEmployeeCount = await prisma.user.count({
+            where: {
+              status: true,
+              roles: {
+                some: {
+                  role: {
+                    organization_id: orgId
+                  }
+                }
+              }
+            }
+          });
+
+          let sdlVal = 0;
+          if (activeEmployeeCount >= sdlThreshold) {
+            sdlVal = Math.round(gross * sdlRate);
+          }
+
+          const snapshot = {
+            taxPolicyId: policy.id,
+            taxPolicyVersion: policy.version,
+            effectiveDate: policy.effective_date,
+            payeSlabs: policy.paye_slabs,
+            employeeNssfRate: empNssfRate,
+            employerNssfRate: empyrNssfRate,
+            employeeNssfCalculated: nssfVal,
+            employerNssfCalculated: employerNssfVal,
+            payeCalculated: payeVal,
+            // New snapshot properties
+            sdlRate,
+            sdlThreshold,
+            wcfRate,
+            heslbRate: parseFloat(policy.heslb_rate?.toString() || '0.15'),
+            heslbApplicable: userDetail.is_heslb_beneficiary,
+            heslbIndexNumber: userDetail.heslb_index_number,
+            basicSalaryUsedForHeslb: userDetail.is_heslb_beneficiary ? (parseFloat(userDetail.base_salary as any) || 0) : 0,
+            calculatedHeslb: heslbVal,
+            calculatedSdl: sdlVal,
+            calculatedWcf: wcfVal,
+            personalReliefMonthly: Math.round(parseFloat(policy.personal_relief_annual?.toString() || '270000') / 12),
+            disabilityReliefMonthly: userDetail.is_disabled ? Math.round(parseFloat(policy.disability_relief_annual?.toString() || '270000') / 12) : 0
+          };
+
+          if (!data.breakdown) data.breakdown = {};
+          data.breakdown = {
+            ...data.breakdown,
+            taxPolicySnapshot: snapshot,
+            employerContributions: [
+              { label: 'Employer NSSF', value: employerNssfVal },
+              { label: 'Employer SDL', value: sdlVal },
+              { label: 'Employer WCF', value: wcfVal }
+            ]
+          };
+        }
+      }
+    } catch (err) {
+      console.error("Failed to append Tanzania tax policy snapshot:", err);
+    }
+
     // Use upsert to prevent duplicate payslips for the same employee in the same month
     // If a payslip already exists for this user+month, update it instead of creating a new one
     const existing = await prisma.payslip.findFirst({
@@ -1405,7 +1518,8 @@ export class PayrollService {
                 netSalary,
                 totalDeductions,
                 earnings,
-                deductions
+                deductions,
+                employerContributions: []
             },
             taxSections: taxSections.map((ts: any) => ({
                 key: ts.section,
@@ -1562,8 +1676,16 @@ export class PayrollService {
 
         const totalActualGross = proratedGross + otAmount + arrearsAmount + bonusAmount;
 
-        // 4. Statutory & Tax Calculations (Routed through PayrollEngineFactory based on employee's country)
-        const country = apiDetails?.country || '';
+        // 4. Statutory & Tax Calculations (Routed through PayrollEngineFactory based on ORGANIZATION's country)
+        const orgId = apiDetails?.payroll_group?.organization_id;
+        let country = '';
+        if (orgId) {
+            const org = await prisma.organization.findUnique({ where: { id: orgId }, select: { country: true } });
+            country = org?.country || '';
+        }
+        if (!country) {
+            country = apiDetails?.country || '';
+        }
         const engine = PayrollEngineFactory.getEngine(country);
 
         const engineInput = {
@@ -1575,7 +1697,9 @@ export class PayrollService {
             lopDeductionAmount,
             earnings,
             deductions,
-            apiDetails
+            apiDetails,
+            month,
+            year
         };
 
         const engineResult = await engine.calculate(engineInput);
@@ -1667,6 +1791,7 @@ export class PayrollService {
             netPay,
             earnings: Object.keys(earnings).map(k => ({ label: k, value: earnings[k] })),
             deductions: Object.keys(finalDeductions).map(k => ({ label: k, value: finalDeductions[k] })),
+            employerContributions: Object.keys(engineResult.employerContributions || {}).map(k => ({ label: k, value: engineResult.employerContributions[k] })),
             lopDeductionAmount,
             taxInfo: engineResult.taxInfo
         };
@@ -2263,5 +2388,273 @@ export class PayrollService {
         }
 
         return result;
+    }
+
+    // ─── Tanzania Tax Policies (Phase 2) ─────────────────────────────────────
+    
+    validateTzPayeSlabs(slabs: any[]) {
+        if (!Array.isArray(slabs) || slabs.length === 0) {
+            throw new AppError("PAYE slabs must be a non-empty array", 400);
+        }
+
+        // 1. Validate individual slab bounds, rates, and fixed amounts
+        slabs.forEach((slab, index) => {
+            const lowerLimit = parseFloat(slab.lowerLimit);
+            const rate = parseFloat(slab.rate);
+            const fixedAmount = parseFloat(slab.fixedAmount);
+
+            if (isNaN(lowerLimit) || lowerLimit < 0) {
+                throw new AppError(`Slab ${index + 1}: Lower limit must be a non-negative number`, 400);
+            }
+            if (isNaN(rate) || rate < 0) {
+                throw new AppError(`Slab ${index + 1}: Tax rate must be a non-negative percentage`, 400);
+            }
+            if (isNaN(fixedAmount) || fixedAmount < 0) {
+                throw new AppError(`Slab ${index + 1}: Fixed tax amount must be a non-negative number`, 400);
+            }
+
+            if (slab.upperLimit !== null && slab.upperLimit !== undefined) {
+                const upperLimit = parseFloat(slab.upperLimit);
+                if (isNaN(upperLimit) || upperLimit <= lowerLimit) {
+                    throw new AppError(`Slab ${index + 1}: Upper limit must be greater than lower limit`, 400);
+                }
+            }
+        });
+
+        // 2. Sort slabs by lower limit
+        const sorted = [...slabs].sort((a, b) => parseFloat(a.lowerLimit) - parseFloat(b.lowerLimit));
+        for (let i = 0; i < slabs.length; i++) {
+            if (parseFloat(slabs[i].lowerLimit) !== parseFloat(sorted[i].lowerLimit)) {
+                throw new AppError("PAYE slabs must be ordered by lower limit ascending", 400);
+            }
+        }
+
+        // 3. Only the last slab can be open-ended (upperLimit = null)
+        for (let i = 0; i < slabs.length - 1; i++) {
+            if (slabs[i].upperLimit === null || slabs[i].upperLimit === undefined) {
+                throw new AppError(`Slab ${i + 1} cannot be open-ended. Only the final slab must be open-ended (upperLimit = null)`, 400);
+            }
+        }
+        const lastSlab = slabs[slabs.length - 1];
+        if (lastSlab.upperLimit !== null && lastSlab.upperLimit !== undefined) {
+            throw new AppError("The final PAYE slab must be open-ended (upperLimit = null)", 400);
+        }
+
+        // 4. Validate no gaps or overlaps
+        for (let i = 0; i < slabs.length - 1; i++) {
+            const currentUpper = parseFloat(slabs[i].upperLimit);
+            const nextLower = parseFloat(slabs[i + 1].lowerLimit);
+            // Allow nextLower to equal currentUpper + 1 (integer bands) or currentUpper (float bounds)
+            if (nextLower !== currentUpper + 1 && nextLower !== currentUpper) {
+                throw new AppError(`Gap or overlap detected between slab ${i + 1} and ${i + 2}`, 400);
+            }
+        }
+    }
+
+    async getTzTaxPolicies(orgId: number) {
+        return await prisma.tzTaxPolicy.findMany({
+            where: { organization_id: orgId },
+            orderBy: [
+                { effective_date: 'desc' },
+                { version: 'desc' }
+            ]
+        });
+    }
+
+    async getActiveTzTaxPolicy(orgId: number) {
+        const policy = await prisma.tzTaxPolicy.findFirst({
+            where: { organization_id: orgId, status: 'active' },
+            orderBy: [
+                { effective_date: 'desc' },
+                { version: 'desc' }
+            ]
+        });
+        return policy || null;
+    }
+
+    async createTzTaxPolicy(orgId: number, data: any) {
+        const { effective_date, status = 'draft', paye_slabs, employee_nssf_rate, employer_nssf_rate, sdl_rate = 0.035, wcf_rate = 0.005, heslb_rate = 0.15, sdl_threshold = 10 } = data;
+        
+        // Validate slabs
+        this.validateTzPayeSlabs(paye_slabs);
+
+        // Parse rates
+        const empRate = parseFloat(employee_nssf_rate);
+        const empyrRate = parseFloat(employer_nssf_rate);
+        const sdlR = parseFloat(sdl_rate);
+        const wcfR = parseFloat(wcf_rate);
+        const heslbR = parseFloat(heslb_rate);
+        const sdlThresh = parseInt(sdl_threshold);
+
+        if (isNaN(empRate) || empRate < 0 || empRate > 0.1) {
+            throw new AppError("Employee NSSF rate must be between 0 and 10% (0.1)", 400);
+        }
+        if (isNaN(empyrRate) || empyrRate < 0 || empyrRate > 1) {
+            throw new AppError("Employer NSSF rate must be between 0 and 1", 400);
+        }
+        if (isNaN(sdlR) || sdlR < 0 || sdlR > 1) {
+            throw new AppError("SDL rate must be between 0 and 1", 400);
+        }
+        if (isNaN(wcfR) || wcfR < 0 || wcfR > 1) {
+            throw new AppError("WCF rate must be between 0 and 1", 400);
+        }
+        if (isNaN(heslbR) || heslbR < 0 || heslbR > 1) {
+            throw new AppError("HESLB rate must be between 0 and 1", 400);
+        }
+        if (isNaN(sdlThresh) || sdlThresh < 0) {
+            throw new AppError("SDL threshold must be a non-negative integer", 400);
+        }
+
+        const effDate = new Date(effective_date);
+        if (isNaN(effDate.getTime())) {
+            throw new AppError("Invalid effective date", 400);
+        }
+
+        // Single active policy rule: deactivate existing active policies when creating a new active one
+        if (status === 'active') {
+            await prisma.tzTaxPolicy.updateMany({
+                where: {
+                    organization_id: orgId,
+                    status: 'active'
+                },
+                data: { status: 'inactive' }
+            });
+        }
+
+        // Get next version number
+        const maxVersionPolicy = await prisma.tzTaxPolicy.findFirst({
+            where: { organization_id: orgId },
+            orderBy: { version: 'desc' }
+        });
+        const nextVersion = maxVersionPolicy ? maxVersionPolicy.version + 1 : 1;
+
+        return await prisma.tzTaxPolicy.create({
+            data: {
+                organization_id: orgId,
+                version: nextVersion,
+                status,
+                effective_date: effDate,
+                paye_slabs: paye_slabs,
+                employee_nssf_rate: empRate,
+                employer_nssf_rate: empyrRate,
+                sdl_rate: sdlR,
+                wcf_rate: wcfR,
+                heslb_rate: heslbR,
+                sdl_threshold: sdlThresh
+            }
+        });
+    }
+
+    async updateTzTaxPolicy(id: number, orgId: number, data: any) {
+        const policy = await prisma.tzTaxPolicy.findFirst({
+            where: { id, organization_id: orgId }
+        });
+        if (!policy) {
+            throw new AppError("Tanzania tax policy not found", 404);
+        }
+
+        // Check if this policy (ID or version) has been used in any payroll runs/payslips
+        // We will store used policy version/ID in payslip breakdown. We check if there are payslips
+        // referencing this policy ID or version.
+        const payslips = await prisma.payslip.findMany({
+            where: {
+                organization_id: orgId,
+            }
+        });
+        const isUsed = payslips.some(p => {
+            if (!p.breakdown) return false;
+            const bd = typeof p.breakdown === 'string' ? JSON.parse(p.breakdown) : (p.breakdown as any);
+            return bd.taxPolicyId === id;
+        });
+
+        if (isUsed) {
+            throw new AppError("This policy has already been used in a payroll run and cannot be modified.", 400);
+        }
+
+        const { effective_date, status, paye_slabs, employee_nssf_rate, employer_nssf_rate, sdl_rate, wcf_rate, heslb_rate, sdl_threshold } = data;
+
+        if (paye_slabs) {
+            this.validateTzPayeSlabs(paye_slabs);
+        }
+
+        const updateData: any = {};
+        if (effective_date) updateData.effective_date = new Date(effective_date);
+        if (status) {
+            if (status === 'active') {
+                // Single active policy rule: deactivate all other active policies for this org
+                await prisma.tzTaxPolicy.updateMany({
+                    where: {
+                        organization_id: orgId,
+                        status: 'active',
+                        id: { not: id }
+                    },
+                    data: { status: 'inactive' }
+                });
+            }
+            updateData.status = status;
+        }
+
+        if (paye_slabs) updateData.paye_slabs = paye_slabs;
+        if (employee_nssf_rate !== undefined) {
+            const rate = parseFloat(employee_nssf_rate);
+            if (isNaN(rate) || rate < 0 || rate > 0.1) throw new AppError("Employee NSSF rate must be between 0 and 10% (0.1)", 400);
+            updateData.employee_nssf_rate = rate;
+        }
+        if (employer_nssf_rate !== undefined) {
+            const rate = parseFloat(employer_nssf_rate);
+            if (isNaN(rate) || rate < 0 || rate > 1) throw new AppError("Invalid employer NSSF rate", 400);
+            updateData.employer_nssf_rate = rate;
+        }
+        if (sdl_rate !== undefined) {
+            const rate = parseFloat(sdl_rate);
+            if (isNaN(rate) || rate < 0 || rate > 1) throw new AppError("Invalid SDL rate", 400);
+            updateData.sdl_rate = rate;
+        }
+        if (wcf_rate !== undefined) {
+            const rate = parseFloat(wcf_rate);
+            if (isNaN(rate) || rate < 0 || rate > 1) throw new AppError("Invalid WCF rate", 400);
+            updateData.wcf_rate = rate;
+        }
+        if (heslb_rate !== undefined) {
+            const rate = parseFloat(heslb_rate);
+            if (isNaN(rate) || rate < 0 || rate > 1) throw new AppError("Invalid HESLB rate", 400);
+            updateData.heslb_rate = rate;
+        }
+        if (sdl_threshold !== undefined) {
+            const threshold = parseInt(sdl_threshold);
+            if (isNaN(threshold) || threshold < 0) throw new AppError("Invalid SDL threshold", 400);
+            updateData.sdl_threshold = threshold;
+        }
+
+        return await prisma.tzTaxPolicy.update({
+            where: { id },
+            data: updateData
+        });
+    }
+
+    async updateTzTaxPolicyStatus(id: number, orgId: number, status: string) {
+        const policy = await prisma.tzTaxPolicy.findFirst({
+            where: { id, organization_id: orgId }
+        });
+        if (!policy) {
+            throw new AppError("Tanzania tax policy not found", 404);
+        }
+
+        if (status === 'active') {
+            // Deactivate all other active policies for this org (single active rule)
+            await prisma.tzTaxPolicy.updateMany({
+                where: {
+                    organization_id: orgId,
+                    status: 'active',
+                    id: { not: id }
+                },
+                data: { status: 'inactive' }
+            });
+        }
+
+        return await prisma.tzTaxPolicy.update({
+            where: { id },
+            data: { status }
+        });
     }
 }

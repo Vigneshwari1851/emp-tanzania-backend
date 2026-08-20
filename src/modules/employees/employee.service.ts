@@ -167,6 +167,9 @@ export class EmployeeService {
         if (files['aadhaar_doc']) {
           detailsData.aadhaar_doc = `/upload/${files['aadhaar_doc'][0].filename}`;
         }
+        if (files['nssf_doc']) {
+          detailsData.nssf_doc = `/upload/${files['nssf_doc'][0].filename}`;
+        }
 
         // Map education documents to records
         if (files['education_docs']) {
@@ -470,6 +473,10 @@ export class EmployeeService {
             tax_regime: true,
             is_nri: true,
             is_senior_citizen: true,
+            is_heslb_beneficiary: true,
+            heslb_index_number: true,
+            is_disabled: true,
+            nssf_number: true,
             department: { select: { id: true, department_name: true } },
             team: { select: { id: true, team_name: true } },
             payroll_group: { select: { name: true } },
@@ -605,11 +612,16 @@ export class EmployeeService {
             dl_doc: true,
             pan_doc: true,
             aadhaar_doc: true,
+            nssf_doc: true,
             esi_number: true,
             pf_uan: true,
             tax_regime: true,
             is_nri: true,
             is_senior_citizen: true,
+            is_heslb_beneficiary: true,
+            heslb_index_number: true,
+            is_disabled: true,
+            nssf_number: true,
             designation_id: true,
             joining_date: true,
             department: { select: { id: true, department_name: true } },
@@ -714,6 +726,9 @@ export class EmployeeService {
       }
       if (files['aadhaar_doc']) {
         detailsData.aadhaar_doc = `/upload/${files['aadhaar_doc'][0].filename}`;
+      }
+      if (files['nssf_doc']) {
+        detailsData.nssf_doc = `/upload/${files['nssf_doc'][0].filename}`;
       }
 
       // Map education documents to records if provided as JSON

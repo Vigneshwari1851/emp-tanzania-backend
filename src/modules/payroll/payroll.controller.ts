@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import crypto from 'crypto';
 import prisma from '../../config/prisma';
 import { PayrollService } from './payroll.service';
-import { PayrollReportService } from './payroll.report.service';
+import { PayrollReportService, getTzComplianceFilename } from './payroll.report.service';
 import { AuthRequest } from '../../middlewares/auth.middleware';
 import { AppError } from '../../middlewares/error.middleware';
 import { auditService } from '../audit/audit.service';
@@ -1112,4 +1112,205 @@ export class PayrollController {
             res.status(500).json({ success: false, message: error.message });
         }
     }
+
+    // ─── Tanzania Tax Policies (Phase 2) ─────────────────────────────────────
+    async getTzTaxPolicies(req: AuthRequest, res: Response) {
+        try {
+            const orgId = req.user?.orgId;
+            if (!orgId) return res.status(401).json({ success: false, message: 'Unauthorized' });
+
+            const result = await payrollService.getTzTaxPolicies(orgId);
+            res.json({ success: true, data: result });
+        } catch (error: any) {
+            _errRes(res, error);
+        }
+    }
+
+    async getActiveTzTaxPolicy(req: AuthRequest, res: Response) {
+        try {
+            const orgId = req.user?.orgId;
+            if (!orgId) return res.status(401).json({ success: false, message: 'Unauthorized' });
+
+            const result = await payrollService.getActiveTzTaxPolicy(orgId);
+            res.json({ success: true, data: result });
+        } catch (error: any) {
+            _errRes(res, error);
+        }
+    }
+
+    async createTzTaxPolicy(req: AuthRequest, res: Response) {
+        try {
+            const orgId = req.user?.orgId;
+            if (!orgId) return res.status(401).json({ success: false, message: 'Unauthorized' });
+
+            const result = await payrollService.createTzTaxPolicy(orgId, req.body);
+            res.status(201).json({ success: true, data: result });
+        } catch (error: any) {
+            _errRes(res, error);
+        }
+    }
+
+    async updateTzTaxPolicy(req: AuthRequest, res: Response) {
+        try {
+            const orgId = req.user?.orgId;
+            const id = parseInt(req.params.id as string);
+            if (!orgId) return res.status(401).json({ success: false, message: 'Unauthorized' });
+            if (isNaN(id)) return res.status(400).json({ success: false, message: 'Invalid ID' });
+
+            const result = await payrollService.updateTzTaxPolicy(id, orgId, req.body);
+            res.json({ success: true, data: result });
+        } catch (error: any) {
+            _errRes(res, error);
+        }
+    }
+
+    async updateTzTaxPolicyStatus(req: AuthRequest, res: Response) {
+        try {
+            const orgId = req.user?.orgId;
+            const id = parseInt(req.params.id as string);
+            if (!orgId) return res.status(401).json({ success: false, message: 'Unauthorized' });
+            if (isNaN(id)) return res.status(400).json({ success: false, message: 'Invalid ID' });
+
+            const { status } = req.body;
+            const result = await payrollService.updateTzTaxPolicyStatus(id, orgId, status);
+            res.json({ success: true, data: result });
+        } catch (error: any) {
+            _errRes(res, error);
+        }
+    }
+
+    private validateYearMonth(yearStr: string, monthStr: string) {
+        const year = parseInt(yearStr);
+        const month = parseInt(monthStr);
+        if (isNaN(year) || year < 2000 || year > 2100) {
+            throw new AppError('Invalid year parameter', 400);
+        }
+        if (isNaN(month) || month < 1 || month > 12) {
+            throw new AppError('Invalid month parameter', 400);
+        }
+        return { year: String(year), month: String(month).padStart(2, '0') };
+    }
+
+    async getTzPayeReport(req: AuthRequest, res: Response) {
+        try {
+            const orgId = req.user?.orgId;
+            if (!orgId) return res.status(401).json({ success: false, message: 'Unauthorized' });
+
+            const { year, month } = this.validateYearMonth(req.params.year as string, req.params.month as string);
+            const buffer = await payrollReportService.generateTzPayeReport(orgId, year, month);
+            
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', `attachment; filename=${getTzComplianceFilename('PAYE', year, month)}`);
+            res.send(buffer);
+        } catch (error: any) {
+            if (error.message && error.message.includes('No finalized payroll runs found')) {
+                res.status(404).json({ success: false, message: error.message });
+            } else {
+                _errRes(res, error);
+            }
+        }
+    }
+
+    async getTzSdlReport(req: AuthRequest, res: Response) {
+        try {
+            const orgId = req.user?.orgId;
+            if (!orgId) return res.status(401).json({ success: false, message: 'Unauthorized' });
+
+            const { year, month } = this.validateYearMonth(req.params.year as string, req.params.month as string);
+            const buffer = await payrollReportService.generateTzSdlReport(orgId, year, month);
+            
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', `attachment; filename=${getTzComplianceFilename('SDL', year, month)}`);
+            res.send(buffer);
+        } catch (error: any) {
+            if (error.message && error.message.includes('No finalized payroll runs found')) {
+                res.status(404).json({ success: false, message: error.message });
+            } else {
+                _errRes(res, error);
+            }
+        }
+    }
+
+    async getTzNssfReport(req: AuthRequest, res: Response) {
+        try {
+            const orgId = req.user?.orgId;
+            if (!orgId) return res.status(401).json({ success: false, message: 'Unauthorized' });
+
+            const { year, month } = this.validateYearMonth(req.params.year as string, req.params.month as string);
+            const buffer = await payrollReportService.generateTzNssfReport(orgId, year, month);
+            
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', `attachment; filename=${getTzComplianceFilename('NSSF', year, month)}`);
+            res.send(buffer);
+        } catch (error: any) {
+            if (error.message && error.message.includes('No finalized payroll runs found')) {
+                res.status(404).json({ success: false, message: error.message });
+            } else {
+                _errRes(res, error);
+            }
+        }
+    }
+
+    async getTzHeslbReport(req: AuthRequest, res: Response) {
+        try {
+            const orgId = req.user?.orgId;
+            if (!orgId) return res.status(401).json({ success: false, message: 'Unauthorized' });
+
+            const { year, month } = this.validateYearMonth(req.params.year as string, req.params.month as string);
+            const buffer = await payrollReportService.generateTzHeslbReport(orgId, year, month);
+            
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', `attachment; filename=${getTzComplianceFilename('HESLB', year, month)}`);
+            res.send(buffer);
+        } catch (error: any) {
+            if (error.message && (error.message.includes('No finalized payroll runs found') || error.message.includes('No finalized HESLB beneficiaries found'))) {
+                res.status(404).json({ success: false, message: error.message });
+            } else {
+                _errRes(res, error);
+            }
+        }
+    }
+
+    async getTzWcfReport(req: AuthRequest, res: Response) {
+        try {
+            const orgId = req.user?.orgId;
+            if (!orgId) return res.status(401).json({ success: false, message: 'Unauthorized' });
+
+            const { year, month } = this.validateYearMonth(req.params.year as string, req.params.month as string);
+            const buffer = await payrollReportService.generateTzWcfReport(orgId, year, month);
+            
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            res.setHeader('Content-Disposition', `attachment; filename=${getTzComplianceFilename('WCF', year, month)}`);
+            res.send(buffer);
+        } catch (error: any) {
+            if (error.message && error.message.includes('No finalized payroll runs found')) {
+                res.status(404).json({ success: false, message: error.message });
+            } else {
+                _errRes(res, error);
+            }
+        }
+    }
+
+    async checkTzFinalizedPayroll(req: AuthRequest, res: Response) {
+        try {
+            const orgId = req.user?.orgId;
+            if (!orgId) return res.status(401).json({ success: false, message: 'Unauthorized' });
+
+            const { year, month } = this.validateYearMonth(req.params.year as string, req.params.month as string);
+            const periodStr = `${year}-${month}`;
+
+            const count = await prisma.payslip.count({
+                where: {
+                    organization_id: orgId,
+                    month: periodStr,
+                    status: { in: ['PAID', 'FINANCE_APPROVED'] }
+                }
+            });
+
+            res.json({ success: true, exists: count > 0 });
+        } catch (error: any) {
+            _errRes(res, error);
+        }
+    }
 }
+
